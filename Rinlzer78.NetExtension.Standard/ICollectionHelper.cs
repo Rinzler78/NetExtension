@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Rinlzer78.NetExtension
 {
-    public static class ICollectionExt
+    public static class ICollectionHelper
     {
         public static void Set<T>(this ICollection<T> currentItems, IEnumerable<T> newItems)
         {

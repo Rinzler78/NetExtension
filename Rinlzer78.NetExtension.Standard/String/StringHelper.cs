@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Rinlzer78.NetExtension.String
 {
-    public static class StringExt
+    public static class StringHelper
     {
         public static string BeginByLowerCase(this string str)
         {
