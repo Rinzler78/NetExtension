@@ -1,0 +1,16 @@
+﻿using System;
+namespace Rinlzer78.NetExtension.Geo
+{
+    public static class DistanceHelper
+    {
+        public static double FromMilesToKiloMeters(this long distanceInMile)
+        {
+            return (double)(distanceInMile / 1609.34d);
+        }
+
+        public static double FromMeterToKiloMeters(this long distanceInMeter)
+        {
+            return distanceInMeter / 1000;
+        }
+    }
+}
