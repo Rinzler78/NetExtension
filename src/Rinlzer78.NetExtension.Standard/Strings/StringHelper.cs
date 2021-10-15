@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Rinlzer78.NetExtension.String
+namespace Rinlzer78.NetExtension.Strings
 {
     public static class StringHelper
     {
