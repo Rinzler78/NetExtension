@@ -18,32 +18,41 @@ namespace Rinlzer78.NetExtension.Objects
                    .SelectMany(i => i.GetProperties());
         }
 
-        public static TU CopyPropertiesTo<TU>(this object source)
+        public static TU CopyTo<TU>(this object source, OnCopyToFailedForPropertyDelegate getValueOnFailedCopyDelegate = null)
             where TU : new()
         {
             var dest = new TU();
-            source.CopyPropertiesTo(dest);
+            source.CopyTo(dest, getValueOnFailedCopyDelegate);
             return dest;
         }
 
-        public static void CopyPropertiesTo<TU>(this object source, TU dest)
+        public delegate void OnCopyToFailedForPropertyDelegate((PropertyInfo propertyInfo, object obj) source, (PropertyInfo propertyInfo, object obj) target);
+
+        public static void CopyTo<TU>(this object source, TU target, OnCopyToFailedForPropertyDelegate onCopyToFailedForProperty = null)
         {
-            var sourceProps = source.GetType().GetPublicProperties().Where(x => x.CanRead).ToList();
-            var destProps = typeof(TU).GetPublicProperties()
+            var sourceProperties = source.GetType().GetPublicProperties().Where(x => x.CanRead).ToList();
+            var targetProperties = typeof(TU).GetPublicProperties()
                     .Where(x => x.CanWrite)
                     .ToList();
 
-            foreach (var sourceProp in sourceProps)
+            foreach (var sourceProperty in sourceProperties)
             {
-                if (destProps.Any(x => x.Name == sourceProp.Name))
+                if (targetProperties.Any(x => x.Name == sourceProperty.Name))
                 {
-                    var p = destProps.First(x => x.Name == sourceProp.Name);
-                    if (p.CanWrite)
-                    { // check if the property can be set or no.
-                        p.SetValue(dest, sourceProp.GetValue(source, null), null);
+                    var targetPropertyInfo = targetProperties.First(x => x.Name == sourceProperty.Name);
+                    //if (targetPropertyInfo.CanWrite && sourceProperty.PropertyType == targetPropertyInfo.PropertyType)
+                    if (targetPropertyInfo.CanWrite)
+                    {
+                        try
+                        {
+                            targetPropertyInfo.SetValue(target, sourceProperty.GetValue(source, null), null);
+                        }
+                        catch (Exception ex)
+                        {
+                            onCopyToFailedForProperty?.Invoke(new(sourceProperty, source), new(targetPropertyInfo, target));
+                        }
                     }
                 }
-
             }
         }
 

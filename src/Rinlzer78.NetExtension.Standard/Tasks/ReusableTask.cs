@@ -4,44 +4,88 @@ using System.Threading.Tasks;
 
 namespace Rinlzer78.NetExtension.Tasks
 {
+    public static class TaskHelper
+    {
+        public static Task WhenAll(this Task[] tasks)
+            => Task.WhenAll(tasks);
+    }
+
     public class ReusableTask
     {
-        readonly Func<(Task Task, CancellationTokenSource CancellationTokenSource)> _taskContext;
+        Action Action { get; }
 
-        public ReusableTask(Func<(Task Task, CancellationTokenSource CancellationTokenSource)> taskContext)
+        public ReusableTask(Action action)
         {
-            _taskContext = taskContext;
+            Action = action;
         }
 
-        (Task Task, CancellationTokenSource CancellationTokenSource) _currentRoutine;
-        Task CurrentTask => _currentRoutine.Task;
-        CancellationTokenSource CurrentCancellationTokenSource => _currentRoutine.CancellationTokenSource;
+        CancellationTokenSource _cancellationTokenSource;
 
-        public Task Run()
+        System.Threading.Tasks.Task _InvokeTask;
+        public System.Threading.Tasks.Task Invoke()
         {
-            if (CurrentTask?.IsCompleted ?? true)
+            lock (this)
             {
-                _currentRoutine = _taskContext.Invoke();
-                CurrentTask.ContinueWith(t =>
+                if (_InvokeTask?.IsCompleted ?? true)
                 {
-                    Console.WriteLine($"Task {t.Status}");
-                });
+                    _InvokeTask = System.Threading.Tasks.Task.Run(() => Action());
+                }
+                return _InvokeTask;
             }
-
-            return CurrentTask;
         }
 
         public bool Cancel()
         {
-            lock (_taskContext)
+            lock (this)
             {
-                if (CurrentCancellationTokenSource != null)
+                if(_cancellationTokenSource != null)
                 {
-                    CurrentCancellationTokenSource.Cancel();
+                    _cancellationTokenSource.Cancel();
+                    _cancellationTokenSource = null;
+
                     return true;
                 }
+
+                return false;
             }
-            return false;
         }
+
+        //readonly Func<(Task Task, CancellationTokenSource CancellationTokenSource)> _taskContext;
+
+        //public ReusableTask(Func<(Task Task, CancellationTokenSource CancellationTokenSource)> taskContext)
+        //{
+        //    _taskContext = taskContext;
+        //}
+
+        //(Task Task, CancellationTokenSource CancellationTokenSource) _currentRoutine;
+        //Task CurrentTask => _currentRoutine.Task;
+        //CancellationTokenSource CurrentCancellationTokenSource => _currentRoutine.CancellationTokenSource;
+
+        //public Task Run()
+        //{
+        //    if (CurrentTask?.IsCompleted ?? true)
+        //    {
+        //        _currentRoutine = _taskContext.Invoke();
+        //        CurrentTask.ContinueWith(t =>
+        //        {
+        //            Console.WriteLine($"Task {t.Status}");
+        //        });
+        //    }
+
+        //    return CurrentTask;
+        //}
+
+        //public bool Cancel()
+        //{
+        //    lock (_taskContext)
+        //    {
+        //        if (CurrentCancellationTokenSource != null)
+        //        {
+        //            CurrentCancellationTokenSource.Cancel();
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
     }
 }

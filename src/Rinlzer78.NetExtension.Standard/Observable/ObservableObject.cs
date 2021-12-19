@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Rinlzer78.NetExtension.Observable
@@ -11,27 +13,37 @@ namespace Rinlzer78.NetExtension.Observable
 
         protected bool SetProperty<T>(ref T target, T source, Action<(T OldValue, T NewValue)> propertyChanged = null, Func<(T OldValue, T NewValue), bool> CheckValidity = null, [CallerMemberName] string propertyName = null)
         {
-            if(CheckValidity == null)
-                CheckValidity = (arg) => EqualityComparer<T>.Default.Equals(arg.OldValue, arg.NewValue);
+            CheckValidity = CheckValidity ?? ((arg) => EqualityComparer<T>.Default.Equals(arg.OldValue, arg.NewValue));
 
             if (EqualityComparer<T>.Default.Equals(target, source))
                 return false;
-#if DEBUG
-            Console.WriteLine($"{GetType().Name} : {propertyName} Changed : {target} => {source}");
-#endif
+
             T oldValue = target;
 
             target = source;
 
+            if (oldValue != null && oldValue is IObservableObject oldObservableObject)
+                DetachDependencies(oldObservableObject);
+
+            if (target != null && target is IObservableObject newObservableObject)
+                AttachDependencies(newObservableObject);
+
             propertyChanged?.Invoke((oldValue, target));
-            OnPropertyChanged(propertyName);
+            OnPropertyChanged(propertyName, oldValue, target);
 
             return true;
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual string NickName { get; }
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null, object oldValue = null, object newValue = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if (PropertyChanged != null)
+            {
+#if DEBUG
+                Console.WriteLine($"{GetType().Name} ({NickName}) : {propertyName} Changed : {oldValue} => {newValue}");
+#endif
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -42,28 +54,67 @@ namespace Rinlzer78.NetExtension.Observable
             {
                 if (disposing)
                 {
-                    // TODO: dispose managed state (managed objects)
                     PropertyChanged = null;
                 }
 
-                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-                // TODO: set large fields to null
                 disposedValue = true;
             }
         }
 
-        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        public ObservableObject()
+        {
+            Dependencies.CollectionChanged += DependenciesCollectionChanged;
+        }
+
+        void DependenciesCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+                foreach (var item in e.NewItems)
+                    (item as IObservableObject).PropertyChanged += OnDependenciesPropertyChanged;
+
+            if (e.OldItems != null)
+                foreach (var item in e.OldItems)
+                    (item as IObservableObject).PropertyChanged -= OnDependenciesPropertyChanged;
+        }
+
         ~ObservableObject()
         {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);
         }
 
         void IDisposable.Dispose()
         {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
+            DetachDependencies();
             GC.SuppressFinalize(this);
+        }
+
+        public ObservableCollection<IObservableObject> Dependencies { get; } = new ObservableCollection<IObservableObject>();
+
+        protected void AttachDependencies(params IObservableObject[] observableObject)
+        {
+            lock (this)
+            {
+                var toAttach = observableObject.Where(arg => !Dependencies.Contains(arg));
+
+                foreach (var dep in toAttach)
+                    Dependencies.Add(dep);
+            }
+        }
+
+        protected void DetachDependencies(params IObservableObject[] observableObject)
+        {
+            lock (this)
+            {
+                var toAttach = observableObject?.Where(arg => Dependencies.Contains(arg)) ?? Dependencies;
+
+                foreach (var dep in toAttach)
+                    Dependencies.Remove(dep);
+            }
+        }
+
+        protected virtual void OnDependenciesPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
         }
     }
 }

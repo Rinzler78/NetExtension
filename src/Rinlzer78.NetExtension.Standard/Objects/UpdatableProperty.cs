@@ -1,9 +1,23 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Rinlzer78.NetExtension.Observable;
 
 namespace Rinlzer78.NetExtension.Objects
 {
+    public static class UpdatablePropertyExtension
+    {
+        public static async System.Threading.Tasks.Task GetAll(this UpdatableProperty[] updatableProperties)
+        {
+            await System.Threading.Tasks.Task.WhenAll(updatableProperties.Select(arg => arg.Get())).ConfigureAwait(false);
+        }
+
+        public static async System.Threading.Tasks.Task UpdateAll(this UpdatableProperty[] updatableProperties)
+        {
+            await System.Threading.Tasks.Task.WhenAll(updatableProperties.Select(arg => arg.Update())).ConfigureAwait(false);
+        }
+    }
+
     public abstract class UpdatableProperty : ObservableObject
     {
         readonly object locker;
@@ -19,17 +33,16 @@ namespace Rinlzer78.NetExtension.Objects
         {
             locker = new object();
             Property = default;
-            _updateTask = null;
         }
 
-        Task<object> _GetTask;
+        Task<object> _getTask;
         public Task<object> Get(bool force = false)
         {
             lock (locker)
             {
-                if (_GetTask?.IsCompleted ?? true)
+                if (_getTask?.IsCompleted ?? true)
                 {
-                    _GetTask = Task.Run(async () =>
+                    _getTask = System.Threading.Tasks.Task.Run(async () =>
                     {
                         if (Property == default || force)
                             await Update();
@@ -37,12 +50,12 @@ namespace Rinlzer78.NetExtension.Objects
                         return Property;
                     });
                 }
-                return _GetTask;
+                return _getTask;
             }
         }
 
-        Task _updateTask;
-        public Task Update()
+        System.Threading.Tasks.Task _updateTask;
+        public System.Threading.Tasks.Task Update()
         {
             lock (locker)
             {
@@ -54,7 +67,7 @@ namespace Rinlzer78.NetExtension.Objects
             }
         }
 
-        protected abstract Task InnerUpdate();
+        protected abstract System.Threading.Tasks.Task InnerUpdate();
     }
 
     public class UpdatableProperty<PropertyType> : UpdatableProperty
@@ -67,8 +80,12 @@ namespace Rinlzer78.NetExtension.Objects
             UpdatableFunction = updatableFunction;
         }
 
-        public new Task<PropertyType> Get(bool force = false) => base.Get(force) as Task<PropertyType>;
-        protected override async Task InnerUpdate()
+        public new async Task<PropertyType> Get(bool force = false)
+        {
+            return (PropertyType)await base.Get(force);
+        }
+
+        protected override async System.Threading.Tasks.Task InnerUpdate()
         {
             base.Property = await UpdatableFunction?.Invoke();
         }

@@ -1,9 +1,27 @@
 ﻿using System;
+using System.IO;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace Rinlzer78.NetExtension.Json
 {
     public static class JsonHelper
     {
-        public static string SerializeObject(this object obj) => Newtonsoft.Json.JsonConvert.SerializeObject(obj);
+        public static string SerializeObject(this object obj) => JsonConvert.SerializeObject(obj);
+        public static object DeSerializeObject(this string str) => JsonConvert.DeserializeObject(str);
+        public static ObjectType DeSerializeObject<ObjectType>(this string str) => JsonConvert.DeserializeObject<ObjectType>(str);
+        public static string SerializeObjectWithoutQuote(this object value)
+        {
+            var builder = new StringBuilder();
+            var serializer = JsonSerializer.Create();
+            var stringWriter = new StringWriter(builder);
+            using (var jsonWriter = new JsonTextWriter(stringWriter))
+            {
+                jsonWriter.Formatting = Formatting.Indented;
+                jsonWriter.QuoteName = false;
+                serializer.Serialize(jsonWriter, value);
+                return builder.ToString();
+            }
+        }
     }
 }
