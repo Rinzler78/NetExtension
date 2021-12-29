@@ -15,5 +15,6 @@ namespace Rinlzer78.NetExtension.Observable
 
     public interface IObservableObject : INotifyPropertyChanged
     {
+        string NickName { get; }
     }
 }

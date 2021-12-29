@@ -34,7 +34,7 @@ namespace Rinlzer78.NetExtension.Observable
             return true;
         }
 
-        protected virtual string NickName { get; }
+        public virtual string NickName { get; }
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null, object oldValue = null, object newValue = null)
         {
             if (PropertyChanged != null)
@@ -63,6 +63,7 @@ namespace Rinlzer78.NetExtension.Observable
 
         public ObservableObject()
         {
+            NickName = GetType().Name;
             Dependencies.CollectionChanged += DependenciesCollectionChanged;
         }
 
@@ -84,6 +85,7 @@ namespace Rinlzer78.NetExtension.Observable
 
         void IDisposable.Dispose()
         {
+            Console.WriteLine($"{NickName} : Dispose");
             Dispose(disposing: true);
             DetachDependencies();
             GC.SuppressFinalize(this);
@@ -98,7 +100,10 @@ namespace Rinlzer78.NetExtension.Observable
                 var toAttach = observableObject.Where(arg => !Dependencies.Contains(arg));
 
                 foreach (var dep in toAttach)
+                {
+                    Console.WriteLine($"{GetType().Name} ({NickName}) : Attach {dep.NickName}");
                     Dependencies.Add(dep);
+                }
             }
         }
 
@@ -109,7 +114,10 @@ namespace Rinlzer78.NetExtension.Observable
                 var toAttach = observableObject?.Where(arg => Dependencies.Contains(arg)) ?? Dependencies;
 
                 foreach (var dep in toAttach)
+                {
+                    Console.WriteLine($"{GetType().Name} ({NickName}) : Detach {dep.NickName}");
                     Dependencies.Remove(dep);
+                }
             }
         }
 
