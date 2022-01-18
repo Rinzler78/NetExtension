@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Rinlzer78.NetExtension.Types;
+using Rinzler78.NetExtension.Types;
 
-namespace Rinlzer78.NetExtension.Objects
+namespace Rinzler78.NetExtension.Objects
 {
     public static class ObjectExtension
     {

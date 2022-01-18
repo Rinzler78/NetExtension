@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Rinlzer78.NetExtension.Observable
+namespace Rinzler78.NetExtension.Observable
 {
     [AttributeUsage(AttributeTargets.Property, Inherited = false)]
     public class ObservablePropertyAttribute : Attribute

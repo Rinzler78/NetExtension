@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Rinlzer78.NetExtension
+namespace Rinzler78.NetExtension
 {
     public static class ICollectionHelper
     {

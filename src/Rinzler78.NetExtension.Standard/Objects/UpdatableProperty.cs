@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Rinlzer78.NetExtension.Observable;
+using Rinzler78.NetExtension.Observable;
 
-namespace Rinlzer78.NetExtension.Objects
+namespace Rinzler78.NetExtension.Objects
 {
     public static class UpdatablePropertyExtension
     {

@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Rinlzer78.NetExtension.Geo
+namespace Rinzler78.NetExtension.Geo
 {
     public static class DistanceHelper
     {

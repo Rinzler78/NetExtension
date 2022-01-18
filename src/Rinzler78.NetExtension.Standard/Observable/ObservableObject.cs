@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace Rinlzer78.NetExtension.Observable
+namespace Rinzler78.NetExtension.Observable
 {
     public abstract class ObservableObject : IObservableObject, IDisposable
     {

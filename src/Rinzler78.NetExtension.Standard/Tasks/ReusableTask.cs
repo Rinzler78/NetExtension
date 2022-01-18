@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Rinlzer78.NetExtension.Tasks
+namespace Rinzler78.NetExtension.Tasks
 {
     public static class TaskHelper
     {

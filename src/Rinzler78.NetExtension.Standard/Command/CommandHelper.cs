@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace Rinlzer78.NetExtension.Command
+namespace Rinzler78.NetExtension.Command
 {
     public static class CommandHelper
     {

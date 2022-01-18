@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Rinlzer78.NetExtension.Dates
+namespace Rinzler78.NetExtension.Dates
 {
     public struct TimeSlot
     {

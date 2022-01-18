@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace Rinlzer78.NetExtension.Json
+namespace Rinzler78.NetExtension.Json
 {
     public static class JsonHelper
     {

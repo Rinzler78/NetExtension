@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Rinlzer78.NetExtension.Enums
+namespace Rinzler78.NetExtension.Enums
 {
     public static class EnumsHelper
     {

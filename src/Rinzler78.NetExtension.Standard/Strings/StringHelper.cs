@@ -8,7 +8,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Rinlzer78.NetExtension.Strings
+namespace Rinzler78.NetExtension.Strings
 {
     public static class StringHelper
     {
