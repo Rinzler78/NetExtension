@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.808.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{5DD5E4FA-CB73-4610-85AB-557B54E96AA9}") = "Rinlzer78.NetExtension.NuGet", "Rinlzer78.NetExtension.NuGet\Rinlzer78.NetExtension.NuGet.nuproj", "{1E1D377E-B5C8-4E45-8815-41B4EC2A64C8}"
+Project("{5DD5E4FA-CB73-4610-85AB-557B54E96AA9}") = "Rinzler78.NetExtension.NuGet", "Rinzler78.NetExtension.NuGet\Rinzler78.NetExtension.NuGet.nuproj", "{1E1D377E-B5C8-4E45-8815-41B4EC2A64C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rinlzer78.NetExtension.Standard", "Rinlzer78.NetExtension.Standard\Rinlzer78.NetExtension.Standard.csproj", "{89382BD8-EDE1-4E9E-9461-1089222BB066}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rinzler78.NetExtension.Standard", "Rinzler78.NetExtension.Standard\Rinzler78.NetExtension.Standard.csproj", "{89382BD8-EDE1-4E9E-9461-1089222BB066}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
