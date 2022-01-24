@@ -1,10 +1,14 @@
-﻿using System;
+﻿#if DEBUG
+//#define SHOW_HTTP_TRACE
+#endif
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -57,16 +61,16 @@ namespace Rinzler78.NetExtension.Strings
         public static bool IsNullOrEmpty(this string str) => string.IsNullOrEmpty(str);
         public static string Join(this string[] strs, char separator) => strs?.Length > 0 ? string.Join(separator, strs) : null;
 
-        public static string HttpGetString(this string url)
+        public static async Task<string> HttpGetString(this string url)
         {
-#if DEBUG
+#if SHOW_HTTP_TRACE
             var strb = new StringBuilder();
             strb.AppendLine($"Http Get ({url}) :");
 #endif
             //return new WebClient().DownloadString(url);
-            var result = new HttpClient().GetStringAsync(url).Result;
+            var result = await new HttpClient().GetStringAsync(url);
 
-#if DEBUG
+#if SHOW_HTTP_TRACE
             strb.AppendLine($"Answer ({url}) :");
             strb.AppendLine($"{result}");
             Console.WriteLine(strb.ToString());
@@ -83,24 +87,24 @@ namespace Rinzler78.NetExtension.Strings
             return contentString;
         }
 
-        public static object HttpGet(this string url)
-            => JsonConvert.DeserializeObject(url.HttpGetString());
+        public static async Task<object> HttpGet(this string url)
+            => JsonConvert.DeserializeObject(await url.HttpGetString());
 
-        public static ReturnType HttpGet<ReturnType>(this string url)
-            => JsonConvert.DeserializeObject<ReturnType>(url.HttpGetString());
+        public static async Task<ReturnType> HttpGet<ReturnType>(this string url)
+            => JsonConvert.DeserializeObject<ReturnType>(await url.HttpGetString());
 
-        public static string HttpPostString<RequestType>(this string url, RequestType obj)
+        public static async Task<string> HttpPostString<RequestType>(this string url, RequestType obj)
         {
-#if DEBUG
+#if SHOW_HTTP_TRACE
             var strb = new StringBuilder();
             strb.AppendLine($"Http Post Request ({url}):");
 
             strb.AppendLine($"Payload :");
             strb.AppendLine($"{JsonConvert.SerializeObject(obj)}");
 #endif
-            var httpResponse = new HttpClient().PostAsync(url, obj.GetStringContent()).Result;
-            var result = httpResponse.Content.ReadAsStringAsync().Result;
-#if DEBUG
+            var httpResponse = await new HttpClient().PostAsync(url, obj.GetStringContent());
+            var result = await httpResponse.Content.ReadAsStringAsync();
+#if SHOW_HTTP_TRACE
             strb.AppendLine($"Answer ({url}) :");
             strb.AppendLine($"{result}");
             Console.WriteLine(strb.ToString());
@@ -108,15 +112,15 @@ namespace Rinzler78.NetExtension.Strings
             return result;
         }
 
-        public static ReturnType HttpPostString<ReturnType>(this string url, string obj)
-            => JsonConvert.DeserializeObject<ReturnType>(url.HttpPostString(obj));
+        public static async Task<ReturnType> HttpPostString<ReturnType>(this string url, string obj)
+            => JsonConvert.DeserializeObject<ReturnType>(await url.HttpPostString(obj));
 
-        public static object HttpPost<RequestType>(this string url, RequestType obj)
-            => JsonConvert.DeserializeObject(url.HttpPostString(obj));
+        public static async Task<object> HttpPost<RequestType>(this string url, RequestType obj)
+            => JsonConvert.DeserializeObject(await url.HttpPostString(obj));
 
-        public static ReturnType HttpPost<RequestType, ReturnType>(this string url, RequestType obj)
+        public static async Task<ReturnType> HttpPost<RequestType, ReturnType>(this string url, RequestType obj)
         {
-            var str = url.HttpPostString(obj);
+            var str = await url.HttpPostString(obj);
             return JsonConvert.DeserializeObject<ReturnType>(str);
         }
 
