@@ -73,5 +73,10 @@ namespace Rinzler78.NetExtension.Objects
             }
             return self == to;
         }
+
+        public static ReturnType GetPropertyValue<ReturnType>(this object src, string propName)
+        {
+            return (ReturnType) src.GetType().GetProperty(propName).GetValue(src, null);
+        }
     }
 }
