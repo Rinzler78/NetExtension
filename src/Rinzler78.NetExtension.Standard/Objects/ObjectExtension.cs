@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Rinzler78.NetExtension.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Rinzler78.NetExtension.Types;
 
 namespace Rinzler78.NetExtension.Objects
 {
@@ -76,7 +76,7 @@ namespace Rinzler78.NetExtension.Objects
 
         public static ReturnType GetPropertyValue<ReturnType>(this object src, string propName)
         {
-            return (ReturnType) src.GetType().GetProperty(propName).GetValue(src, null);
+            return (ReturnType)src.GetType().GetProperty(propName).GetValue(src, null);
         }
     }
 }

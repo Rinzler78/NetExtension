@@ -38,7 +38,7 @@ namespace Rinzler78.NetExtension.Tasks
         {
             lock (this)
             {
-                if(_cancellationTokenSource != null)
+                if (_cancellationTokenSource != null)
                 {
                     _cancellationTokenSource.Cancel();
                     _cancellationTokenSource = null;

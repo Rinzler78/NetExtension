@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Rinzler78.NetExtension.Observable;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Rinzler78.NetExtension.Observable;
 
 namespace Rinzler78.NetExtension.Objects
 {

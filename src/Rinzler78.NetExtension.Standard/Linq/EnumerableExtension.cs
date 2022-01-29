@@ -12,7 +12,7 @@ namespace Rinzler78.NetExtension.Linq
             {
                 return source.Aggregate(func);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
             }
