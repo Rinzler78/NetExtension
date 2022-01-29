@@ -14,10 +14,9 @@ namespace Rinzler78.NetExtension.Enums
             }
             catch (Exception ex)
             {
-
             }
 
-            return default(ToEnumType);
+            return default;
         }
 
         public static ToEnumType Convert<ToEnumType>(this string str)
@@ -35,7 +34,7 @@ namespace Rinzler78.NetExtension.Enums
                 Console.WriteLine();
             }
 
-            return default(ToEnumType);
+            return default;
         }
     }
 }

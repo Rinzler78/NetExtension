@@ -33,8 +33,7 @@ namespace Rinzler78.NetExtension.Dates
             if (endDate > startDate)
             {
                 var start = startDate;
-                DateTime end = default;
-
+                DateTime end;
                 do
                 {
                     end = start.AddDays(daysSlotDuration);

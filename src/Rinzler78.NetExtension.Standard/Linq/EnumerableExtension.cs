@@ -14,10 +14,9 @@ namespace Rinzler78.NetExtension.Linq
             }
             catch (Exception ex)
             {
-
             }
 
-            return default(TSource);
+            return default;
         }
     }
 }

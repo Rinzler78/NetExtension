@@ -9,7 +9,6 @@ namespace Rinzler78.NetExtension.Observable
     {
         public ObservablePropertyAttribute([CallerMemberName] string propertyName = null)
         {
-
         }
     }
 
