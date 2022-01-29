@@ -25,6 +25,7 @@
     <None Remove="Linq\" />
     <None Remove="Enum\" />
     <None Remove="Dates\" />
+    <None Remove="Json\Converters\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Json\" />
@@ -32,5 +33,6 @@
     <Folder Include="Linq\" />
     <Folder Include="Enums\" />
     <Folder Include="Dates\" />
+    <Folder Include="Json\Converters\" />
   </ItemGroup>
 </Project>
