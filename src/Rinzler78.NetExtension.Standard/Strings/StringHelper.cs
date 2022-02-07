@@ -85,11 +85,11 @@ namespace Rinzler78.NetExtension.Strings
             return contentString;
         }
 
-        public static async Task<object> HttpGet(this string url)
-            => JsonConvert.DeserializeObject(await url.HttpGetString());
+        public static async Task<object> HttpGet(this string url, JsonSerializerSettings settings = null)
+            => JsonConvert.DeserializeObject(await url.HttpGetString(), settings);
 
-        public static async Task<ReturnType> HttpGet<ReturnType>(this string url)
-            => JsonConvert.DeserializeObject<ReturnType>(await url.HttpGetString());
+        public static async Task<ReturnType> HttpGet<ReturnType>(this string url, JsonSerializerSettings settings = null)
+            => JsonConvert.DeserializeObject<ReturnType>(await url.HttpGetString(), settings);
 
         public static async Task<string> HttpPostString<RequestType>(this string url, RequestType obj)
         {
