@@ -31,7 +31,7 @@ namespace Rinzler78.NetExtension.Enums
             }
             catch (Exception ex)
             {
-                Console.WriteLine();
+                
             }
 
             return default;
