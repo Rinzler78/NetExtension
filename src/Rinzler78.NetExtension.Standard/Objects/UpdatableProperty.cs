@@ -32,7 +32,6 @@ namespace Rinzler78.NetExtension.Objects
         public UpdatableProperty()
         {
             locker = new object();
-            Property = default;
         }
 
         Task<object> _getTask;
