@@ -1,6 +1,7 @@
 ﻿#if DEBUG
 //#define SHOW_HTTP_TRACE
 #endif
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -57,6 +58,7 @@ namespace Rinzler78.NetExtension.Strings
         }
 
         public static bool IsNullOrEmpty(this string str) => string.IsNullOrEmpty(str);
+
         public static string Join(this string[] strs, char separator) => strs?.Length > 0 ? string.Join(separator, strs) : null;
 
         public static async Task<string> HttpGetString(this string url)

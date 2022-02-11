@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace Rinzler78.NetExtension.Types
 {
     public static class ConvertHelper

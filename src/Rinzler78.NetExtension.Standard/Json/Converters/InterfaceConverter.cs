@@ -11,7 +11,8 @@ namespace Rinzler78.NetExtension.Json.Converters
             return JsonSerializer.Deserialize<Implementation>(ref reader, options);
         }
 
-        public override void Write(Utf8JsonWriter writer, Interface value, JsonSerializerOptions options) { }
+        public override void Write(Utf8JsonWriter writer, Interface value, JsonSerializerOptions options)
+        { }
     }
 
     public class InterfaceConverterFactory<Interface, Implementation> : JsonConverterFactory

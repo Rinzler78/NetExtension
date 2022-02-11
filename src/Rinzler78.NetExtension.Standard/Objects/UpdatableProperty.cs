@@ -20,9 +20,10 @@ namespace Rinzler78.NetExtension.Objects
 
     public abstract class UpdatableProperty : ObservableObject
     {
-        readonly object locker;
+        private readonly object locker;
 
-        object _property;
+        private object _property;
+
         public object Property
         {
             get => _property;
@@ -34,7 +35,8 @@ namespace Rinzler78.NetExtension.Objects
             locker = new object();
         }
 
-        Task<object> _getTask;
+        private Task<object> _getTask;
+
         public Task<object> Get(bool force = false)
         {
             lock (locker)
@@ -53,7 +55,8 @@ namespace Rinzler78.NetExtension.Objects
             }
         }
 
-        System.Threading.Tasks.Task _updateTask;
+        private System.Threading.Tasks.Task _updateTask;
+
         public System.Threading.Tasks.Task Update()
         {
             lock (locker)
@@ -72,7 +75,7 @@ namespace Rinzler78.NetExtension.Objects
     public class UpdatableProperty<PropertyType> : UpdatableProperty
     {
         public new PropertyType Property => (PropertyType)base.Property;
-        Func<Task<PropertyType>> UpdatableFunction { get; }
+        private Func<Task<PropertyType>> UpdatableFunction { get; }
 
         public UpdatableProperty(Func<Task<PropertyType>> updatableFunction) : base()
         {

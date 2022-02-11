@@ -35,6 +35,7 @@ namespace Rinzler78.NetExtension.Observable
         }
 
         public virtual string NickName { get; }
+
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null, object oldValue = null, object newValue = null)
         {
             if (PropertyChanged != null)
@@ -67,7 +68,7 @@ namespace Rinzler78.NetExtension.Observable
             Dependencies.CollectionChanged += DependenciesCollectionChanged;
         }
 
-        void DependenciesCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void DependenciesCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
                 foreach (var item in e.NewItems)

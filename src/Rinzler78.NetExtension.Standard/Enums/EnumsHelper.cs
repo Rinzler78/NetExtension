@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace Rinzler78.NetExtension.Enums
 {
     public static class EnumsHelper
@@ -31,7 +32,6 @@ namespace Rinzler78.NetExtension.Enums
             }
             catch (Exception ex)
             {
-                
             }
 
             return default;

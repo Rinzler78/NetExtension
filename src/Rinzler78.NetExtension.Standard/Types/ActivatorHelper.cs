@@ -14,7 +14,7 @@ namespace Rinzler78.NetExtension.Types
     public static class TypeExtensions
     {
         /// <summary>
-        /// Determine whether a type is simple (String, Decimal, DateTime, etc) 
+        /// Determine whether a type is simple (String, Decimal, DateTime, etc)
         /// or complex (i.e. custom class with public properties and methods).
         /// </summary>
         /// <see cref="http://stackoverflow.com/questions/2442534/how-to-test-if-type-is-primitive"/>
@@ -42,12 +42,16 @@ namespace Rinzler78.NetExtension.Types
             {
                 case MemberTypes.Event:
                     return ((EventInfo)member).EventHandlerType;
+
                 case MemberTypes.Field:
                     return ((FieldInfo)member).FieldType;
+
                 case MemberTypes.Method:
                     return ((MethodInfo)member).ReturnType;
+
                 case MemberTypes.Property:
                     return ((PropertyInfo)member).PropertyType;
+
                 default:
                     throw new ArgumentException
                     (

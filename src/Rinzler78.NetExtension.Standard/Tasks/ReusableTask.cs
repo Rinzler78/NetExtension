@@ -12,16 +12,17 @@ namespace Rinzler78.NetExtension.Tasks
 
     public class ReusableTask
     {
-        Action Action { get; }
+        private Action Action { get; }
 
         public ReusableTask(Action action)
         {
             Action = action;
         }
 
-        CancellationTokenSource _cancellationTokenSource;
+        private CancellationTokenSource _cancellationTokenSource;
 
-        System.Threading.Tasks.Task _InvokeTask;
+        private System.Threading.Tasks.Task _InvokeTask;
+
         public System.Threading.Tasks.Task Invoke()
         {
             lock (this)
