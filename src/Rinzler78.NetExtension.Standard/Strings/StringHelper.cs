@@ -15,6 +15,16 @@ namespace Rinzler78.NetExtension.Strings
 {
     public static class StringHelper
     {
+        public static bool ContainsAll(this string str, string [] words)
+        {
+            return words?.All((string arg) => str.Contains(arg)) ?? true;
+        }
+
+        public static bool ContainsAny(this string str, string[] words)
+        {
+            return words?.Any((string arg) => str.Contains(arg)) ?? true;
+        }
+
         public static string BeginByLowerCase(this string str)
         {
             if (str?.Length > 0)
