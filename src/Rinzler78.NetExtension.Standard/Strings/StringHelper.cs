@@ -15,7 +15,7 @@ namespace Rinzler78.NetExtension.Strings
 {
     public static class StringHelper
     {
-        public static bool ContainsAll(this string str, string [] words)
+        public static bool ContainsAll(this string str, string[] words)
         {
             return words?.All((string arg) => str.Contains(arg)) ?? true;
         }
