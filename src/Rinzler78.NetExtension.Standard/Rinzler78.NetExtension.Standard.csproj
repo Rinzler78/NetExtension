@@ -17,6 +17,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="CsvHelper" Version="27.2.1" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Json\" />
@@ -26,6 +27,8 @@
     <None Remove="Enum\" />
     <None Remove="Dates\" />
     <None Remove="Json\Converters\" />
+    <None Remove="Csv\" />
+    <None Remove="CsvHelper" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Json\" />
@@ -34,5 +37,6 @@
     <Folder Include="Enums\" />
     <Folder Include="Dates\" />
     <Folder Include="Json\Converters\" />
+    <Folder Include="Csv\" />
   </ItemGroup>
 </Project>
