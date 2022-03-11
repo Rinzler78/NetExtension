@@ -14,13 +14,14 @@ namespace Rinzler78.NetExtension.Csv
         public static Task<IEnumerable<ReturnType>> LoadCSVAsync<ReturnType>(this string fileName, char separator = ';')
             => Task.Run(() => fileName.LoadCSV<ReturnType>(separator));
 
-        public static IEnumerable<ReturnType> LoadCSV<ReturnType>(this string fileName, char separator = ';')
+        public static IEnumerable<ReturnType> LoadCSV<ReturnType>(this string fileName, char separator = ';', bool hasHeaderRecord = false)
         {
             try
             {
                 var config = new CsvConfiguration(CultureInfo.InvariantCulture)
                 {
                     Delimiter = separator.ToString(),
+                    HasHeaderRecord = hasHeaderRecord
                 };
 
                 var sourcePath = fileName;
