@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -15,6 +16,12 @@ namespace Rinzler78.NetExtension.Strings
 {
     public static class StringHelper
     {
+        public static bool IsValidEmail(this string str)
+        {
+            var emailAddressAttribute = new EmailAddressAttribute();
+            return emailAddressAttribute.IsValid(str);
+        }
+
         public static int ComputeLevenshteInDistance(this string source, string target)
         {
             if (string.IsNullOrEmpty(source))
