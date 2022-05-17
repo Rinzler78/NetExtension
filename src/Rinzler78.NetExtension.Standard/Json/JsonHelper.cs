@@ -25,5 +25,32 @@ namespace Rinzler78.NetExtension.Json
                 return builder.ToString();
             }
         }
+
+        public static object DeSerializeObjectFromFile(this string filePath)
+        {
+            if (File.Exists(filePath))
+            {
+                using (StreamReader reader = new StreamReader(filePath))
+                {
+                    string json = reader.ReadToEnd();
+                    return json.DeSerializeObject();
+                }
+            }
+            return null;
+        }
+
+        public static ObjectType DeSerializeObjectFromFile<ObjectType>(this string filePath, params JsonConverter[] converters)
+        {
+            if (File.Exists(filePath))
+            {
+                using (StreamReader reader = new StreamReader(filePath))
+                {
+                    string json = reader.ReadToEnd();
+                    return JsonConvert.DeserializeObject<ObjectType>(json, converters);
+                }
+            }
+
+            return default;
+        }
     }
 }
