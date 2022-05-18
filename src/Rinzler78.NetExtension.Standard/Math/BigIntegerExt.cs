@@ -24,5 +24,25 @@ namespace Rinzler78.NetExtension.Math
             //Console.WriteLine($"BigInteger convert failed : From {bigInteger} to {result}");
             return result;
         }
+
+        public static double ToDouble(this BigInteger bigInteger)
+        {
+            try
+            {
+                return (double)bigInteger;
+            }
+            catch
+            {
+            }
+
+            double result = 0;
+            if (bigInteger < 0)
+                result = double.MinValue;
+            else
+                result = double.MaxValue;
+
+            //Console.WriteLine($"BigInteger convert failed : From {bigInteger} to {result}");
+            return result;
+        }
     }
 }
