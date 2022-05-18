@@ -29,6 +29,7 @@
     <None Remove="Json\Converters\" />
     <None Remove="Csv\" />
     <None Remove="CsvHelper" />
+    <None Remove="Math\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Json\" />
@@ -38,5 +39,6 @@
     <Folder Include="Dates\" />
     <Folder Include="Json\Converters\" />
     <Folder Include="Csv\" />
+    <Folder Include="Math\" />
   </ItemGroup>
 </Project>

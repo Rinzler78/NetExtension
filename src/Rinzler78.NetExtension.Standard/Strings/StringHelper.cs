@@ -47,8 +47,8 @@ namespace Rinzler78.NetExtension.Strings
                     int cost = (target[j - 1] == source[i - 1]) ? 0 : 1;
 
                     // Step 3
-                    distance[i, j] = Math.Min(
-                                        Math.Min(distance[i - 1, j] + 1, distance[i, j - 1] + 1),
+                    distance[i, j] = System.Math.Min(
+                                        System.Math.Min(distance[i - 1, j] + 1, distance[i, j - 1] + 1),
                                         distance[i - 1, j - 1] + cost);
                 }
             }
@@ -65,7 +65,7 @@ namespace Rinzler78.NetExtension.Strings
                 return string.IsNullOrEmpty(source) ? 1 : 0;
 
             double stepsToSame = ComputeLevenshteInDistance(source, target);
-            return (1.0 - (stepsToSame / (double)Math.Max(source.Length, target.Length)));
+            return (1.0 - (stepsToSame / (double)System.Math.Max(source.Length, target.Length)));
         }
 
         public static bool ContainsAll(this string str, string[] words)
