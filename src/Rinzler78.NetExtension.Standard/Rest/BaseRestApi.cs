@@ -9,7 +9,6 @@ namespace Rinzler78.NetExtension.Rest
 
         protected BaseRestApi(string baseUri, string path) : this(new Uri(baseUri), path)
         {
-
         }
 
         protected BaseRestApi(Uri baseUri, string path)

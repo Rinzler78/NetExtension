@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 namespace Rinzler78.NetExtension.Array
 {
@@ -10,7 +9,7 @@ namespace Rinzler78.NetExtension.Array
             int count = arrays.Max(arg => arg.Length);
             var result = new double[count];
 
-            for(var i = 0; i < count; ++i)
+            for (var i = 0; i < count; ++i)
             {
                 double sum = default;
 
