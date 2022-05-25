@@ -141,6 +141,23 @@ namespace Rinzler78.NetExtension.Strings
             return result;
         }
 
+        public static async Task<string> HttpGetStringAsync(this string url)
+        {
+#if SHOW_HTTP_TRACE
+            var strb = new StringBuilder();
+            strb.AppendLine($"Http Get ({url}) :");
+#endif
+            //return new WebClient().DownloadString(url);
+            var result = await new HttpClient().GetStringAsync(url);
+
+#if SHOW_HTTP_TRACE
+            strb.AppendLine($"Answer ({url}) :");
+            strb.AppendLine($"{result}");
+            Console.WriteLine(strb.ToString());
+#endif
+            return result;
+        }
+
         public static StringContent GetStringContent(this object obj)
         {
             var jsonContent = JsonConvert.SerializeObject(obj);
@@ -150,11 +167,11 @@ namespace Rinzler78.NetExtension.Strings
             return contentString;
         }
 
-        public static async Task<object> HttpGet(this string url, JsonSerializerSettings settings = null)
-            => JsonConvert.DeserializeObject(await url.HttpGetString(), settings);
+        public static async Task<object> HttpGetAsync(this string url, JsonSerializerSettings settings = null)
+            => JsonConvert.DeserializeObject(await url.HttpGetStringAsync(), settings);
 
-        public static async Task<ReturnType> HttpGet<ReturnType>(this string url, JsonSerializerSettings settings = null)
-            => JsonConvert.DeserializeObject<ReturnType>(await url.HttpGetString(), settings);
+        public static async Task<ReturnType> HttpGetAsync<ReturnType>(this string url, JsonSerializerSettings settings = null)
+            => JsonConvert.DeserializeObject<ReturnType>(await url.HttpGetStringAsync(), settings);
 
         public static async Task<string> HttpPostString<RequestType>(this string url, RequestType obj)
         {
