@@ -131,7 +131,7 @@ namespace Rinzler78.NetExtension.Strings
             strb.AppendLine($"Http Get ({url}) :");
 #endif
             //return new WebClient().DownloadString(url);
-            var result = await new HttpClient().GetStringAsync(url);
+            var result = await new HttpClient().GetStringAsync(url).ConfigureAwait(false);
 
 #if SHOW_HTTP_TRACE
             strb.AppendLine($"Answer ({url}) :");
@@ -148,7 +148,7 @@ namespace Rinzler78.NetExtension.Strings
             strb.AppendLine($"Http Get ({url}) :");
 #endif
             //return new WebClient().DownloadString(url);
-            var result = await new HttpClient().GetStringAsync(url);
+            var result = await new HttpClient().GetStringAsync(url).ConfigureAwait(false);
 
 #if SHOW_HTTP_TRACE
             strb.AppendLine($"Answer ({url}) :");
@@ -168,10 +168,10 @@ namespace Rinzler78.NetExtension.Strings
         }
 
         public static async Task<object> HttpGetAsync(this string url, JsonSerializerSettings settings = null)
-            => JsonConvert.DeserializeObject(await url.HttpGetStringAsync(), settings);
+            => JsonConvert.DeserializeObject(await url.HttpGetStringAsync().ConfigureAwait(false), settings);
 
         public static async Task<ReturnType> HttpGetAsync<ReturnType>(this string url, JsonSerializerSettings settings = null)
-            => JsonConvert.DeserializeObject<ReturnType>(await url.HttpGetStringAsync(), settings);
+            => JsonConvert.DeserializeObject<ReturnType>(await url.HttpGetStringAsync().ConfigureAwait(false), settings);
 
         public static async Task<string> HttpPostString<RequestType>(this string url, RequestType obj)
         {
@@ -182,8 +182,8 @@ namespace Rinzler78.NetExtension.Strings
             strb.AppendLine($"Payload :");
             strb.AppendLine($"{JsonConvert.SerializeObject(obj)}");
 #endif
-            var httpResponse = await new HttpClient().PostAsync(url, obj.GetStringContent());
-            var result = await httpResponse.Content.ReadAsStringAsync();
+            var httpResponse = await new HttpClient().PostAsync(url, obj.GetStringContent()).ConfigureAwait(false);
+            var result = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
 #if SHOW_HTTP_TRACE
             strb.AppendLine($"Answer ({url}) :");
             strb.AppendLine($"{result}");
@@ -193,14 +193,14 @@ namespace Rinzler78.NetExtension.Strings
         }
 
         public static async Task<ReturnType> HttpPostString<ReturnType>(this string url, string obj)
-            => JsonConvert.DeserializeObject<ReturnType>(await url.HttpPostString(obj));
+            => JsonConvert.DeserializeObject<ReturnType>(await url.HttpPostString(obj).ConfigureAwait(false));
 
         public static async Task<object> HttpPost<RequestType>(this string url, RequestType obj)
-            => JsonConvert.DeserializeObject(await url.HttpPostString(obj));
+            => JsonConvert.DeserializeObject(await url.HttpPostString(obj).ConfigureAwait(false));
 
         public static async Task<ReturnType> HttpPost<RequestType, ReturnType>(this string url, RequestType obj)
         {
-            var str = await url.HttpPostString(obj);
+            var str = await url.HttpPostString(obj).ConfigureAwait(false);
             return JsonConvert.DeserializeObject<ReturnType>(str);
         }
 

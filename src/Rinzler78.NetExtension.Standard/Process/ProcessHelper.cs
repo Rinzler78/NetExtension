@@ -15,7 +15,7 @@ namespace Rinzler78.NetExtension.Process
 
         public static async Task<ProcessOutputs> WaitProcessOutputsAsync(this System.Diagnostics.Process process)
         {
-            await process.WaitForExitAsync();
+            await process.WaitForExitAsync().ConfigureAwait(false);
 
             return new(process.StandardOutput.ReadToEnd(), process.StandardError.ReadToEnd());
         }
