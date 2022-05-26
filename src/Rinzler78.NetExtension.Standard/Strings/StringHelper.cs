@@ -124,35 +124,40 @@ namespace Rinzler78.NetExtension.Strings
 
         public static string Join(this string[] strs, char separator) => strs?.Length > 0 ? string.Join(separator, strs) : null;
 
-        public static async Task<string> HttpGetString(this string url)
-        {
-#if SHOW_HTTP_TRACE
-            var strb = new StringBuilder();
-            strb.AppendLine($"Http Get ({url}) :");
-#endif
-            //return new WebClient().DownloadString(url);
-            var result = await new HttpClient().GetStringAsync(url).ConfigureAwait(false);
+        //        public static async Task<string> HttpGetString(this string url)
+        //        {
+        //#if SHOW_HTTP_TRACE
+        //            var strb = new StringBuilder();
+        //            strb.AppendLine($"Http Get ({url}) :");
+        //#endif
+        //            //return new WebClient().DownloadString(url);
+        //            var result = await new HttpClient().GetStringAsync(url).ConfigureAwait(false);
 
-#if SHOW_HTTP_TRACE
-            strb.AppendLine($"Answer ({url}) :");
-            strb.AppendLine($"{result}");
-            Console.WriteLine(strb.ToString());
-#endif
-            return result;
-        }
+        //#if SHOW_HTTP_TRACE
+        //            strb.AppendLine($"Answer ({url}) :");
+        //            strb.AppendLine($"{result}");
+        //            Console.WriteLine(strb.ToString());
+        //#endif
+        //            return result;
+        //        }
+
+        static readonly HttpClient _httpClient = new HttpClient();
 
         public static async Task<string> HttpGetStringAsync(this string url)
         {
 #if SHOW_HTTP_TRACE
             var strb = new StringBuilder();
+            var start = DateTime.Now;
             strb.AppendLine($"Http Get ({url}) :");
 #endif
             //return new WebClient().DownloadString(url);
-            var result = await new HttpClient().GetStringAsync(url).ConfigureAwait(false);
+            var result = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
 
 #if SHOW_HTTP_TRACE
             strb.AppendLine($"Answer ({url}) :");
             strb.AppendLine($"{result}");
+            var elapsed = DateTime.Now - start;
+            strb.AppendLine($"Elapsed : {elapsed}");
             Console.WriteLine(strb.ToString());
 #endif
             return result;
@@ -182,7 +187,7 @@ namespace Rinzler78.NetExtension.Strings
             strb.AppendLine($"Payload :");
             strb.AppendLine($"{JsonConvert.SerializeObject(obj)}");
 #endif
-            var httpResponse = await new HttpClient().PostAsync(url, obj.GetStringContent()).ConfigureAwait(false);
+            var httpResponse = await _httpClient.PostAsync(url, obj.GetStringContent()).ConfigureAwait(false);
             var result = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
 #if SHOW_HTTP_TRACE
             strb.AppendLine($"Answer ({url}) :");
