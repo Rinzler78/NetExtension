@@ -6,7 +6,7 @@ namespace Rinzler78.NetExtension.Objects;
 
 public abstract class UpdatableProperty : ObservableObject
 {
-    private readonly object locker;
+    private readonly object _locker;
 
     private Task<object> _getTask;
 
@@ -16,7 +16,7 @@ public abstract class UpdatableProperty : ObservableObject
 
     public UpdatableProperty()
     {
-        locker = new object();
+        _locker = new object();
     }
 
     public object Property
@@ -27,7 +27,7 @@ public abstract class UpdatableProperty : ObservableObject
 
     public Task<object> Get(bool force = false)
     {
-        lock (locker)
+        lock (_locker)
         {
             if (_getTask?.IsCompleted ?? true)
                 _getTask = Task.Run(async () =>
@@ -43,7 +43,7 @@ public abstract class UpdatableProperty : ObservableObject
 
     public Task Update()
     {
-        lock (locker)
+        lock (_locker)
         {
             if (_updateTask?.IsCompleted ?? true) _updateTask = InnerUpdate();
             return _updateTask;

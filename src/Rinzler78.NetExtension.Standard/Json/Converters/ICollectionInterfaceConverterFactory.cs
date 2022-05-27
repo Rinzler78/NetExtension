@@ -5,14 +5,14 @@ using System.Text.Json.Serialization;
 
 namespace Rinzler78.NetExtension.Json.Converters;
 
-public class ICollectionInterfaceConverterFactory<CollectionElement> : JsonConverterFactory
+public class CollectionInterfaceConverterFactory<CollectionElement> : JsonConverterFactory
 {
-    public readonly Type CollectionElementType = typeof(CollectionElement);
+    public readonly Type _collectionElementType = typeof(CollectionElement);
 
     public override bool CanConvert(Type typeToConvert)
     {
-        if (typeToConvert.Equals(typeof(ICollection<>).MakeGenericType(CollectionElementType))
-            && typeToConvert.GenericTypeArguments[0].Equals(CollectionElementType))
+        if (typeToConvert.Equals(typeof(ICollection<>).MakeGenericType(_collectionElementType))
+            && typeToConvert.GenericTypeArguments[0].Equals(_collectionElementType))
             return true;
 
         return false;
@@ -21,6 +21,6 @@ public class ICollectionInterfaceConverterFactory<CollectionElement> : JsonConve
     public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
     {
         return (JsonConverter)Activator.CreateInstance(
-            typeof(CollectionConverter<>).MakeGenericType(CollectionElementType));
+            typeof(CollectionConverter<>).MakeGenericType(_collectionElementType));
     }
 }

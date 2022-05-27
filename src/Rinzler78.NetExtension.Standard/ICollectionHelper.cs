@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Rinzler78.NetExtension;
 
-public static class ICollectionHelper
+public static class CollectionHelper
 {
     public static void Set<T>(this ICollection<T> currentItems, IEnumerable<T> newItems)
     {

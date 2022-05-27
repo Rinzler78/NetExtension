@@ -5,7 +5,7 @@ namespace Rinzler78.NetExtension.Rest;
 
 public abstract class BaseRestApi
 {
-    public readonly Uri BaseUri;
+    public readonly Uri _baseUri;
 
     protected BaseRestApi(string baseUri, string path) : this(new Uri(baseUri), path)
     {
@@ -19,7 +19,7 @@ public abstract class BaseRestApi
         if (!path.EndsWith("/"))
             path = $"{path}/";
 
-        BaseUri = new Uri(baseUri.AbsoluteUri + path);
+        _baseUri = new Uri(baseUri.AbsoluteUri + path);
     }
 
     protected string CreateUrlPath(string baseUrl, object[] args, string[] argsNames)

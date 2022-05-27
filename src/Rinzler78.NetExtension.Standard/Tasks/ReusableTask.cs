@@ -8,7 +8,7 @@ public class ReusableTask
 {
     private CancellationTokenSource _cancellationTokenSource;
 
-    private Task _InvokeTask;
+    private Task _invokeTask;
 
     public ReusableTask(Action action)
     {
@@ -21,8 +21,8 @@ public class ReusableTask
     {
         lock (this)
         {
-            if (_InvokeTask?.IsCompleted ?? true) _InvokeTask = Task.Run(() => Action());
-            return _InvokeTask;
+            if (_invokeTask?.IsCompleted ?? true) _invokeTask = Task.Run(() => Action());
+            return _invokeTask;
         }
     }
 

@@ -21,20 +21,20 @@ public static class ObjectExtension
             .SelectMany(i => i.GetProperties());
     }
 
-    public static TU CopyTo<TU>(this object source,
+    public static Tu CopyTo<Tu>(this object source,
         OnCopyToFailedForPropertyDelegate getValueOnFailedCopyDelegate = null)
-        where TU : new()
+        where Tu : new()
     {
-        var dest = new TU();
+        var dest = new Tu();
         source.CopyTo(dest, getValueOnFailedCopyDelegate);
         return dest;
     }
 
-    public static void CopyTo<TU>(this object source, TU target,
+    public static void CopyTo<Tu>(this object source, Tu target,
         OnCopyToFailedForPropertyDelegate onCopyToFailedForProperty = null)
     {
         var sourceProperties = source.GetType().GetPublicProperties().Where(x => x.CanRead).ToList();
-        var targetProperties = typeof(TU).GetPublicProperties()
+        var targetProperties = typeof(Tu).GetPublicProperties()
             .Where(x => x.CanWrite)
             .ToList();
 

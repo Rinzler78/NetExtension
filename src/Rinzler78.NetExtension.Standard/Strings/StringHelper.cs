@@ -33,7 +33,7 @@ public static class StringHelper
     //            return result;
     //        }
 
-    private static readonly HttpClient _httpClient = new();
+    private static readonly HttpClient HttpClient = new();
 
     public static bool IsValidEmail(this string str)
     {
@@ -156,7 +156,7 @@ public static class StringHelper
             strb.AppendLine($"Http Get ({url}) :");
 #endif
         //return new WebClient().DownloadString(url);
-        var result = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
+        var result = await HttpClient.GetStringAsync(url).ConfigureAwait(false);
 
 #if SHOW_HTTP_TRACE
             strb.AppendLine($"Answer ({url}) :");
@@ -198,7 +198,7 @@ public static class StringHelper
             strb.AppendLine($"Payload :");
             strb.AppendLine($"{JsonConvert.SerializeObject(obj)}");
 #endif
-        var httpResponse = await _httpClient.PostAsync(url, obj.GetStringContent()).ConfigureAwait(false);
+        var httpResponse = await HttpClient.PostAsync(url, obj.GetStringContent()).ConfigureAwait(false);
         var result = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
 #if SHOW_HTTP_TRACE
             strb.AppendLine($"Answer ({url}) :");
@@ -238,36 +238,36 @@ public static class StringHelper
     public static string GetBytesReadable(this long i)
     {
         // Get absolute value
-        var absolute_i = i < 0 ? -i : i;
+        var absoluteI = i < 0 ? -i : i;
         // Determine the suffix and readable value
         string suffix;
         double readable;
-        if (absolute_i >= 0x1000000000000000) // Exabyte
+        if (absoluteI >= 0x1000000000000000) // Exabyte
         {
             suffix = "EB";
             readable = i >> 50;
         }
-        else if (absolute_i >= 0x4000000000000) // Petabyte
+        else if (absoluteI >= 0x4000000000000) // Petabyte
         {
             suffix = "PB";
             readable = i >> 40;
         }
-        else if (absolute_i >= 0x10000000000) // Terabyte
+        else if (absoluteI >= 0x10000000000) // Terabyte
         {
             suffix = "TB";
             readable = i >> 30;
         }
-        else if (absolute_i >= 0x40000000) // Gigabyte
+        else if (absoluteI >= 0x40000000) // Gigabyte
         {
             suffix = "GB";
             readable = i >> 20;
         }
-        else if (absolute_i >= 0x100000) // Megabyte
+        else if (absoluteI >= 0x100000) // Megabyte
         {
             suffix = "MB";
             readable = i >> 10;
         }
-        else if (absolute_i >= 0x400) // Kilobyte
+        else if (absoluteI >= 0x400) // Kilobyte
         {
             suffix = "KB";
             readable = i;

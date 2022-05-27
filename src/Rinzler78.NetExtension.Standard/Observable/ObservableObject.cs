@@ -10,7 +10,7 @@ namespace Rinzler78.NetExtension.Observable;
 
 public abstract class ObservableObject : IObservableObject, IDisposable
 {
-    private bool disposedValue;
+    private bool _disposedValue;
 
     public ObservableObject()
     {
@@ -33,9 +33,9 @@ public abstract class ObservableObject : IObservableObject, IDisposable
     public event PropertyChangedEventHandler PropertyChanged;
 
     protected bool SetProperty<T>(ref T target, T source, Action<(T OldValue, T NewValue)> propertyChanged = null,
-        Func<(T OldValue, T NewValue), bool> CheckValidity = null, [CallerMemberName] string propertyName = null)
+        Func<(T OldValue, T NewValue), bool> checkValidity = null, [CallerMemberName] string propertyName = null)
     {
-        CheckValidity ??= arg => EqualityComparer<T>.Default.Equals(arg.OldValue, arg.NewValue);
+        checkValidity ??= arg => EqualityComparer<T>.Default.Equals(arg.OldValue, arg.NewValue);
 
         if (EqualityComparer<T>.Default.Equals(target, source))
             return false;
@@ -70,11 +70,11 @@ public abstract class ObservableObject : IObservableObject, IDisposable
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!disposedValue)
+        if (!_disposedValue)
         {
             if (disposing) PropertyChanged = null;
 
-            disposedValue = true;
+            _disposedValue = true;
         }
     }
 
