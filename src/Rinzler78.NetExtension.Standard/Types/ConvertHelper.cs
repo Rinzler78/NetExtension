@@ -1,12 +1,11 @@
 ﻿using System;
 
-namespace Rinzler78.NetExtension.Types
+namespace Rinzler78.NetExtension.Types;
+
+public static class ConvertHelper
 {
-    public static class ConvertHelper
+    public static T ConvertValue<T>(this object value)
     {
-        public static T ConvertValue<T>(this object value)
-        {
-            return (T)Convert.ChangeType(value, typeof(T));
-        }
+        return (T)Convert.ChangeType(value, typeof(T));
     }
 }

@@ -1,25 +1,24 @@
 ﻿using System.Linq;
 
-namespace Rinzler78.NetExtension.Array
+namespace Rinzler78.NetExtension.Array;
+
+public static class ArrayExtension
 {
-    public static class ArrayExtension
+    public static double[] SumArrays(params double[][] arrays)
     {
-        public static double[] SumArrays(params double[][] arrays)
+        var count = arrays.Max(arg => arg.Length);
+        var result = new double[count];
+
+        for (var i = 0; i < count; ++i)
         {
-            int count = arrays.Max(arg => arg.Length);
-            var result = new double[count];
+            double sum = default;
 
-            for (var i = 0; i < count; ++i)
-            {
-                double sum = default;
+            for (var y = 0; y < arrays.Length; ++y)
+                sum += arrays[y][i];
 
-                for (var y = 0; y < arrays.Length; ++y)
-                    sum += arrays[y][i];
-
-                result[i] = sum;
-            }
-
-            return result;
+            result[i] = sum;
         }
+
+        return result;
     }
 }

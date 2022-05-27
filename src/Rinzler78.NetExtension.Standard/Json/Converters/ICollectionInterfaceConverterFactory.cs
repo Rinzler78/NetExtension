@@ -13,9 +13,7 @@ public class ICollectionInterfaceConverterFactory<CollectionElement> : JsonConve
     {
         if (typeToConvert.Equals(typeof(ICollection<>).MakeGenericType(CollectionElementType))
             && typeToConvert.GenericTypeArguments[0].Equals(CollectionElementType))
-        {
             return true;
-        }
 
         return false;
     }

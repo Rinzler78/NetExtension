@@ -1,24 +1,20 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
-namespace Rinzler78.NetExtension.Process
+namespace Rinzler78.NetExtension.Process;
+
+public static class ProcessHelper
 {
-
-    public static class ProcessHelper
+    public static ProcessOutputs WaitProcessOutputs(this System.Diagnostics.Process process)
     {
-        public static ProcessOutputs WaitProcessOutputs(this System.Diagnostics.Process process)
-        {
-            process.WaitForExit();
+        process.WaitForExit();
 
-            return new(process.StandardOutput.ReadToEnd(), process.StandardError.ReadToEnd());
-        }
+        return new ProcessOutputs(process.StandardOutput.ReadToEnd(), process.StandardError.ReadToEnd());
+    }
 
-        public static async Task<ProcessOutputs> WaitProcessOutputsAsync(this System.Diagnostics.Process process)
-        {
-            await process.WaitForExitAsync().ConfigureAwait(false);
+    public static async Task<ProcessOutputs> WaitProcessOutputsAsync(this System.Diagnostics.Process process)
+    {
+        await process.WaitForExitAsync().ConfigureAwait(false);
 
-            return new(process.StandardOutput.ReadToEnd(), process.StandardError.ReadToEnd());
-        }
+        return new ProcessOutputs(process.StandardOutput.ReadToEnd(), process.StandardError.ReadToEnd());
     }
 }
-

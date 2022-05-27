@@ -1,43 +1,45 @@
-﻿using CsvHelper;
-using CsvHelper.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper;
+using CsvHelper.Configuration;
 
-namespace Rinzler78.NetExtension.Csv
+namespace Rinzler78.NetExtension.Csv;
+
+public static class CsvExtension
 {
-    public static class CsvExtension
+    public static Task<IEnumerable<ReturnType>> LoadCSVAsync<ReturnType>(this string fileName, char separator = ';')
     {
-        public static Task<IEnumerable<ReturnType>> LoadCSVAsync<ReturnType>(this string fileName, char separator = ';')
-            => Task.Run(() => fileName.LoadCSV<ReturnType>(separator));
+        return Task.Run(() => fileName.LoadCSV<ReturnType>(separator));
+    }
 
-        public static IEnumerable<ReturnType> LoadCSV<ReturnType>(this string fileName, char separator = ';', bool hasHeaderRecord = false)
+    public static IEnumerable<ReturnType> LoadCSV<ReturnType>(this string fileName, char separator = ';',
+        bool hasHeaderRecord = false)
+    {
+        try
         {
-            try
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-                {
-                    Delimiter = separator.ToString(),
-                    HasHeaderRecord = hasHeaderRecord
-                };
+                Delimiter = separator.ToString(),
+                HasHeaderRecord = hasHeaderRecord
+            };
 
-                var sourcePath = fileName;
+            var sourcePath = fileName;
 
-                using (var reader = new StreamReader(sourcePath))
-                using (var csv = new CsvReader(reader, config))
-                {
-                    return csv.GetRecords<ReturnType>().ToArray();
-                }
-            }
-            catch (Exception ex)
+            using (var reader = new StreamReader(sourcePath))
+            using (var csv = new CsvReader(reader, config))
             {
-                Console.WriteLine(ex);
+                return csv.GetRecords<ReturnType>().ToArray();
             }
-
-            return default;
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+
+        return default;
     }
 }

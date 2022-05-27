@@ -1,32 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Rinzler78.NetExtension
+namespace Rinzler78.NetExtension;
+
+public static class ICollectionHelper
 {
-    public static class ICollectionHelper
+    public static void Set<T>(this ICollection<T> currentItems, IEnumerable<T> newItems)
     {
-        public static void Set<T>(this ICollection<T> currentItems, IEnumerable<T> newItems)
+        if (currentItems == null)
+            return;
+
+        lock (currentItems)
         {
-            if (currentItems == null)
-                return;
-
-            lock (currentItems)
+            if (newItems == null)
             {
-                if (newItems == null)
-                    currentItems.Clear();
-                else
-                {
-                    var itemsToDelete = currentItems.Where(arg => !newItems.Contains(arg)).ToList();
+                currentItems.Clear();
+            }
+            else
+            {
+                var itemsToDelete = currentItems.Where(arg => !newItems.Contains(arg)).ToList();
 
-                    foreach (var item in itemsToDelete)
-                        currentItems.Remove(item);
+                foreach (var item in itemsToDelete)
+                    currentItems.Remove(item);
 
-                    var itemsToAdd = newItems.Where(arg => !currentItems.Contains(arg)).ToList();
+                var itemsToAdd = newItems.Where(arg => !currentItems.Contains(arg)).ToList();
 
-                    foreach (var item in itemsToAdd)
-                        currentItems.Add(item);
-                }
+                foreach (var item in itemsToAdd)
+                    currentItems.Add(item);
             }
         }
     }

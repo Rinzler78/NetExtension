@@ -8,8 +8,8 @@ public class InterfaceConverterFactory<Interface, Implementation> : JsonConverte
     where Implementation : class, Interface, new()
 
 {
-    public readonly Type InterfaceType = typeof(Interface);
     public readonly Type ImplementationType = typeof(Implementation);
+    public readonly Type InterfaceType = typeof(Interface);
 
     public override bool CanConvert(Type typeToConvert)
     {
