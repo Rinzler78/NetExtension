@@ -21,4 +21,12 @@ public static class ArrayExtension
 
         return result;
     }
+
+    public static int ComputeHashCode<ArrayType>(this ArrayType[] array)
+    {
+        int hash = 0;
+        for (int i = 0; i < array.Length; i++)
+            hash ^= array[i].GetHashCode();
+        return hash;
+    }
 }
