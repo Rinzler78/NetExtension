@@ -48,13 +48,13 @@ public static class JsonHelper
     }
 
     public static ObjectType DeSerializeObjectFromFile<ObjectType>(this string filePath,
-        params JsonConverter[] converters)
+        JsonSerializerSettings settings = null)
     {
         if (File.Exists(filePath))
             using (var reader = new StreamReader(filePath))
             {
                 var json = reader.ReadToEnd();
-                return JsonConvert.DeserializeObject<ObjectType>(json, converters);
+                return JsonConvert.DeserializeObject<ObjectType>(json, settings);
             }
 
         return default;
