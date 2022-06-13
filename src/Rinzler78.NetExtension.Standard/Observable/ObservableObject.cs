@@ -1,4 +1,9 @@
-﻿using System;
+﻿#if DEBUG
+#define TRACE_PROPERTY_CHANGED
+#define TRACE_PROPERTY_ATTACH_DETACH
+#define TRACE_DISPOSE
+#endif
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -22,7 +27,9 @@ public abstract class ObservableObject : IObservableObject, IDisposable
 
     void IDisposable.Dispose()
     {
+#if TRACE_DISPOSE
         Console.WriteLine($"{NickName} : Dispose");
+#endif
         Dispose(true);
         DetachDependencies();
         GC.SuppressFinalize(this);
@@ -61,7 +68,7 @@ public abstract class ObservableObject : IObservableObject, IDisposable
     {
         if (PropertyChanged != null)
         {
-#if DEBUG
+#if TRACE_PROPERTY_CHANGED
             Console.WriteLine($"{GetType().Name} ({NickName}) : {propertyName} Changed : {oldValue} => {newValue}");
 #endif
             PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
@@ -102,7 +109,9 @@ public abstract class ObservableObject : IObservableObject, IDisposable
 
             foreach (var dep in toAttach)
             {
+#if TRACE_PROPERTY_ATTACH_DETACH
                 Console.WriteLine($"{GetType().Name} ({NickName}) : Attach {dep.NickName}");
+#endif
                 Dependencies.Add(dep);
             }
         }
@@ -116,7 +125,9 @@ public abstract class ObservableObject : IObservableObject, IDisposable
 
             foreach (var dep in toAttach)
             {
+#if TRACE_PROPERTY_ATTACH_DETACH
                 Console.WriteLine($"{GetType().Name} ({NickName}) : Detach {dep.NickName}");
+#endif
                 Dependencies.Remove(dep);
             }
         }
