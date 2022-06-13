@@ -1,7 +1,7 @@
 ﻿#if DEBUG
-#define TRACE_PROPERTY_CHANGED
-#define TRACE_PROPERTY_ATTACH_DETACH
-#define TRACE_DISPOSE
+//#define TRACE_PROPERTY_CHANGED
+//#define TRACE_PROPERTY_ATTACH_DETACH
+//#define TRACE_DISPOSE
 #endif
 using System;
 using System.Collections.Generic;
