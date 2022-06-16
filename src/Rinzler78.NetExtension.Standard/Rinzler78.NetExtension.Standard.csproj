@@ -34,12 +34,10 @@
     <None Remove="Process\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Json\" />
     <Folder Include="Objects\" />
     <Folder Include="Linq\" />
     <Folder Include="Enums\" />
     <Folder Include="Dates\" />
-    <Folder Include="Json\Converters\" />
     <Folder Include="Csv\" />
     <Folder Include="Math\" />
     <Folder Include="Rest\" />
