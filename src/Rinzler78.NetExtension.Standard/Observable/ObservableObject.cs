@@ -44,7 +44,8 @@ public abstract class ObservableObject : IObservableObject, IDisposable
     {
         checkValidity ??= arg => EqualityComparer<T>.Default.Equals(arg.OldValue, arg.NewValue);
 
-        if (EqualityComparer<T>.Default.Equals(target, source))
+        if (checkValidity.Invoke((target, source)))
+            //if (EqualityComparer<T>.Default.Equals(target, source))
             return false;
 
         var oldValue = target;
