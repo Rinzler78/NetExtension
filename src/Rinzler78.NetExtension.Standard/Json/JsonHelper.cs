@@ -16,9 +16,9 @@ public static class JsonHelper
         return JsonConvert.DeserializeObject(str);
     }
 
-    public static ObjectType DeSerializeObject<ObjectType>(this string str, params JsonConverter[] converters)
+    public static ObjectType DeSerializeObject<ObjectType>(this string str, JsonSerializerSettings settings = null)
     {
-        return JsonConvert.DeserializeObject<ObjectType>(str, converters);
+        return JsonConvert.DeserializeObject<ObjectType>(str, settings);
     }
 
     public static string SerializeObjectWithoutQuote(this object value)
