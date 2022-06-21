@@ -2,6 +2,7 @@
 //#define TRACE_PROPERTY_CHANGED
 //#define TRACE_PROPERTY_ATTACH_DETACH
 //#define TRACE_DISPOSE
+//#define TRACE_CTOR
 #endif
 
 using System;
@@ -22,6 +23,10 @@ public abstract class ObservableObject : IObservableObject, IDisposable
     {
         NickName = GetType().Name;
         Dependencies.CollectionChanged += DependenciesCollectionChanged;
+
+#if TRACE_CTOR
+        Console.WriteLine($"{NickName} : Ctor");
+#endif
     }
 
     public ObservableCollection<IObservableObject> Dependencies { get; } = new();
