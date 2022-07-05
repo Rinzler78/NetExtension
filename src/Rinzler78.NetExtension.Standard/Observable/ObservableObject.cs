@@ -19,10 +19,12 @@ public abstract class ObservableObject : IObservableObject, IDisposable
 {
     private bool _disposedValue;
 
-    public ObservableObject()
+    protected ObservableObject(params IObservableObject[] dependentManagers)
     {
         NickName = GetType().Name;
         Dependencies.CollectionChanged += DependenciesCollectionChanged;
+
+        AttachDependencies(dependentManagers);
 
 #if TRACE_CTOR
         Console.WriteLine($"{NickName} : Ctor");
