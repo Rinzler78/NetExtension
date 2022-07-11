@@ -282,4 +282,7 @@ public static class StringHelper
         // Return formatted number with suffix
         return readable.ToString("0.### ") + suffix;
     }
+
+    public static byte[] GetBytes(this string str)
+        => Encoding.ASCII.GetBytes(str);
 }
