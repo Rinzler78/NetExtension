@@ -1,0 +1,33 @@
+﻿using System;
+using System.Reflection.Metadata.Ecma335;
+using System.Threading.Tasks;
+
+namespace Rinzler78.NetExtension.Measure
+{
+    public static class PerformanceHelper
+    {
+        public static void MeasureDuration(Action action, Action<TimeSpan> duration = null)
+        {
+            var startDate = DateTime.UtcNow;
+
+            action();
+
+            if (duration != null)
+                duration(DateTime.UtcNow - startDate);
+        }
+
+        public static ReturnType MeasureDuration<ReturnType>(Func<ReturnType> func, Action<TimeSpan> duration = null)
+        {
+            ReturnType result = default;
+            Action action = () => result = func();
+            MeasureDuration(action, duration);
+            return result;
+        }
+
+        public static async Task<ReturnType> MeasureDurationAsync<ReturnType>(Func<ReturnType> func, Action<TimeSpan> duration = null)
+        {
+            return await Task.Run(() => MeasureDuration(func, duration));
+        }
+    }
+}
+

@@ -37,6 +37,7 @@
     <None Remove="Process\" />
     <None Remove="SharpZipLib" />
     <None Remove="FootPrint\" />
+    <None Remove="Measure\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Objects\" />
@@ -48,5 +49,6 @@
     <Folder Include="Rest\" />
     <Folder Include="Process\" />
     <Folder Include="FootPrint\" />
+    <Folder Include="Measure\" />
   </ItemGroup>
 </Project>
