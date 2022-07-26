@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,7 +13,7 @@ public static class TaskHelper
     public static bool IsRunning(this Task task)
         => !(task?.IsCompleted ?? true);
 
-    public static Task WhenAll(this Task[] tasks)
+    public static Task WhenAll(this IEnumerable<Task> tasks)
     {
         return Task.WhenAll(tasks);
     }
