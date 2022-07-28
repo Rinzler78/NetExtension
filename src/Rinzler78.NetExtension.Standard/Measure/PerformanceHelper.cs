@@ -6,7 +6,7 @@ namespace Rinzler78.NetExtension.Measure
 {
     public static class PerformanceHelper
     {
-        public static void MeasureDuration(Action action, Action<TimeSpan> duration = null)
+        public static void MeasureDuration(this Action action, Action<TimeSpan> duration = null)
         {
             var startDate = DateTime.UtcNow;
 
@@ -16,7 +16,7 @@ namespace Rinzler78.NetExtension.Measure
                 duration(DateTime.UtcNow - startDate);
         }
 
-        public static ReturnType MeasureDuration<ReturnType>(Func<ReturnType> func, Action<TimeSpan> duration = null)
+        public static ReturnType MeasureDuration<ReturnType>(this Func<ReturnType> func, Action<TimeSpan> duration = null)
         {
             ReturnType result = default;
             Action action = () => result = func();
@@ -24,7 +24,7 @@ namespace Rinzler78.NetExtension.Measure
             return result;
         }
 
-        public static async Task<ReturnType> MeasureDurationAsync<ReturnType>(Func<ReturnType> func, Action<TimeSpan> duration = null)
+        public static async Task<ReturnType> MeasureDurationAsync<ReturnType>(this Func<ReturnType> func, Action<TimeSpan> duration = null)
         {
             return await Task.Run(() => MeasureDuration(func, duration));
         }
