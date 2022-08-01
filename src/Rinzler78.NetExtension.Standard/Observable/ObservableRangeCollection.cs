@@ -136,4 +136,3 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, changedItems: changedItems, startingIndex: startingIndex));
     }
 }
-

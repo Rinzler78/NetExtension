@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using ICSharpCode.SharpZipLib.Checksum;
+﻿using ICSharpCode.SharpZipLib.Checksum;
 using Rinzler78.NetExtension.Array;
 
 namespace Rinzler78.NetExtension.FootPrint
@@ -61,4 +59,3 @@ namespace Rinzler78.NetExtension.FootPrint
         }
     }
 }
-

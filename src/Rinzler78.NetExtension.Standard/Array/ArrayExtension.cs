@@ -1,12 +1,11 @@
-﻿using System;
+﻿using Rinzler78.NetExtension.Strings;
 using System.Linq;
-using Rinzler78.NetExtension.Strings;
 
 namespace Rinzler78.NetExtension.Array;
 
 public static class ArrayExtension
 {
-    public unsafe static byte[] GetBytes(this ulong[] array)
+    public static unsafe byte[] GetBytes(this ulong[] array)
     {
         if (array?.Length > 0)
         {
@@ -28,7 +27,7 @@ public static class ArrayExtension
         return null;
     }
 
-    public unsafe static byte[] GetBytes(this uint[] array)
+    public static unsafe byte[] GetBytes(this uint[] array)
     {
         if (array?.Length > 0)
         {

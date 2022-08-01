@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 
 namespace Rinzler78.NetExtension.Measure
@@ -30,4 +29,3 @@ namespace Rinzler78.NetExtension.Measure
         }
     }
 }
-
