@@ -1,61 +1,29 @@
-﻿using ICSharpCode.SharpZipLib.Checksum;
+﻿
+using System;
+using System.Data.HashFunction.CRC;
 using Rinzler78.NetExtension.Array;
+using Rinzler78.NetExtension.Strings;
 
-namespace Rinzler78.NetExtension.FootPrint
+namespace Rinzler78.NetExtension.FootPrint;
+
+public static class CRC32Helper
 {
-    public static class CRC32Helper
+    public static uint GenerateCRC32(this ulong[] data)
+        => data.GetBytes().GenerateCRC32();
+
+    public static uint GenerateCRC32(this uint[] data)
+        => data.GetBytes().GenerateCRC32();
+
+    public static uint GenerateCRC32(this string[] data)
+        => data.GetBytes().GenerateCRC32();
+
+    public static uint GenerateCRC32(this string str)
+        => str.GetBytes().GenerateCRC32();
+
+    public static uint GenerateCRC32(this byte[] data)
     {
-        public static uint GenerateCRC32(this ulong[] data)
-        {
-            var tool = new Crc32();
+        var result = CRCFactory.Instance.Create(CRCConfig.CRC32).ComputeHash(data);
 
-            tool.Reset();
-            tool.Update(data.GetBytes());
-
-            return (uint)tool.Value;
-        }
-
-        public static uint GenerateCRC32(this uint[] data)
-        {
-            var tool = new Crc32();
-
-            tool.Reset();
-            tool.Update(data.GetBytes());
-
-            return (uint)tool.Value;
-        }
-
-        public static uint GenerateCRC32(this string[] data)
-        {
-            var tool = new Crc32();
-
-            tool.Reset();
-            tool.Update(data.GetBytes());
-
-            return (uint)tool.Value;
-        }
-
-        public static uint GenerateCRC32(this byte[] data)
-        {
-            var tool = new Crc32();
-
-            tool.Reset();
-            tool.Update(data);
-
-            return (uint)tool.Value;
-        }
-
-        public static uint GenerateCRC32(this string str)
-        {
-            try
-            {
-                return System.Text.Encoding.ASCII.GetBytes(str).GenerateCRC32();
-            }
-            catch
-            {
-            }
-
-            return 0;
-        }
+        return BitConverter.ToUInt32(result.Hash);
     }
 }

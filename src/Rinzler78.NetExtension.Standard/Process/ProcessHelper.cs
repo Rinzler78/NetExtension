@@ -9,18 +9,18 @@ public static class ProcessHelper
         var stdOut = process.StandardOutput.ReadToEnd();
         var stdErr = process.StandardError.ReadToEnd();
 
-        process.WaitForExit();
+        //process.WaitForExit();
 
         return new ProcessOutputs(stdOut, stdErr);
     }
 
-    public static async Task<ProcessOutputs> WaitProcessOutputsAsync(this System.Diagnostics.Process process)
-    {
-        var stdOut = process.StandardOutput.ReadToEnd();
-        var stdErr = process.StandardError.ReadToEnd();
+    //public static async Task<ProcessOutputs> WaitProcessOutputsAsync(this System.Diagnostics.Process process)
+    //{
+    //    var stdOut = process.StandardOutput.ReadToEnd();
+    //    var stdErr = process.StandardError.ReadToEnd();
 
-        await process.WaitForExitAsync().ConfigureAwait(false);
+    //    await process.WaitForExitAsync().ConfigureAwait(false);
 
-        return new ProcessOutputs(stdOut, stdErr);
-    }
+    //    return new ProcessOutputs(stdOut, stdErr);
+    //}
 }

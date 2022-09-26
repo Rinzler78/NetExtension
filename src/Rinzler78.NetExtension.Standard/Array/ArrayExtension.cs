@@ -50,7 +50,7 @@ public static class ArrayExtension
     }
 
     public static byte[] GetBytes(this string[] strings)
-        => strings.SelectMany(str => str.GetBytes()).ToArray();
+        => string.Join("", strings).GetBytes();// strings.SelectMany(str => str.GetBytes()).ToArray();
 
     public static double[] SumArrays(params double[][] arrays)
     {
