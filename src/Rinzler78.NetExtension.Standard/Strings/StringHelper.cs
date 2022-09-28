@@ -152,13 +152,15 @@ public static class StringHelper
     {
         return Task.Run(async () =>
         {
+            try
+            {
 #if SHOW_HTTP_TRACE
             var strb = new StringBuilder();
             var start = DateTime.Now;
             strb.AppendLine($"Http Get ({url}) :");
 #endif
-            //return new WebClient().DownloadString(url);
-            var result = await HttpClient.GetStringAsync(url).ConfigureAwait(false);
+                //return new WebClient().DownloadString(url);
+                var result = await HttpClient.GetStringAsync(url).ConfigureAwait(false);
 
 #if SHOW_HTTP_TRACE
             strb.AppendLine($"Answer ({url}) :");
@@ -167,7 +169,14 @@ public static class StringHelper
             strb.AppendLine($"Elapsed : {elapsed}");
             Console.WriteLine(strb.ToString());
 #endif
-            return result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return "";
         });
     }
 
