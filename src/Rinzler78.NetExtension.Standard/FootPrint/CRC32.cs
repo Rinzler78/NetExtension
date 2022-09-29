@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Rinzler78.NetExtension.FootPrint;
+﻿namespace Rinzler78.NetExtension.FootPrint;
 
 //public class CRC32
 //{
 //    #region Constants
 //    /// <summary>
-//    /// Generator polynomial (modulo 2) for the reversed CRC32 algorithm. 
+//    /// Generator polynomial (modulo 2) for the reversed CRC32 algorithm.
 //    /// </summary>
 //    private const uint s_generator = 0xEDB88320;
 //    #endregion
@@ -81,4 +77,3 @@ namespace Rinzler78.NetExtension.FootPrint;
 
 //    #endregion
 //}
-

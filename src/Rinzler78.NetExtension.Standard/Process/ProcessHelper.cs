@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Rinzler78.NetExtension.Process;
+﻿namespace Rinzler78.NetExtension.Process;
 
 public static class ProcessHelper
 {

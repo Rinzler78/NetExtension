@@ -173,7 +173,6 @@ public static class StringHelper
             }
             catch (Exception ex)
             {
-
             }
 
             return "";

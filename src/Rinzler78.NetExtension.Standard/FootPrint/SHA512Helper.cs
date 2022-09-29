@@ -1,7 +1,6 @@
-﻿using System;
-using System.Security.Cryptography;
-using Rinzler78.NetExtension.Array;
+﻿using Rinzler78.NetExtension.Array;
 using Rinzler78.NetExtension.Strings;
+using System.Security.Cryptography;
 
 namespace Rinzler78.NetExtension.FootPrint;
 
@@ -28,4 +27,3 @@ public static class SHA512Helper
         return result;
     }
 }
-

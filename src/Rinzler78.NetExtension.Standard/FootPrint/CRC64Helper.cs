@@ -1,8 +1,7 @@
-﻿
+﻿using Rinzler78.NetExtension.Array;
+using Rinzler78.NetExtension.Strings;
 using System;
 using System.Data.HashFunction.CRC;
-using Rinzler78.NetExtension.Array;
-using Rinzler78.NetExtension.Strings;
 
 namespace Rinzler78.NetExtension.FootPrint;
 

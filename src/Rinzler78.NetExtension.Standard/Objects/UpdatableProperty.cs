@@ -6,7 +6,7 @@ namespace Rinzler78.NetExtension.Objects;
 
 public abstract class UpdatableProperty : ObservableObject
 {
-    readonly object _locker;
+    private readonly object _locker;
 
     private Task<object> _getTask;
 
