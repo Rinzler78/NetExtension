@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -148,36 +149,11 @@ public static class StringHelper
         return strs?.Length > 0 ? string.Join(separator, strs) : null;
     }
 
+    public static Task<Stream> HttpGetStreamAsync(this string url)
+        => HttpClient.GetStreamAsync(url);
+
     public static Task<string> HttpGetStringAsync(this string url)
-    {
-        return Task.Run(async () =>
-        {
-            try
-            {
-#if SHOW_HTTP_TRACE
-            var strb = new StringBuilder();
-            var start = DateTime.Now;
-            strb.AppendLine($"Http Get ({url}) :");
-#endif
-                //return new WebClient().DownloadString(url);
-                var result = await HttpClient.GetStringAsync(url).ConfigureAwait(false);
-
-#if SHOW_HTTP_TRACE
-            strb.AppendLine($"Answer ({url}) :");
-            strb.AppendLine($"{result}");
-            var elapsed = DateTime.Now - start;
-            strb.AppendLine($"Elapsed : {elapsed}");
-            Console.WriteLine(strb.ToString());
-#endif
-                return result;
-            }
-            catch (Exception ex)
-            {
-            }
-
-            return "";
-        });
-    }
+        => HttpClient.GetStringAsync(url);
 
     public static StringContent GetStringContent(this object obj)
     {
@@ -188,11 +164,53 @@ public static class StringHelper
         return contentString;
     }
 
-    public static Task<object> HttpGetAsync(this string url, JsonSerializerSettings settings = null)
-        => Task.Run(async () => JsonConvert.DeserializeObject(await url.HttpGetStringAsync().ConfigureAwait(false), settings));
+    public static async Task<object> HttpGetAsync(this string url)
+    {
+        using (Stream s = await url.HttpGetStreamAsync())
+        using (StreamReader sr = new StreamReader(s))
+        using (JsonReader reader = new JsonTextReader(sr))
+        {
+            JsonSerializer serializer = JsonSerializer.Create();
+            var obj = serializer.Deserialize(reader);
+            return obj;
+        }
+    }
 
-    public static Task<ReturnType> HttpGetAsync<ReturnType>(this string url, JsonSerializerSettings settings = null)
-        => Task.Run(async () => JsonConvert.DeserializeObject<ReturnType>(await url.HttpGetStringAsync().ConfigureAwait(false), settings));
+    public static async Task<object> HttpGetAsync(this string url, JsonSerializerSettings settings)
+    {
+        using (Stream s = await url.HttpGetStreamAsync())
+        using (StreamReader sr = new StreamReader(s))
+        using (JsonReader reader = new JsonTextReader(sr))
+        {
+            JsonSerializer serializer = JsonSerializer.Create(settings);
+            var obj = serializer.Deserialize(reader);
+            return obj;
+        }
+    }
+
+    public static async Task<ReturnType> HttpGetAsync<ReturnType>(this string url)
+    {
+        using (Stream s = await url.HttpGetStreamAsync())
+        using (StreamReader sr = new StreamReader(s))
+        using (JsonReader reader = new JsonTextReader(sr))
+        {
+            JsonSerializer serializer = JsonSerializer.Create();
+            var obj = serializer.Deserialize<ReturnType>(reader);
+            return obj;
+        }
+    }
+
+    public static async Task<ReturnType> HttpGetAsync<ReturnType>(this string url, JsonSerializerSettings settings)
+    {
+        using (Stream s = await url.HttpGetStreamAsync())
+        using (StreamReader sr = new StreamReader(s))
+        using (JsonReader reader = new JsonTextReader(sr))
+        {
+            JsonSerializer serializer = JsonSerializer.Create(settings);
+            var obj = serializer.Deserialize<ReturnType>(reader);
+            return obj;
+        }
+    }
 
     public static Task<string> HttpPostString<RequestType>(this string url, RequestType obj)
     {
@@ -216,18 +234,18 @@ public static class StringHelper
         });
     }
 
-    public static Task<ReturnType> HttpPostString<ReturnType>(this string url, string obj)
-        => Task.Run(async () => JsonConvert.DeserializeObject<ReturnType>(await url.HttpPostString(obj).ConfigureAwait(false)));
+    public static async Task<ReturnType> HttpPostString<ReturnType>(this string url, string obj)
+        => JsonConvert.DeserializeObject<ReturnType>(await url.HttpPostString(obj).ConfigureAwait(false));
 
-    public static Task<object> HttpPost<RequestType>(this string url, RequestType obj)
-        => Task.Run(async () => JsonConvert.DeserializeObject(await url.HttpPostString(obj).ConfigureAwait(false)));
+    public static async Task<object> HttpPost<RequestType>(this string url, RequestType obj)
+        => JsonConvert.DeserializeObject(await url.HttpPostString(obj).ConfigureAwait(false));
 
-    public static Task<ReturnType> HttpPost<RequestType, ReturnType>(this string url, RequestType obj)
-        => Task.Run(async () =>
-        {
-            var str = await url.HttpPostString(obj).ConfigureAwait(false);
-            return JsonConvert.DeserializeObject<ReturnType>(str);
-        });
+    //public static Task<ReturnType> HttpPost<RequestType, ReturnType>(this string url, RequestType obj)
+    //    => Task.Run(async () =>
+    //    {
+    //        var str = await url.HttpPostString(obj).ConfigureAwait(false);
+    //        return JsonConvert.DeserializeObject<ReturnType>(str);
+    //    });
 
     public static string ToJsonFormatedString(this string jsonString)
     {
