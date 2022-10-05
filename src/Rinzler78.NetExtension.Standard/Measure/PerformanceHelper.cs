@@ -15,15 +15,19 @@ namespace Rinzler78.NetExtension.Measure
                 duration(DateTime.UtcNow - startDate);
         }
 
-        public static ReturnType MeasureDuration<ReturnType>(this Func<ReturnType> func, Action<TimeSpan> duration = null)
+        public static ReturnType MeasureDuration<ReturnType>(this Func<ReturnType> func, Action<TimeSpan, ReturnType> duration = null)
         {
-            ReturnType result = default;
-            Action action = () => result = func();
-            MeasureDuration(action, duration);
+            var startDate = DateTime.UtcNow;
+
+            ReturnType result = func();
+
+            if (duration != null)
+                duration(DateTime.UtcNow - startDate, result);
+
             return result;
         }
 
-        public static async Task<ReturnType> MeasureDurationAsync<ReturnType>(this Func<ReturnType> func, Action<TimeSpan> duration = null)
+        public static async Task<ReturnType> MeasureDurationAsync<ReturnType>(this Func<ReturnType> func, Action<TimeSpan, ReturnType> duration = null)
         {
             return await Task.Run(() => MeasureDuration(func, duration));
         }
