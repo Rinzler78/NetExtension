@@ -50,26 +50,29 @@ public abstract class ObservableObject : IObservableObject, IDisposable
     protected bool SetProperty<T>(ref T target, T source, Action<(T OldValue, T NewValue)> propertyChanged = null,
         Func<(T OldValue, T NewValue), bool> checkValidity = null, [CallerMemberName] string propertyName = null)
     {
-        checkValidity ??= arg => EqualityComparer<T>.Default.Equals(arg.OldValue, arg.NewValue);
+        lock (Dependencies)
+        {
+            checkValidity ??= arg => EqualityComparer<T>.Default.Equals(arg.OldValue, arg.NewValue);
 
-        if (checkValidity.Invoke((target, source)))
-            //if (EqualityComparer<T>.Default.Equals(target, source))
-            return false;
+            if (checkValidity.Invoke((target, source)))
+                //if (EqualityComparer<T>.Default.Equals(target, source))
+                return false;
 
-        var oldValue = target;
+            var oldValue = target;
 
-        target = source;
+            target = source;
 
-        if (oldValue != null && oldValue is IObservableObject oldObservableObject)
-            DetachDependencies(oldObservableObject);
+            if (oldValue != null && oldValue is IObservableObject oldObservableObject)
+                DetachDependencies(oldObservableObject);
 
-        if (target != null && target is IObservableObject newObservableObject)
-            AttachDependencies(newObservableObject);
+            if (target != null && target is IObservableObject newObservableObject)
+                AttachDependencies(newObservableObject);
 
-        propertyChanged?.Invoke((oldValue, target));
-        OnPropertyChanged(propertyName, oldValue, target);
+            propertyChanged?.Invoke((oldValue, target));
+            OnPropertyChanged(propertyName, oldValue, target);
 
-        return true;
+            return true;
+        }
     }
 
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null, object oldValue = null,
