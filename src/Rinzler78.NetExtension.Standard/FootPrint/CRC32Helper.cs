@@ -1,23 +1,31 @@
-﻿using Rinzler78.NetExtension.Array;
-using Rinzler78.NetExtension.Strings;
-using System;
+﻿using System;
 using System.Data.HashFunction.CRC;
+using Rinzler78.NetExtension.Array;
+using Rinzler78.NetExtension.Strings;
 
 namespace Rinzler78.NetExtension.FootPrint;
 
 public static class CRC32Helper
 {
     public static uint GenerateCRC32(this ulong[] data)
-        => data.GetBytes().GenerateCRC32();
+    {
+        return data.GetBytes().GenerateCRC32();
+    }
 
     public static uint GenerateCRC32(this uint[] data)
-        => data.GetBytes().GenerateCRC32();
+    {
+        return data.GetBytes().GenerateCRC32();
+    }
 
     public static uint GenerateCRC32(this string[] data)
-        => data.GetBytes().GenerateCRC32();
+    {
+        return data.GetBytes().GenerateCRC32();
+    }
 
     public static uint GenerateCRC32(this string str)
-        => str.GetBytes().GenerateCRC32();
+    {
+        return str.GetBytes().GenerateCRC32();
+    }
 
     public static uint GenerateCRC32(this byte[] data)
     {

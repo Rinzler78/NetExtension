@@ -9,7 +9,6 @@ namespace Rinzler78.NetExtension.Observable;
 public class ObservableRangeCollection<T> : ObservableCollection<T>
 {
     public ObservableRangeCollection()
-        : base()
     {
     }
 
@@ -18,9 +17,11 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
     {
     }
 
-    public void AddRange(IEnumerable<T> collection, NotifyCollectionChangedAction notificationMode = NotifyCollectionChangedAction.Add)
+    public void AddRange(IEnumerable<T> collection,
+        NotifyCollectionChangedAction notificationMode = NotifyCollectionChangedAction.Add)
     {
-        if (notificationMode != NotifyCollectionChangedAction.Add && notificationMode != NotifyCollectionChangedAction.Reset)
+        if (notificationMode != NotifyCollectionChangedAction.Add &&
+            notificationMode != NotifyCollectionChangedAction.Reset)
             throw new ArgumentException("Mode must be either Add or Reset for AddRange.", nameof(notificationMode));
         if (collection == null)
             throw new ArgumentNullException(nameof(collection));
@@ -36,7 +37,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
 
         if (notificationMode == NotifyCollectionChangedAction.Reset)
         {
-            RaiseChangeNotificationEvents(action: NotifyCollectionChangedAction.Reset);
+            RaiseChangeNotificationEvents(NotifyCollectionChangedAction.Reset);
 
             return;
         }
@@ -44,15 +45,18 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
         var changedItems = collection is List<T> ? (List<T>)collection : new List<T>(collection);
 
         RaiseChangeNotificationEvents(
-            action: NotifyCollectionChangedAction.Add,
-            changedItems: changedItems,
-            startingIndex: startIndex);
+            NotifyCollectionChangedAction.Add,
+            changedItems,
+            startIndex);
     }
 
-    public void RemoveRange(IEnumerable<T> collection, NotifyCollectionChangedAction notificationMode = NotifyCollectionChangedAction.Remove)
+    public void RemoveRange(IEnumerable<T> collection,
+        NotifyCollectionChangedAction notificationMode = NotifyCollectionChangedAction.Remove)
     {
-        if (notificationMode != NotifyCollectionChangedAction.Remove && notificationMode != NotifyCollectionChangedAction.Reset)
-            throw new ArgumentException("Mode must be either Remove or Reset for RemoveRange.", nameof(notificationMode));
+        if (notificationMode != NotifyCollectionChangedAction.Remove &&
+            notificationMode != NotifyCollectionChangedAction.Reset)
+            throw new ArgumentException("Mode must be either Remove or Reset for RemoveRange.",
+                nameof(notificationMode));
         if (collection == null)
             throw new ArgumentNullException(nameof(collection));
 
@@ -68,30 +72,32 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
             }
 
             if (raiseEvents)
-                RaiseChangeNotificationEvents(action: NotifyCollectionChangedAction.Reset);
+                RaiseChangeNotificationEvents(NotifyCollectionChangedAction.Reset);
 
             return;
         }
 
         var changedItems = new List<T>(collection);
         for (var i = 0; i < changedItems.Count; i++)
-        {
             if (!Items.Remove(changedItems[i]))
             {
-                changedItems.RemoveAt(i); //Can't use a foreach because changedItems is intended to be (carefully) modified
+                changedItems
+                    .RemoveAt(i); //Can't use a foreach because changedItems is intended to be (carefully) modified
                 i--;
             }
-        }
 
         if (changedItems.Count == 0)
             return;
 
         RaiseChangeNotificationEvents(
-            action: NotifyCollectionChangedAction.Remove,
-            changedItems: changedItems);
+            NotifyCollectionChangedAction.Remove,
+            changedItems);
     }
 
-    public void Replace(T item) => ReplaceRange(new T[] { item });
+    public void Replace(T item)
+    {
+        ReplaceRange(new[] { item });
+    }
 
     public void ReplaceRange(IEnumerable<T> collection)
     {
@@ -111,7 +117,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
         if (previouslyEmpty && currentlyEmpty)
             return;
 
-        RaiseChangeNotificationEvents(action: NotifyCollectionChangedAction.Reset);
+        RaiseChangeNotificationEvents(NotifyCollectionChangedAction.Reset);
     }
 
     private bool AddArrangeCore(IEnumerable<T> collection)
@@ -122,10 +128,12 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
             Items.Add(item);
             itemAdded = true;
         }
+
         return itemAdded;
     }
 
-    private void RaiseChangeNotificationEvents(NotifyCollectionChangedAction action, List<T>? changedItems = null, int startingIndex = -1)
+    private void RaiseChangeNotificationEvents(NotifyCollectionChangedAction action, List<T>? changedItems = null,
+        int startingIndex = -1)
     {
         OnPropertyChanged(new PropertyChangedEventArgs(nameof(Count)));
         OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
@@ -133,6 +141,6 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
         if (changedItems is null)
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(action));
         else
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, changedItems: changedItems, startingIndex: startingIndex));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, changedItems, startingIndex));
     }
 }

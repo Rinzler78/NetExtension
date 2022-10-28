@@ -1,5 +1,5 @@
-﻿using Rinzler78.NetExtension.Strings;
-using System.Linq;
+﻿using System.Linq;
+using Rinzler78.NetExtension.Strings;
 
 namespace Rinzler78.NetExtension.Array;
 
@@ -13,7 +13,7 @@ public static class ArrayExtension
 
             fixed (ulong* pArray = array)
             {
-                byte* pArrayAsBytes = (byte*)pArray;
+                var pArrayAsBytes = (byte*)pArray;
 
                 fixed (byte* pBytesArray = bytesArray)
                 {
@@ -24,6 +24,7 @@ public static class ArrayExtension
 
             return bytesArray;
         }
+
         return null;
     }
 
@@ -35,7 +36,7 @@ public static class ArrayExtension
 
             fixed (uint* pArray = array)
             {
-                byte* pArrayAsBytes = (byte*)pArray;
+                var pArrayAsBytes = (byte*)pArray;
 
                 fixed (byte* pBytesArray = bytesArray)
                 {
@@ -46,11 +47,15 @@ public static class ArrayExtension
 
             return bytesArray;
         }
+
         return null;
     }
 
     public static byte[] GetBytes(this string[] strings)
-        => string.Join("", strings).GetBytes();// strings.SelectMany(str => str.GetBytes()).ToArray();
+    {
+        return string.Join("", strings).GetBytes();
+        // strings.SelectMany(str => str.GetBytes()).ToArray();
+    }
 
     public static double[] SumArrays(params double[][] arrays)
     {
@@ -72,8 +77,8 @@ public static class ArrayExtension
 
     public static int ComputeHashCode<ArrayType>(this ArrayType[] array)
     {
-        int hash = 0;
-        for (int i = 0; i < array.Length; i++)
+        var hash = 0;
+        for (var i = 0; i < array.Length; i++)
             hash ^= array[i].GetHashCode();
         return hash;
     }

@@ -60,16 +60,16 @@ public static class StringHelper
         for (var j = 0; j <= targetLength; distance[0, j] = j++) ;
 
         for (var i = 1; i <= sourceLength; i++)
-            for (var j = 1; j <= targetLength; j++)
-            {
-                // Step 2
-                var cost = target[j - 1] == source[i - 1] ? 0 : 1;
+        for (var j = 1; j <= targetLength; j++)
+        {
+            // Step 2
+            var cost = target[j - 1] == source[i - 1] ? 0 : 1;
 
-                // Step 3
-                distance[i, j] = System.Math.Min(
-                    System.Math.Min(distance[i - 1, j] + 1, distance[i, j - 1] + 1),
-                    distance[i - 1, j - 1] + cost);
-            }
+            // Step 3
+            distance[i, j] = System.Math.Min(
+                System.Math.Min(distance[i - 1, j] + 1, distance[i, j - 1] + 1),
+                distance[i - 1, j - 1] + cost);
+        }
 
         return distance[sourceLength, targetLength];
     }
@@ -133,8 +133,8 @@ public static class StringHelper
 
         if ((allStrings?.Count() ?? 0) > 0)
             foreach (var leftStr in allStrings)
-                foreach (var rightStr in allStrings)
-                    list.Add($"{leftStr}{rightStr}");
+            foreach (var rightStr in allStrings)
+                list.Add($"{leftStr}{rightStr}");
 
         return list;
     }
@@ -150,10 +150,14 @@ public static class StringHelper
     }
 
     public static Task<Stream> HttpGetStreamAsync(this string url)
-        => HttpClient.GetStreamAsync(url);
+    {
+        return HttpClient.GetStreamAsync(url);
+    }
 
     public static Task<string> HttpGetStringAsync(this string url)
-        => HttpClient.GetStringAsync(url);
+    {
+        return HttpClient.GetStringAsync(url);
+    }
 
     public static StringContent GetStringContent(this object obj)
     {
@@ -166,11 +170,11 @@ public static class StringHelper
 
     public static async Task<object> HttpGetAsync(this string url)
     {
-        using (Stream s = await url.HttpGetStreamAsync())
-        using (StreamReader sr = new StreamReader(s))
+        using (var s = await url.HttpGetStreamAsync())
+        using (var sr = new StreamReader(s))
         using (JsonReader reader = new JsonTextReader(sr))
         {
-            JsonSerializer serializer = JsonSerializer.Create();
+            var serializer = JsonSerializer.Create();
             var obj = serializer.Deserialize(reader);
             return obj;
         }
@@ -178,11 +182,11 @@ public static class StringHelper
 
     public static async Task<object> HttpGetAsync(this string url, JsonSerializerSettings settings)
     {
-        using (Stream s = await url.HttpGetStreamAsync())
-        using (StreamReader sr = new StreamReader(s))
+        using (var s = await url.HttpGetStreamAsync())
+        using (var sr = new StreamReader(s))
         using (JsonReader reader = new JsonTextReader(sr))
         {
-            JsonSerializer serializer = JsonSerializer.Create(settings);
+            var serializer = JsonSerializer.Create(settings);
             var obj = serializer.Deserialize(reader);
             return obj;
         }
@@ -190,11 +194,11 @@ public static class StringHelper
 
     public static async Task<ReturnType> HttpGetAsync<ReturnType>(this string url)
     {
-        using (Stream s = await url.HttpGetStreamAsync())
-        using (StreamReader sr = new StreamReader(s))
+        using (var s = await url.HttpGetStreamAsync())
+        using (var sr = new StreamReader(s))
         using (JsonReader reader = new JsonTextReader(sr))
         {
-            JsonSerializer serializer = JsonSerializer.Create();
+            var serializer = JsonSerializer.Create();
             var obj = serializer.Deserialize<ReturnType>(reader);
             return obj;
         }
@@ -202,11 +206,11 @@ public static class StringHelper
 
     public static async Task<ReturnType> HttpGetAsync<ReturnType>(this string url, JsonSerializerSettings settings)
     {
-        using (Stream s = await url.HttpGetStreamAsync())
-        using (StreamReader sr = new StreamReader(s))
+        using (var s = await url.HttpGetStreamAsync())
+        using (var sr = new StreamReader(s))
         using (JsonReader reader = new JsonTextReader(sr))
         {
-            JsonSerializer serializer = JsonSerializer.Create(settings);
+            var serializer = JsonSerializer.Create(settings);
             var obj = serializer.Deserialize<ReturnType>(reader);
             return obj;
         }
@@ -235,10 +239,14 @@ public static class StringHelper
     }
 
     public static async Task<ReturnType> HttpPostString<ReturnType>(this string url, string obj)
-        => JsonConvert.DeserializeObject<ReturnType>(await url.HttpPostString(obj).ConfigureAwait(false));
+    {
+        return JsonConvert.DeserializeObject<ReturnType>(await url.HttpPostString(obj).ConfigureAwait(false));
+    }
 
     public static async Task<object> HttpPost<RequestType>(this string url, RequestType obj)
-        => JsonConvert.DeserializeObject(await url.HttpPostString(obj).ConfigureAwait(false));
+    {
+        return JsonConvert.DeserializeObject(await url.HttpPostString(obj).ConfigureAwait(false));
+    }
 
     //public static Task<ReturnType> HttpPost<RequestType, ReturnType>(this string url, RequestType obj)
     //    => Task.Run(async () =>
@@ -307,5 +315,7 @@ public static class StringHelper
     }
 
     public static byte[] GetBytes(this string str)
-        => Encoding.ASCII.GetBytes(str);
+    {
+        return Encoding.ASCII.GetBytes(str);
+    }
 }
