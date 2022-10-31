@@ -3,26 +3,9 @@ using System.Linq;
 
 namespace Rinzler78.NetExtension.Rest;
 
-public abstract class BaseRestApi
+public static class BaseRestApiExt
 {
-    public readonly Uri _baseUri;
-
-    protected BaseRestApi(string baseUri, string path) : this(new Uri(baseUri), path)
-    {
-    }
-
-    protected BaseRestApi(Uri baseUri, string path)
-    {
-        if (!baseUri.AbsoluteUri.EndsWith("/"))
-            baseUri = new Uri($"{baseUri.AbsoluteUri}/");
-
-        if (!path.EndsWith("/"))
-            path = $"{path}/";
-
-        _baseUri = new Uri(baseUri.AbsoluteUri + path);
-    }
-
-    protected string CreateUrlPath(string baseUrl, object[] args, string[] argsNames)
+    public static string CreateUrlPath(this string baseUrl, object[] args, string[] argsNames)
     {
         if (args != null && argsNames != null && args.Length == argsNames.Length)
             if (args.Any(o => o != null))
@@ -42,5 +25,31 @@ public abstract class BaseRestApi
             }
 
         return baseUrl;
+    }
+}
+
+public abstract class BaseRestApi
+{
+    public readonly Uri _baseUri;
+
+    protected BaseRestApi(string baseUri, string path = null)
+        : this(new Uri(baseUri), path)
+    {
+    }
+
+    protected BaseRestApi(Uri baseUri, string path = null)
+    {
+        if (!baseUri.AbsoluteUri.EndsWith("/"))
+            baseUri = new Uri($"{baseUri.AbsoluteUri}/");
+
+        if (path != null)
+        {
+            if (!path.EndsWith("/"))
+                path = $"{path}/";
+
+            _baseUri = new Uri(baseUri.AbsoluteUri + path);
+        }
+        else
+            _baseUri = new Uri(baseUri.AbsoluteUri);
     }
 }
