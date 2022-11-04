@@ -5,6 +5,8 @@ using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography;
 using Newtonsoft.Json.Linq;
+using Rinzler78.NetExtension.Measure;
+using Rinzler78.NetExtension.Strings;
 
 namespace Rinzler78.NetExtension.Enums;
 
@@ -56,19 +58,33 @@ public static class EnumParser<Enumtype>
     public static readonly ReadOnlyDictionary<string, Enumtype> EnumValuesDictionary = new(Enum
             .GetValues(typeof(Enumtype))
             .Cast<Enumtype>()
+            .AsParallel()
             .SelectMany(v =>
-                new[] {
-                                (n: v.ToString().ToLower(), v),
-                                (n: ((int)(object)v).ToString(), v)
+            {
+                var lst = new List<(string, Enumtype)>();
+
+                lst.Add((((int)(object)v).ToString(), v));
+
+                var vAsString = v.ToString().ToLower();
+
+                lst.Add((vAsString, v));
+
+                vAsString = vAsString.Replace("_", ".");
+
+                if (!lst.AsParallel().Any(arg => arg.Item1 == vAsString))
+                {
+                    lst.Add((vAsString, v));
+                }
+
+                return lst;
             })
-            .ToDictionary(i => i.n, i => i.v, StringComparer.OrdinalIgnoreCase));
+            .ToDictionary(i => i.Item1, i => i.Item2, StringComparer.OrdinalIgnoreCase));
 
     public static Enumtype Parse(string str)
     {
         try
         {
             return EnumValuesDictionary[str];
-            //return EnumValuesDictionary.AsParallel().First(kvp => string.Equals(kvp.Key, str, StringComparison.InvariantCultureIgnoreCase)).Value;
         }
         catch
         {
