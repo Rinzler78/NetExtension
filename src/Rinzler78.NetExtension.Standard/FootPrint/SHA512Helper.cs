@@ -4,29 +4,29 @@ using Rinzler78.NetExtension.Strings;
 
 namespace Rinzler78.NetExtension.FootPrint;
 
-public static class SHA512Helper
+public static class Sha512Helper
 {
-    public static byte[] GenerateSHA512(this ulong[] data)
+    public static byte[] GenerateSha512(this ulong[] data)
     {
-        return data.GetBytes().GenerateSHA512();
+        return data.GetBytes().GenerateSha512();
     }
 
-    public static byte[] GenerateSHA512(this uint[] data)
+    public static byte[] GenerateSha512(this uint[] data)
     {
-        return data.GetBytes().GenerateSHA512();
+        return data.GetBytes().GenerateSha512();
     }
 
-    public static byte[] GenerateSHA512(this string[] data)
+    public static byte[] GenerateSha512(this string[] data)
     {
-        return data.GetBytes().GenerateSHA512();
+        return data.GetBytes().GenerateSha512();
     }
 
-    public static byte[] GenerateSHA512(this string str)
+    public static byte[] GenerateSha512(this string str)
     {
-        return str.GetBytes().GenerateSHA512();
+        return str.GetBytes().GenerateSha512();
     }
 
-    public static byte[] GenerateSHA512(this byte[] data)
+    public static byte[] GenerateSha512(this byte[] data)
     {
         var tool = SHA512.Create();
 

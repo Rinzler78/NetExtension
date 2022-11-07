@@ -5,29 +5,29 @@ using Rinzler78.NetExtension.Strings;
 
 namespace Rinzler78.NetExtension.FootPrint;
 
-public static class CRC64Helper
+public static class Crc64Helper
 {
-    public static ulong GenerateCRC64(this ulong[] data)
+    public static ulong GenerateCrc64(this ulong[] data)
     {
-        return data.GetBytes().GenerateCRC64();
+        return data.GetBytes().GenerateCrc64();
     }
 
-    public static ulong GenerateCRC64(this uint[] data)
+    public static ulong GenerateCrc64(this uint[] data)
     {
-        return data.GetBytes().GenerateCRC64();
+        return data.GetBytes().GenerateCrc64();
     }
 
-    public static ulong GenerateCRC64(this string[] data)
+    public static ulong GenerateCrc64(this string[] data)
     {
-        return data.GetBytes().GenerateCRC64();
+        return data.GetBytes().GenerateCrc64();
     }
 
-    public static ulong GenerateCRC64(this string str)
+    public static ulong GenerateCrc64(this string str)
     {
-        return str.GetBytes().GenerateCRC64();
+        return str.GetBytes().GenerateCrc64();
     }
 
-    public static ulong GenerateCRC64(this byte[] data)
+    public static ulong GenerateCrc64(this byte[] data)
     {
         var result = CRCFactory.Instance.Create(CRCConfig.CRC64).ComputeHash(data);
 

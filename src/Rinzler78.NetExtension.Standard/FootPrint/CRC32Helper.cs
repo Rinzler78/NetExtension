@@ -5,29 +5,29 @@ using Rinzler78.NetExtension.Strings;
 
 namespace Rinzler78.NetExtension.FootPrint;
 
-public static class CRC32Helper
+public static class Crc32Helper
 {
-    public static uint GenerateCRC32(this ulong[] data)
+    public static uint GenerateCrc32(this ulong[] data)
     {
-        return data.GetBytes().GenerateCRC32();
+        return data.GetBytes().GenerateCrc32();
     }
 
-    public static uint GenerateCRC32(this uint[] data)
+    public static uint GenerateCrc32(this uint[] data)
     {
-        return data.GetBytes().GenerateCRC32();
+        return data.GetBytes().GenerateCrc32();
     }
 
-    public static uint GenerateCRC32(this string[] data)
+    public static uint GenerateCrc32(this string[] data)
     {
-        return data.GetBytes().GenerateCRC32();
+        return data.GetBytes().GenerateCrc32();
     }
 
-    public static uint GenerateCRC32(this string str)
+    public static uint GenerateCrc32(this string str)
     {
-        return str.GetBytes().GenerateCRC32();
+        return str.GetBytes().GenerateCrc32();
     }
 
-    public static uint GenerateCRC32(this byte[] data)
+    public static uint GenerateCrc32(this byte[] data)
     {
         var result = CRCFactory.Instance.Create(CRCConfig.CRC32).ComputeHash(data);
 
