@@ -48,7 +48,7 @@ public static class ObjectExtension
                     {
                         targetPropertyInfo.SetValue(target, sourceProperty.GetValue(source, null), null);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         onCopyToFailedForProperty?.Invoke(new ValueTuple<PropertyInfo, object>(sourceProperty, source),
                             new ValueTuple<PropertyInfo, object>(targetPropertyInfo, target));

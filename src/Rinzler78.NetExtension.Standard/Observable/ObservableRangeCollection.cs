@@ -132,7 +132,7 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
         return itemAdded;
     }
 
-    private void RaiseChangeNotificationEvents(NotifyCollectionChangedAction action, List<T>? changedItems = null,
+    private void RaiseChangeNotificationEvents(NotifyCollectionChangedAction action, List<T> changedItems = null,
         int startingIndex = -1)
     {
         OnPropertyChanged(new PropertyChangedEventArgs(nameof(Count)));

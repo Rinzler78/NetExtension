@@ -18,7 +18,7 @@ public static class EnumsHelper
             var fromEnumString = obj.ToString();
             return fromEnumString.Convert<ToEnumType>();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
 
@@ -35,7 +35,7 @@ public static class EnumsHelper
             if (Enum.TryParse(str, out result))
                 return result;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
 

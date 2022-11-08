@@ -12,7 +12,7 @@ public static class EnumerableExtension
         {
             return source.Aggregate(func);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
 
