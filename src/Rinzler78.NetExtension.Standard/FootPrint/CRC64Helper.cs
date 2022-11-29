@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.HashFunction;
 using System.Data.HashFunction.CRC;
 using Rinzler78.NetExtension.Array;
 using Rinzler78.NetExtension.Strings;
