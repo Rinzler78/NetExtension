@@ -6,23 +6,21 @@ public static class ProcessHelper
 {
     public static ProcessOutputs WaitProcessOutputs(this System.Diagnostics.Process process)
     {
-        var stds = Task.WhenAll(process.StandardOutput.ReadToEndAsync(), process.StandardError.ReadToEndAsync()).Result;
+        var stdOut = process.StandardOutput.ReadToEnd();
+        var stdErr = process.StandardError.ReadToEnd();
 
-        var stdOut = stds[0];
-        var stdErr = stds[1];
-
-        //process.WaitForExit();
+        process.WaitForExit();
 
         return new ProcessOutputs(stdOut, stdErr);
     }
 
-    //public static async Task<ProcessOutputs> WaitProcessOutputsAsync(this System.Diagnostics.Process process)
-    //{
-    //    var stdOut = process.StandardOutput.ReadToEnd();
-    //    var stdErr = process.StandardError.ReadToEnd();
+    public static async Task<ProcessOutputs> WaitProcessOutputsAsync(this System.Diagnostics.Process process)
+    {
+        var stdOut = await process.StandardOutput.ReadToEndAsync();
+        var stdErr = await process.StandardError.ReadToEndAsync();
 
-    //    await process.WaitForExitAsync().ConfigureAwait(false);
+        await process.WaitForExitAsync();
 
-    //    return new ProcessOutputs(stdOut, stdErr);
-    //}
+        return new ProcessOutputs(stdOut, stdErr);
+    }
 }
