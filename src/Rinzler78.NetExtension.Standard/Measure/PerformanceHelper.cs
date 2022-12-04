@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Rinzler78.NetExtension.Measure;
@@ -7,11 +8,13 @@ public static class PerformanceHelper
 {
     public static void MeasureDuration(this Action action, out TimeSpan duration)
     {
-        var startDate = DateTime.UtcNow;
+        var timer = new Stopwatch();
+
+        timer.Start();
 
         action();
 
-        duration = DateTime.UtcNow - startDate;
+        duration = timer.Elapsed;
     }
 
     public static void MeasureDuration(this Action action, Action<TimeSpan> durationAction = null)
@@ -23,11 +26,13 @@ public static class PerformanceHelper
 
     public static ReturnType MeasureDuration<ReturnType>(this Func<ReturnType> func, out TimeSpan duration)
     {
-        var startDate = DateTime.UtcNow;
+        var timer = new Stopwatch();
+
+        timer.Start();
 
         var result = func();
 
-        duration = DateTime.UtcNow - startDate;
+        duration = timer.Elapsed;
 
         return result;
     }
@@ -45,11 +50,13 @@ public static class PerformanceHelper
     public static ReturnType MeasureDuration<InType, ReturnType>(this Func<InType, ReturnType> func, InType input,
         out TimeSpan duration)
     {
-        var startDate = DateTime.UtcNow;
+        var timer = new Stopwatch();
+
+        timer.Start();
 
         var result = func(input);
 
-        duration = DateTime.UtcNow - startDate;
+        duration = timer.Elapsed;
 
         return result;
     }
@@ -57,11 +64,13 @@ public static class PerformanceHelper
     public static ReturnType MeasureDuration<InType, ReturnType>(this Func<InType, ReturnType> func, InType input,
         Action<TimeSpan, ReturnType> durationAction = null)
     {
-        var startDate = DateTime.UtcNow;
+        var timer = new Stopwatch();
+
+        timer.Start();
 
         var result = func(input);
 
-        durationAction?.Invoke(DateTime.UtcNow - startDate, result);
+        durationAction?.Invoke(timer.Elapsed, result);
 
         return result;
     }
