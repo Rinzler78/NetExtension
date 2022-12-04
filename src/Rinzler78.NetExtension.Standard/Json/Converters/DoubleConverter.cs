@@ -3,9 +3,9 @@ using Newtonsoft.Json;
 
 namespace Rinzler78.NetExtension.Json.Converters;
 
-public class DoubleStringConverter : JsonConverter
+public class DoubleConverter : JsonConverter
 {
-    public static readonly DoubleStringConverter Singleton = new();
+    public static readonly DoubleConverter Singleton = new();
 
     public override bool CanConvert(Type t)
     {
