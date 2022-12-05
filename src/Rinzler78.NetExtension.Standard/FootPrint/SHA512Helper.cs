@@ -28,7 +28,6 @@ public static class Sha512Helper
 
     public static byte[] GenerateSha512(this byte[] data)
     {
-
         var result = SHA512.HashData(data);
 
         return result;

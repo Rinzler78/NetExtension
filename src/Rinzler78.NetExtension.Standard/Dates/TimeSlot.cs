@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace Rinzler78.NetExtension.Dates;
 
-[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Auto)]
+[StructLayout(LayoutKind.Auto)]
 public struct TimeSlot
 {
     public TimeSlot(DateTime start, DateTime end)
@@ -16,7 +17,7 @@ public struct TimeSlot
     public DateTime End { get; }
     public TimeSpan Duration { get; }
 
-    public override readonly string ToString()
+    public readonly override string ToString()
     {
         return $"{Start} => {End} ({Duration})";
     }

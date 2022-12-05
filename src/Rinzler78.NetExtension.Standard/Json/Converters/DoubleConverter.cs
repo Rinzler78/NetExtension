@@ -31,7 +31,7 @@ public sealed class DoubleConverter : JsonConverter
     {
         if (untypedValue == null)
         {
-            serializer.Serialize(writer, value: null);
+            serializer.Serialize(writer, null);
             return;
         }
 

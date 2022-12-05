@@ -24,7 +24,7 @@ public static class CsvExtension
             var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
                 Delimiter = separator.ToString(),
-                HasHeaderRecord = hasHeaderRecord,
+                HasHeaderRecord = hasHeaderRecord
             };
 
             var sourcePath = fileName;

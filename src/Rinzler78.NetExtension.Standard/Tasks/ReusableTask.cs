@@ -21,7 +21,8 @@ public sealed class ReusableTask
     {
         lock (this)
         {
-            if (_invokeTask?.IsCompleted ?? true) _invokeTask = Task.Run(() => Action(), _cancellationTokenSource.Token);
+            if (_invokeTask?.IsCompleted ?? true)
+                _invokeTask = Task.Run(() => Action(), _cancellationTokenSource.Token);
             return _invokeTask;
         }
     }

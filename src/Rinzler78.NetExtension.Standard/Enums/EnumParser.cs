@@ -25,9 +25,7 @@ public static class EnumParser<Enumtype>
             vAsString = vAsString.Replace("_", ".", StringComparison.Ordinal);
 
             if (!lst.AsParallel().Any(arg => string.Equals(arg.Item1, vAsString, StringComparison.Ordinal)))
-            {
                 lst.Add((vAsString, v));
-            }
 
             return lst;
         })

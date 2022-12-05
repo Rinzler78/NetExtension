@@ -24,6 +24,8 @@ public abstract class BaseRestApi
             _baseUri = new Uri(baseUri.AbsoluteUri + path);
         }
         else
+        {
             _baseUri = new Uri(baseUri.AbsoluteUri);
+        }
     }
 }

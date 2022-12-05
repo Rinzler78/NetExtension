@@ -8,6 +8,7 @@ namespace Rinzler78.NetExtension.FootPrint;
 public static class Crc64Helper
 {
     private static readonly ICRC Crc64Generator = CRCFactory.Instance.Create(CRCConfig.CRC64);
+
     public static ulong GenerateCrc64(this ulong[] data)
     {
         return data.GetBytes().GenerateCrc64();
