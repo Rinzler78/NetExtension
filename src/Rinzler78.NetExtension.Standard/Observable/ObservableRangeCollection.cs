@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace Rinzler78.NetExtension.Observable;
 
-public class ObservableRangeCollection<T> : ObservableCollection<T>
+public sealed class ObservableRangeCollection<T> : ObservableCollection<T>
 {
     public ObservableRangeCollection()
     {

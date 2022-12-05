@@ -16,10 +16,10 @@ public static class ProcessHelper
 
     public static async Task<ProcessOutputs> WaitProcessOutputsAsync(this System.Diagnostics.Process process)
     {
-        var stdOut = await process.StandardOutput.ReadToEndAsync();
-        var stdErr = await process.StandardError.ReadToEndAsync();
+        var stdOut = await process.StandardOutput.ReadToEndAsync().ConfigureAwait(false);
+        var stdErr = await process.StandardError.ReadToEndAsync().ConfigureAwait(false);
 
-        await process.WaitForExitAsync();
+        await process.WaitForExitAsync().ConfigureAwait(false);
 
         return new ProcessOutputs(stdOut, stdErr);
     }

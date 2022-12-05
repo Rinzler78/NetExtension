@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace Rinzler78.NetExtension.Json.Converters;
 
-public class CollectionConverter<CollectionElement> : JsonConverter<ICollection<CollectionElement>>
+public sealed class CollectionConverter<CollectionElement> : JsonConverter<ICollection<CollectionElement>>
 {
     public override ICollection<CollectionElement> Read(ref Utf8JsonReader reader, Type typeToConvert,
         JsonSerializerOptions options)

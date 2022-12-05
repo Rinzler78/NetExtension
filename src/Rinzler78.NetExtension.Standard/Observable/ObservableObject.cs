@@ -38,7 +38,7 @@ public abstract class ObservableObject : IObservableObject, IDisposable
 #if TRACE_DISPOSE
         Console.WriteLine($"{NickName} : Dispose");
 #endif
-        Dispose(true);
+        Dispose(disposing: true);
         DetachDependencies();
         GC.SuppressFinalize(this);
     }
@@ -110,7 +110,7 @@ public abstract class ObservableObject : IObservableObject, IDisposable
 
     ~ObservableObject()
     {
-        Dispose(false);
+        Dispose(disposing: false);
     }
 
     protected void AttachDependencies(params IObservableObject[] observableObject)

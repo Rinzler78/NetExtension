@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Rinzler78.NetExtension.Json.Converters;
 
-public class DoubleConverter : JsonConverter
+public sealed class DoubleConverter : JsonConverter
 {
     public static readonly DoubleConverter Singleton = new();
 
@@ -31,7 +31,7 @@ public class DoubleConverter : JsonConverter
     {
         if (untypedValue == null)
         {
-            serializer.Serialize(writer, null);
+            serializer.Serialize(writer, value: null);
             return;
         }
 

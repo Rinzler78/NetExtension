@@ -14,7 +14,7 @@ public abstract class UpdatableProperty : ObservableObject
 
     private Task _updateTask;
 
-    public UpdatableProperty()
+    protected UpdatableProperty()
     {
         _locker = new object();
     }
@@ -33,7 +33,7 @@ public abstract class UpdatableProperty : ObservableObject
                 _getTask = Task.Run(async () =>
                 {
                     if (Property == default || force)
-                        await Update();
+                        await Update().ConfigureAwait(false);
 
                     return Property;
                 });
@@ -53,7 +53,7 @@ public abstract class UpdatableProperty : ObservableObject
     protected abstract Task InnerUpdate();
 }
 
-public class UpdatableProperty<PropertyType> : UpdatableProperty
+public sealed class UpdatableProperty<PropertyType> : UpdatableProperty
 {
     public UpdatableProperty(Func<Task<PropertyType>> updatableFunction)
     {
@@ -65,11 +65,11 @@ public class UpdatableProperty<PropertyType> : UpdatableProperty
 
     public new async Task<PropertyType> Get(bool force = false)
     {
-        return (PropertyType)await base.Get(force);
+        return (PropertyType)await base.Get(force).ConfigureAwait(false);
     }
 
     protected override async Task InnerUpdate()
     {
-        base.Property = await UpdatableFunction?.Invoke();
+        base.Property = await (UpdatableFunction?.Invoke()).ConfigureAwait(false);
     }
 }

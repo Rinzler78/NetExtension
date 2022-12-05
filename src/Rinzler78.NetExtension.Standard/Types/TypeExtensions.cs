@@ -24,7 +24,7 @@ public static class TypeExtensions
                 typeof(DateTime),
                 typeof(DateTimeOffset),
                 typeof(TimeSpan),
-                typeof(Guid)
+                typeof(Guid),
             }.Contains(type) ||
             Convert.GetTypeCode(type) != TypeCode.Object;
     }

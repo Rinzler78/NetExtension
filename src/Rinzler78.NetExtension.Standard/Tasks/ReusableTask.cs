@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Rinzler78.NetExtension.Tasks;
 
-public class ReusableTask
+public sealed class ReusableTask
 {
     private CancellationTokenSource _cancellationTokenSource;
 
@@ -21,7 +21,7 @@ public class ReusableTask
     {
         lock (this)
         {
-            if (_invokeTask?.IsCompleted ?? true) _invokeTask = Task.Run(() => Action());
+            if (_invokeTask?.IsCompleted ?? true) _invokeTask = Task.Run(() => Action(), _cancellationTokenSource.Token);
             return _invokeTask;
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace Rinzler78.NetExtension.Process;
 
-public class ProcessOutputs
+public sealed class ProcessOutputs
 {
     public ProcessOutputs(string stdOut, string stdErr)
     {

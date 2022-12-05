@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Rinzler78.NetExtension.Json.Converters;
 
-public class CollectionInterfaceConverterFactory<CollectionElement> : JsonConverterFactory
+public sealed class CollectionInterfaceConverterFactory<CollectionElement> : JsonConverterFactory
 {
     public readonly Type _collectionElementType = typeof(CollectionElement);
 

@@ -39,14 +39,14 @@ public static class ObjectExtension
             .ToList();
 
         foreach (var sourceProperty in sourceProperties)
-            if (targetProperties.Any(x => x.Name == sourceProperty.Name))
+            if (targetProperties.Any(x => string.Equals(x.Name, sourceProperty.Name, StringComparison.Ordinal)))
             {
-                var targetPropertyInfo = targetProperties.First(x => x.Name == sourceProperty.Name);
+                var targetPropertyInfo = targetProperties.First(x => string.Equals(x.Name, sourceProperty.Name, StringComparison.Ordinal));
                 //if (targetPropertyInfo.CanWrite && sourceProperty.PropertyType == targetPropertyInfo.PropertyType)
                 if (targetPropertyInfo.CanWrite)
                     try
                     {
-                        targetPropertyInfo.SetValue(target, sourceProperty.GetValue(source, null), null);
+                        targetPropertyInfo.SetValue(target, sourceProperty.GetValue(source, index: null), index: null);
                     }
                     catch (Exception)
                     {
@@ -64,10 +64,10 @@ public static class ObjectExtension
             var ignoreList = new List<string>(ignore);
             var unequalProperties =
                 from pi in type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                where !ignoreList.Contains(pi.Name) && pi.GetUnderlyingType().IsSimpleType() &&
+                where !ignoreList.Contains(pi.Name, StringComparer.Ordinal) && pi.GetUnderlyingType().IsSimpleType() &&
                       pi.GetIndexParameters().Length == 0
-                let selfValue = type.GetProperty(pi.Name).GetValue(self, null)
-                let toValue = type.GetProperty(pi.Name).GetValue(to, null)
+                let selfValue = type.GetProperty(pi.Name).GetValue(self, index: null)
+                let toValue = type.GetProperty(pi.Name).GetValue(to, index: null)
                 where selfValue != toValue && (selfValue == null || !selfValue.Equals(toValue))
                 select selfValue;
             return !unequalProperties.Any();
@@ -78,6 +78,6 @@ public static class ObjectExtension
 
     public static ReturnType GetPropertyValue<ReturnType>(this object src, string propName)
     {
-        return (ReturnType)src.GetType().GetProperty(propName).GetValue(src, null);
+        return (ReturnType)src.GetType().GetProperty(propName).GetValue(src, index: null);
     }
 }

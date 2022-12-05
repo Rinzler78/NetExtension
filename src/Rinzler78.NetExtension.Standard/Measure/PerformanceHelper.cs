@@ -78,12 +78,12 @@ public static class PerformanceHelper
     public static async Task<ReturnType> MeasureDurationAsync<ReturnType>(this Func<ReturnType> func,
         Action<TimeSpan, ReturnType> durationAction = null)
     {
-        return await Task.Run(() => MeasureDuration(func, durationAction));
+        return await Task.Run(() => MeasureDuration(func, durationAction)).ConfigureAwait(false);
     }
 
     public static async Task<ReturnType> MeasureDurationAsync<InType, ReturnType>(this Func<InType, ReturnType> func,
         InType input, Action<TimeSpan, ReturnType> durationAction = null)
     {
-        return await Task.Run(() => MeasureDuration(func, input, durationAction));
+        return await Task.Run(() => MeasureDuration(func, input, durationAction)).ConfigureAwait(false);
     }
 }

@@ -34,7 +34,7 @@ public static class DatesHelper
     {
         var tasks = timeSlots.Select(arg => func(arg));
 
-        var results = await Task.WhenAll(tasks);
+        var results = await Task.WhenAll(tasks).ConfigureAwait(false);
 
         return results;
     }

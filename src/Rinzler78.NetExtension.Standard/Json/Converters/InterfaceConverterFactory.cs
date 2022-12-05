@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Rinzler78.NetExtension.Json.Converters;
 
-public class InterfaceConverterFactory<Interface, Implementation> : JsonConverterFactory
+public sealed class InterfaceConverterFactory<Interface, Implementation> : JsonConverterFactory
     where Implementation : class, Interface, new()
 
 {

@@ -56,8 +56,13 @@ public static class StringHelper
         var distance = new int[sourceLength + 1, targetLength + 1];
 
         // Step 1
-        for (var i = 0; i <= sourceLength; distance[i, 0] = i++) ;
-        for (var j = 0; j <= targetLength; distance[0, j] = j++) ;
+        for (var i = 0; i <= sourceLength; distance[i, 0] = i++)
+        {
+        }
+
+        for (var j = 0; j <= targetLength; distance[0, j] = j++)
+        {
+        }
 
         for (var i = 1; i <= sourceLength; i++)
         for (var j = 1; j <= targetLength; j++)
@@ -88,12 +93,12 @@ public static class StringHelper
 
     public static bool ContainsAll(this string str, string[] words)
     {
-        return words?.All(arg => str.Contains(arg)) ?? true;
+        return words?.All(arg => str.Contains(arg, StringComparison.Ordinal)) ?? true;
     }
 
     public static bool ContainsAny(this string str, string[] words)
     {
-        return words?.Any(arg => str.Contains(arg)) ?? true;
+        return words?.Any(arg => str.Contains(arg, StringComparison.Ordinal)) ?? true;
     }
 
     public static string BeginByLowerCase(this string str)
@@ -170,7 +175,7 @@ public static class StringHelper
 
     public static async Task<object> HttpGetAsync(this string url)
     {
-        using (var s = await url.HttpGetStreamAsync())
+        await using (var s = await url.HttpGetStreamAsync().ConfigureAwait(false))
         using (var sr = new StreamReader(s))
         using (JsonReader reader = new JsonTextReader(sr))
         {
@@ -182,7 +187,7 @@ public static class StringHelper
 
     public static async Task<object> HttpGetAsync(this string url, JsonSerializerSettings settings)
     {
-        using (var s = await url.HttpGetStreamAsync())
+        await using (var s = await url.HttpGetStreamAsync().ConfigureAwait(false))
         using (var sr = new StreamReader(s))
         using (JsonReader reader = new JsonTextReader(sr))
         {
@@ -194,7 +199,7 @@ public static class StringHelper
 
     public static async Task<ReturnType> HttpGetAsync<ReturnType>(this string url)
     {
-        using (var s = await url.HttpGetStreamAsync())
+        await using (var s = await url.HttpGetStreamAsync().ConfigureAwait(false))
         using (var sr = new StreamReader(s))
         using (JsonReader reader = new JsonTextReader(sr))
         {
@@ -206,7 +211,7 @@ public static class StringHelper
 
     public static async Task<ReturnType> HttpGetAsync<ReturnType>(this string url, JsonSerializerSettings settings)
     {
-        using (var s = await url.HttpGetStreamAsync())
+        await using (var s = await url.HttpGetStreamAsync().ConfigureAwait(false))
         using (var sr = new StreamReader(s))
         using (JsonReader reader = new JsonTextReader(sr))
         {

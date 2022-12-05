@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Rinzler78.NetExtension.Json.Converters;
 
-public class InterfaceConverter<Implementation, Interface> : JsonConverter<Interface>
+public sealed class InterfaceConverter<Implementation, Interface> : JsonConverter<Interface>
     where Implementation : class, Interface
 {
     public override Interface Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

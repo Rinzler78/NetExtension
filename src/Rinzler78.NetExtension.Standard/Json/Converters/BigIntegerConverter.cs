@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Rinzler78.NetExtension.Json.Converters;
 
-public class BigIntegerConverter : JsonConverter
+public sealed class BigIntegerConverter : JsonConverter
 {
     public static readonly BigIntegerConverter Singleton = new();
 
@@ -26,7 +26,7 @@ public class BigIntegerConverter : JsonConverter
     {
         if (untypedValue == null)
         {
-            serializer.Serialize(writer, null);
+            serializer.Serialize(writer, value: null);
             return;
         }
 

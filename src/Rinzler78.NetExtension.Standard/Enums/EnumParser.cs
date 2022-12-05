@@ -22,9 +22,9 @@ public static class EnumParser<Enumtype>
 
             lst.Add((vAsString, v));
 
-            vAsString = vAsString.Replace("_", ".");
+            vAsString = vAsString.Replace("_", ".", StringComparison.Ordinal);
 
-            if (!lst.AsParallel().Any(arg => arg.Item1 == vAsString))
+            if (!lst.AsParallel().Any(arg => string.Equals(arg.Item1, vAsString, StringComparison.Ordinal)))
             {
                 lst.Add((vAsString, v));
             }
