@@ -16,7 +16,12 @@ public static class JsonHelper
         return JsonConvert.DeserializeObject(str);
     }
 
-    public static ObjectType DeSerializeObject<ObjectType>(this string str, JsonSerializerSettings settings = null)
+    public static ObjectType DeSerializeObject<ObjectType>(this string str)
+    {
+        return JsonConvert.DeserializeObject<ObjectType>(str);
+    }
+
+    public static ObjectType DeSerializeObject<ObjectType>(this string str, JsonSerializerSettings settings)
     {
         return JsonConvert.DeserializeObject<ObjectType>(str, settings);
     }
@@ -47,8 +52,19 @@ public static class JsonHelper
         return null;
     }
 
-    public static ObjectType DeSerializeObjectFromFile<ObjectType>(this string filePath,
-        JsonSerializerSettings settings = null)
+    public static ObjectType DeSerializeObjectFromFile<ObjectType>(this string filePath)
+    {
+        if (File.Exists(filePath))
+            using (var reader = new StreamReader(filePath))
+            {
+                var json = reader.ReadToEnd();
+                return JsonConvert.DeserializeObject<ObjectType>(json);
+            }
+
+        return default;
+    }
+
+    public static ObjectType DeSerializeObjectFromFile<ObjectType>(this string filePath, JsonSerializerSettings settings)
     {
         if (File.Exists(filePath))
             using (var reader = new StreamReader(filePath))
