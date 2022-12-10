@@ -59,7 +59,7 @@ public static class ObjectExtension
 
     public static bool IsEqualTo<T>(this T self, T to, params string[] ignore) where T : class
     {
-        if (self != null && to != null)
+        if (self is not null && to is not null)
         {
             var type = typeof(T);
             var ignoreList = new List<string>(ignore);
@@ -69,7 +69,7 @@ public static class ObjectExtension
                       pi.GetIndexParameters().Length == 0
                 let selfValue = type.GetProperty(pi.Name).GetValue(self, null)
                 let toValue = type.GetProperty(pi.Name).GetValue(to, null)
-                where selfValue != toValue && (selfValue == null || !selfValue.Equals(toValue))
+                where selfValue != toValue && (selfValue is null || !selfValue.Equals(toValue))
                 select selfValue;
             return !unequalProperties.Any();
         }

@@ -31,7 +31,7 @@ public sealed class ReusableTask
     {
         lock (this)
         {
-            if (_cancellationTokenSource != null)
+            if (_cancellationTokenSource is not null)
             {
                 _cancellationTokenSource.Cancel();
                 _cancellationTokenSource = null;
@@ -72,7 +72,7 @@ public sealed class ReusableTask
     //{
     //    lock (_taskContext)
     //    {
-    //        if (CurrentCancellationTokenSource != null)
+    //        if (CurrentCancellationTokenSource is not null)
     //        {
     //            CurrentCancellationTokenSource.Cancel();
     //            return true;

@@ -7,12 +7,12 @@ public static class CollectionHelper
 {
     public static void Set<T>(this ICollection<T> currentItems, IEnumerable<T> newItems)
     {
-        if (currentItems == null)
+        if (currentItems is null)
             return;
 
         lock (currentItems)
         {
-            if (newItems == null)
+            if (newItems is null)
             {
                 currentItems.Clear();
             }

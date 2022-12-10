@@ -62,10 +62,10 @@ public abstract class ObservableObject : IObservableObject, IDisposable
 
             target = source;
 
-            if (oldValue != null && oldValue is IObservableObject oldObservableObject)
+            if (oldValue is not null && oldValue is IObservableObject oldObservableObject)
                 DetachDependencies(oldObservableObject);
 
-            if (target != null && target is IObservableObject newObservableObject)
+            if (target is not null && target is IObservableObject newObservableObject)
                 AttachDependencies(newObservableObject);
 
             propertyChanged?.Invoke((oldValue, target));
@@ -78,7 +78,7 @@ public abstract class ObservableObject : IObservableObject, IDisposable
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null, object oldValue = null,
         object newValue = null)
     {
-        if (PropertyChanged != null)
+        if (PropertyChanged is not null)
         {
 #if TRACE_PROPERTY_CHANGED
             Console.WriteLine($"{GetType().Name} ({NickName}) : {propertyName} Changed : {oldValue} => {newValue}");
@@ -99,11 +99,11 @@ public abstract class ObservableObject : IObservableObject, IDisposable
 
     private void DependenciesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
-        if (e.NewItems != null)
+        if (e.NewItems is not null)
             foreach (var item in e.NewItems)
                 (item as IObservableObject).PropertyChanged += OnDependenciesPropertyChanged;
 
-        if (e.OldItems != null)
+        if (e.OldItems is not null)
             foreach (var item in e.OldItems)
                 (item as IObservableObject).PropertyChanged -= OnDependenciesPropertyChanged;
     }

@@ -6,8 +6,8 @@ public static class BaseRestApiExt
 {
     public static string CreateUrlPath(this string baseUrl, object[] args, string[] argsNames)
     {
-        if (args != null && argsNames != null && args.Length == argsNames.Length)
-            if (args.Any(o => o != null))
+        if (args is not null && argsNames is not null && args.Length == argsNames.Length)
+            if (args.Any(o => o is not null))
             {
                 baseUrl += "?";
 

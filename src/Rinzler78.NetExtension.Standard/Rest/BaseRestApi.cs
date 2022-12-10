@@ -16,7 +16,7 @@ public abstract class BaseRestApi
         if (!baseUri.AbsoluteUri.EndsWith("/", StringComparison.Ordinal))
             baseUri = new Uri($"{baseUri.AbsoluteUri}/");
 
-        if (path != null)
+        if (path is not null)
         {
             if (!path.EndsWith("/", StringComparison.Ordinal))
                 path = $"{path}/";

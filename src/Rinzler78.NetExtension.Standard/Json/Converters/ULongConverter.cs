@@ -23,7 +23,7 @@ public sealed class ULongConverter : JsonConverter
 
     public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
     {
-        if (untypedValue == null)
+        if (untypedValue is null)
         {
             serializer.Serialize(writer, null);
             return;
