@@ -8,13 +8,11 @@ public static class PerformanceHelper
 {
     public static void MeasureDuration(this Action action, out TimeSpan duration)
     {
-        var timer = new Stopwatch();
-
-        timer.Start();
+        var startTime = Stopwatch.GetTimestamp();
 
         action();
 
-        duration = timer.Elapsed;
+        duration = Stopwatch.GetElapsedTime(startTime);
     }
 
     public static void MeasureDuration(this Action action, Action<TimeSpan> durationAction = null)
@@ -26,13 +24,11 @@ public static class PerformanceHelper
 
     public static ReturnType MeasureDuration<ReturnType>(this Func<ReturnType> func, out TimeSpan duration)
     {
-        var timer = new Stopwatch();
-
-        timer.Start();
+        var startTime = Stopwatch.GetTimestamp();
 
         var result = func();
 
-        duration = timer.Elapsed;
+        duration = Stopwatch.GetElapsedTime(startTime);
 
         return result;
     }
@@ -50,13 +46,11 @@ public static class PerformanceHelper
     public static ReturnType MeasureDuration<InType, ReturnType>(this Func<InType, ReturnType> func, InType input,
         out TimeSpan duration)
     {
-        var timer = new Stopwatch();
-
-        timer.Start();
+        var startTime = Stopwatch.GetTimestamp();
 
         var result = func(input);
 
-        duration = timer.Elapsed;
+        duration = Stopwatch.GetElapsedTime(startTime);
 
         return result;
     }
@@ -64,13 +58,11 @@ public static class PerformanceHelper
     public static ReturnType MeasureDuration<InType, ReturnType>(this Func<InType, ReturnType> func, InType input,
         Action<TimeSpan, ReturnType> durationAction = null)
     {
-        var timer = new Stopwatch();
-
-        timer.Start();
+        var startTime = Stopwatch.GetTimestamp();
 
         var result = func(input);
 
-        durationAction?.Invoke(timer.Elapsed, result);
+        durationAction?.Invoke(Stopwatch.GetElapsedTime(startTime), result);
 
         return result;
     }

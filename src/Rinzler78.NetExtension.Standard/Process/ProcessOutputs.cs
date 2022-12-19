@@ -10,4 +10,9 @@ public sealed class ProcessOutputs
 
     public string StdOut { get; }
     public string StdErr { get; }
+
+    public override string ToString()
+    {
+        return $"- StdOut : {StdOut}\n- StdErr : {StdErr}";
+    }
 }
