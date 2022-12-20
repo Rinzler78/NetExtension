@@ -9,7 +9,7 @@ public static class ProcessHelper
         var stdOut = process.StandardOutput.ReadToEnd();
         var stdErr = process.StandardError.ReadToEnd();
 
-        process.WaitForExit();
+        process.WaitForExitAsync();
 
         return new ProcessOutputs(stdOut, stdErr);
     }
