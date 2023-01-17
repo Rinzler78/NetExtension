@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Rinzler78.NetExtension.Process;
 
@@ -23,4 +24,7 @@ public static class ProcessHelper
 
         return new ProcessOutputs(stdOut, stdErr);
     }
+
+    public static ProcessPriorityClass CurrrentProcessPriorityClass()
+        => System.Diagnostics.Process.GetCurrentProcess().PriorityClass;
 }
