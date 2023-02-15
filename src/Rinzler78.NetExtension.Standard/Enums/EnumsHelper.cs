@@ -25,9 +25,7 @@ public static class EnumsHelper
     {
         try
         {
-            ToEnumType result = default;
-
-            if (Enum.TryParse(str, out result))
+            if (Enum.TryParse(str, out ToEnumType result))
                 return result;
         }
         catch (Exception)

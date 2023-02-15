@@ -17,8 +17,7 @@ public sealed class BigIntegerConverter : JsonConverter
     {
         if (reader.TokenType == JsonToken.Null) return null;
         var value = serializer.Deserialize<string>(reader);
-        BigInteger l;
-        if (BigInteger.TryParse(value, out l)) return l;
+        if (BigInteger.TryParse(value, out BigInteger l)) return l;
         throw new Exception("Cannot unmarshal type double");
     }
 

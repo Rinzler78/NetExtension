@@ -14,9 +14,10 @@ public static class EnumParser<Enumtype>
         .AsParallel()
         .SelectMany(v =>
         {
-            var lst = new List<(string, Enumtype)>();
-
-            lst.Add((((int)(object)v).ToString(), v));
+            var lst = new List<(string, Enumtype)>
+            {
+                (((int)(object)v).ToString(), v)
+            };
 
             var vAsString = v.ToString().ToLower();
 

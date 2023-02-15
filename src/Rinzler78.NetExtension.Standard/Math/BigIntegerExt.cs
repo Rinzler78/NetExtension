@@ -14,7 +14,7 @@ public static class BigIntegerExt
         {
         }
 
-        ulong result = 0;
+        ulong result;
         if (bigInteger < 0)
             result = ulong.MinValue;
         else
@@ -34,7 +34,7 @@ public static class BigIntegerExt
         {
         }
 
-        double result = 0;
+        double result;
         if (bigInteger < 0)
             result = double.MinValue;
         else

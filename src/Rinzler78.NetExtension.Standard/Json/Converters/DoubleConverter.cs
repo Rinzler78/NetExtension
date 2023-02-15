@@ -16,9 +16,8 @@ public sealed class DoubleConverter : JsonConverter
     {
         if (reader.TokenType == JsonToken.Null) return null;
         var value = serializer.Deserialize<string>(reader);
-        double l;
 
-        if (double.TryParse(value, out l))
+        if (double.TryParse(value, out double l))
             return l;
 
         if (double.TryParse(value.Replace('.', ','), out l))
