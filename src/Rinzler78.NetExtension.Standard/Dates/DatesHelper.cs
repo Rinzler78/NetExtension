@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Rinzler78.NetExtension.Dates;
@@ -38,4 +39,6 @@ public static class DatesHelper
 
         return results;
     }
+
+    public static TimeSpan ElapsedUtc(this DateTime date) => DateTime.UtcNow - date;
 }
