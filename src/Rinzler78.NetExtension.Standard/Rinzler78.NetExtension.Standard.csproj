@@ -43,6 +43,7 @@
 		<None Remove="Measure\" />
 		<None Remove="Nito.HashAlgorithms.CRC" />
 		<None Remove="System.Data.HashFunction.CRC" />
+		<None Remove="Network\" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Objects\" />
@@ -55,5 +56,6 @@
 		<Folder Include="Process\" />
 		<Folder Include="FootPrint\" />
 		<Folder Include="Measure\" />
+		<Folder Include="Network\" />
 	</ItemGroup>
 </Project>
