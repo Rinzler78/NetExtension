@@ -5,28 +5,44 @@ namespace Rinzler78.NetExtension;
 
 public static class ConsoleExt
 {
+    public static readonly ConsoleColor DefaultForegroundColor = Console.ForegroundColor;
+    public static readonly ConsoleColor DefaultBackgroundColor = Console.BackgroundColor;
+
     public static readonly object Locker = new();
 
     public static void ConsoleWriteLine(this string str, ConsoleColor? backgroundColor = null, ConsoleColor? foregroundColor = null)
     {
-        if (backgroundColor != null || foregroundColor != null)
+        try
         {
-            lock (Locker)
+            backgroundColor ??= DefaultBackgroundColor;
+            foregroundColor ??= DefaultForegroundColor;
+
+            if (backgroundColor != Console.BackgroundColor || foregroundColor != Console.ForegroundColor)
             {
-                var previousForegroundColor = Console.ForegroundColor;
-                var previousBackgroundColor = Console.BackgroundColor;
+                lock (Locker)
+                {
+                    Console.ForegroundColor = foregroundColor.Value;
+                    Console.BackgroundColor = backgroundColor.Value;
 
-                Console.ForegroundColor = foregroundColor ?? previousForegroundColor;
-                Console.BackgroundColor = backgroundColor ?? previousBackgroundColor;
+                    Console.WriteLine(str);
 
+                    ResetDefaultConsoleColor();
+                }
+            }
+            else
                 Console.WriteLine(str);
 
-                Console.ForegroundColor = previousForegroundColor;
-                Console.BackgroundColor = previousBackgroundColor;
-            }
         }
-        else
-            Console.WriteLine(str);
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+    }
+
+    public static void ResetDefaultConsoleColor()
+    {
+        Console.ForegroundColor = DefaultForegroundColor;
+        Console.BackgroundColor = DefaultBackgroundColor;
     }
 }
 
