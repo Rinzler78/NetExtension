@@ -1,24 +1,23 @@
 ﻿using System;
-using System.Numerics;
 using Newtonsoft.Json;
 
 namespace Rinzler78.NetExtension.Json.Converters;
 
-public sealed class BigIntegerConverter : JsonConverter
+public sealed class DecimalConverter : JsonConverter
 {
-    public static readonly BigIntegerConverter Singleton = new();
+    public static readonly DecimalConverter Singleton = new();
 
     public override bool CanConvert(Type t)
     {
-        return t == typeof(BigInteger) || t == typeof(BigInteger?);
+        return t == typeof(decimal) || t == typeof(decimal?);
     }
 
     public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
     {
         if (reader.TokenType == JsonToken.Null) return null;
         var value = serializer.Deserialize<string>(reader);
-        if (BigInteger.TryParse(value, out BigInteger l)) return l;
-        throw new Exception("Cannot unmarshal type double");
+        if (decimal.TryParse(value, out decimal l)) return l;
+        throw new Exception("Cannot unmarshal type decimal");
     }
 
     public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
@@ -29,7 +28,7 @@ public sealed class BigIntegerConverter : JsonConverter
             return;
         }
 
-        var value = (BigInteger)untypedValue;
+        var value = (decimal)untypedValue;
         serializer.Serialize(writer, value.ToString());
     }
 }
