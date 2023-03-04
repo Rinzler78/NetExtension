@@ -6,10 +6,9 @@ namespace Rinzler78.NetExtension.Json;
 
 public static class JsonHelper
 {
-    public static string SerializeObject(this object obj)
-    {
-        return JsonConvert.SerializeObject(obj);
-    }
+    public static string SerializeObject(this object obj) => JsonConvert.SerializeObject(obj);
+    public static string SerializeObject(this object obj, Formatting formatting) => JsonConvert.SerializeObject(obj, formatting);
+    public static string SerializeObject(this object obj, Formatting formatting, JsonSerializerSettings settings) => JsonConvert.SerializeObject(obj, formatting, settings);
 
     public static object DeSerializeObject(this string str)
     {

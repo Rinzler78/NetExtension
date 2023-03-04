@@ -12,6 +12,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Newtonsoft.Json;
 
 namespace Rinzler78.NetExtension.Observable;
 
@@ -31,6 +32,7 @@ public abstract class ObservableObject : IObservableObject, IDisposable
 #endif
     }
 
+    [JsonIgnore]
     public ObservableCollection<IObservableObject> Dependencies { get; } = new();
 
     void IDisposable.Dispose()
@@ -43,6 +45,7 @@ public abstract class ObservableObject : IObservableObject, IDisposable
         GC.SuppressFinalize(this);
     }
 
+    [JsonIgnore]
     public virtual string NickName { get; }
 
     public event PropertyChangedEventHandler PropertyChanged;

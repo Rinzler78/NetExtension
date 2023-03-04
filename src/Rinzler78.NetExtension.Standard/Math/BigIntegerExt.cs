@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Linq.Expressions;
+using System.Numerics;
 
 namespace Rinzler78.NetExtension.Math;
 
@@ -39,6 +40,26 @@ public static class BigIntegerExt
             result = double.MinValue;
         else
             result = double.MaxValue;
+
+        //Console.WriteLine($"BigInteger convert failed : From {bigInteger} to {result}");
+        return result;
+    }
+
+    public static decimal ToDecimal(this BigInteger bigInteger)
+    {
+        try
+        {
+            return (decimal)bigInteger;
+        }
+        catch
+        {
+        }
+
+        decimal result;
+        if (bigInteger < 0)
+            result = decimal.MinValue;
+        else
+            result = decimal.MaxValue;
 
         //Console.WriteLine($"BigInteger convert failed : From {bigInteger} to {result}");
         return result;
