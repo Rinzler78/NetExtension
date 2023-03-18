@@ -24,9 +24,11 @@ public static class ConsoleExt
                     Console.ForegroundColor = foregroundColor.Value;
                     Console.BackgroundColor = backgroundColor.Value;
 
-                    Console.WriteLine(str);
+                    Console.Write(str);
 
                     ResetDefaultConsoleColor();
+
+                    Console.WriteLine();
                 }
             }
             else
