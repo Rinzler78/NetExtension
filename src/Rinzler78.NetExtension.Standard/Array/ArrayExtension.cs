@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Rinzler78.NetExtension.Strings;
+﻿using Rinzler78.NetExtension.Strings;
+using System.Linq;
 
 namespace Rinzler78.NetExtension.Array;
 

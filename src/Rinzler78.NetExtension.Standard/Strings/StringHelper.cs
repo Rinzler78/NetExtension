@@ -65,16 +65,16 @@ public static class StringHelper
         }
 
         for (var i = 1; i <= sourceLength; i++)
-        for (var j = 1; j <= targetLength; j++)
-        {
-            // Step 2
-            var cost = target[j - 1] == source[i - 1] ? 0 : 1;
+            for (var j = 1; j <= targetLength; j++)
+            {
+                // Step 2
+                var cost = target[j - 1] == source[i - 1] ? 0 : 1;
 
-            // Step 3
-            distance[i, j] = System.Math.Min(
-                System.Math.Min(distance[i - 1, j] + 1, distance[i, j - 1] + 1),
-                distance[i - 1, j - 1] + cost);
-        }
+                // Step 3
+                distance[i, j] = System.Math.Min(
+                    System.Math.Min(distance[i - 1, j] + 1, distance[i, j - 1] + 1),
+                    distance[i - 1, j - 1] + cost);
+            }
 
         return distance[sourceLength, targetLength];
     }
@@ -138,8 +138,8 @@ public static class StringHelper
 
         if ((allStrings?.Count() ?? 0) > 0)
             foreach (var leftStr in allStrings)
-            foreach (var rightStr in allStrings)
-                list.Add($"{leftStr}{rightStr}");
+                foreach (var rightStr in allStrings)
+                    list.Add($"{leftStr}{rightStr}");
 
         return list;
     }

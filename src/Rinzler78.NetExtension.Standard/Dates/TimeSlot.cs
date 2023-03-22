@@ -17,7 +17,7 @@ public struct TimeSlot
     public DateTime End { get; }
     public TimeSpan Duration { get; }
 
-    public readonly override string ToString()
+    public override readonly string ToString()
     {
         return $"{Start} => {End} ({Duration})";
     }

@@ -56,11 +56,9 @@ public static class NetworkHelper
             }
             catch (Exception ex)
             {
-
             }
         }
 
         return false;
     }
 }
-

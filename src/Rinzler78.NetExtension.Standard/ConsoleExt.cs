@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace Rinzler78.NetExtension;
 
@@ -33,7 +32,6 @@ public static class ConsoleExt
             }
             else
                 Console.WriteLine(str);
-
         }
         catch (Exception ex)
         {
@@ -47,4 +45,3 @@ public static class ConsoleExt
         Console.BackgroundColor = DefaultBackgroundColor;
     }
 }
-

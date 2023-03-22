@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Linq;
-using Newtonsoft.Json;
 
 namespace Rinzler78.NetExtension.Json.Converters;
 
@@ -54,11 +54,9 @@ public sealed class ULongArrayConverter : JsonConverter
         }
         finally
         {
-
         }
 
         throw new Exception("Cannot unmarshal type ulong[]");
-
     }
 
     public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)

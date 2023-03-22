@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using System.Numerics;
+﻿using System.Numerics;
 
 namespace Rinzler78.NetExtension.Math;
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 
 namespace Rinzler78.NetExtension;
 
@@ -12,4 +11,3 @@ public static class UriHelper
         return fullEndpoint.EndsWith("/", StringComparison.OrdinalIgnoreCase) ? fullEndpoint.Substring(0, fullEndpoint.Length - 1) : fullEndpoint;
     }
 }
-
