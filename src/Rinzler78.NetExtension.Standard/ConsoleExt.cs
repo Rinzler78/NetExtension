@@ -31,7 +31,9 @@ public static class ConsoleExt
                 }
             }
             else
+            {
                 Console.WriteLine(str);
+            }
         }
         catch (Exception ex)
         {

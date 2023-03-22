@@ -22,7 +22,10 @@ public sealed class ObservableRangeCollection<T> : ObservableCollection<T>
     {
         if (notificationMode != NotifyCollectionChangedAction.Add &&
             notificationMode != NotifyCollectionChangedAction.Reset)
+        {
             throw new ArgumentException("Mode must be either Add or Reset for AddRange.", nameof(notificationMode));
+        }
+
         if (collection is null)
             throw new ArgumentNullException(nameof(collection));
 
@@ -55,8 +58,11 @@ public sealed class ObservableRangeCollection<T> : ObservableCollection<T>
     {
         if (notificationMode != NotifyCollectionChangedAction.Remove &&
             notificationMode != NotifyCollectionChangedAction.Reset)
+        {
             throw new ArgumentException("Mode must be either Remove or Reset for RemoveRange.",
                 nameof(notificationMode));
+        }
+
         if (collection is null)
             throw new ArgumentNullException(nameof(collection));
 
@@ -79,12 +85,14 @@ public sealed class ObservableRangeCollection<T> : ObservableCollection<T>
 
         var changedItems = new List<T>(collection);
         for (var i = 0; i < changedItems.Count; i++)
+        {
             if (!Items.Remove(changedItems[i]))
             {
                 changedItems
                     .RemoveAt(i); //Can't use a foreach because changedItems is intended to be (carefully) modified
                 i--;
             }
+        }
 
         if (changedItems.Count == 0)
             return;

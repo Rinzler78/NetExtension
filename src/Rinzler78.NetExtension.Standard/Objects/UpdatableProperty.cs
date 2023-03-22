@@ -30,6 +30,7 @@ public abstract class UpdatableProperty : ObservableObject
         lock (_locker)
         {
             if (_getTask?.IsCompleted ?? true)
+            {
                 _getTask = Task.Run(async () =>
                 {
                     if (Property == default || force)
@@ -37,6 +38,8 @@ public abstract class UpdatableProperty : ObservableObject
 
                     return Property;
                 });
+            }
+
             return _getTask;
         }
     }

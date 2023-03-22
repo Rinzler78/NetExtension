@@ -39,12 +39,14 @@ public static class ObjectExtension
             .ToList();
 
         foreach (var sourceProperty in sourceProperties)
+        {
             if (targetProperties.Any(x => string.Equals(x.Name, sourceProperty.Name, StringComparison.Ordinal)))
             {
                 var targetPropertyInfo = targetProperties.First(x =>
                     string.Equals(x.Name, sourceProperty.Name, StringComparison.Ordinal));
                 //if (targetPropertyInfo.CanWrite && sourceProperty.PropertyType == targetPropertyInfo.PropertyType)
                 if (targetPropertyInfo.CanWrite)
+                {
                     try
                     {
                         targetPropertyInfo.SetValue(target, sourceProperty.GetValue(source, null), null);
@@ -54,7 +56,9 @@ public static class ObjectExtension
                         onCopyToFailedForProperty?.Invoke(new ValueTuple<PropertyInfo, object>(sourceProperty, source),
                             new ValueTuple<PropertyInfo, object>(targetPropertyInfo, target));
                     }
+                }
             }
+        }
     }
 
     public static bool IsEqualTo<T>(this T self, T to, params string[] ignore) where T : class
@@ -69,7 +73,7 @@ public static class ObjectExtension
                       pi.GetIndexParameters().Length == 0
                 let selfValue = type.GetProperty(pi.Name).GetValue(self, null)
                 let toValue = type.GetProperty(pi.Name).GetValue(to, null)
-                where selfValue != toValue && (selfValue is null || !selfValue.Equals(toValue))
+                where selfValue != toValue && (selfValue?.Equals(toValue) != true)
                 select selfValue;
             return !unequalProperties.Any();
         }

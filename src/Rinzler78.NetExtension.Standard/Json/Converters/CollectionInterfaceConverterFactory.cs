@@ -13,7 +13,9 @@ public sealed class CollectionInterfaceConverterFactory<CollectionElement> : Jso
     {
         if (typeToConvert.Equals(typeof(ICollection<>).MakeGenericType(_collectionElementType))
             && typeToConvert.GenericTypeArguments[0].Equals(_collectionElementType))
+        {
             return true;
+        }
 
         return false;
     }

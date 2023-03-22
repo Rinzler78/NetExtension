@@ -65,6 +65,7 @@ public static class StringHelper
         }
 
         for (var i = 1; i <= sourceLength; i++)
+        {
             for (var j = 1; j <= targetLength; j++)
             {
                 // Step 2
@@ -75,6 +76,7 @@ public static class StringHelper
                     System.Math.Min(distance[i - 1, j] + 1, distance[i, j - 1] + 1),
                     distance[i - 1, j - 1] + cost);
             }
+        }
 
         return distance[sourceLength, targetLength];
     }
@@ -88,7 +90,7 @@ public static class StringHelper
             return string.IsNullOrEmpty(source) ? 1 : 0;
 
         double stepsToSame = ComputeLevenshteInDistance(source, target);
-        return 1.0 - stepsToSame / System.Math.Max(source.Length, target.Length);
+        return 1.0 - (stepsToSame / System.Math.Max(source.Length, target.Length));
     }
 
     public static bool ContainsAll(this string str, string[] words)
@@ -137,9 +139,11 @@ public static class StringHelper
         var list = new List<string>();
 
         if ((allStrings?.Count() ?? 0) > 0)
+        {
             foreach (var leftStr in allStrings)
                 foreach (var rightStr in allStrings)
                     list.Add($"{leftStr}{rightStr}");
+        }
 
         return list;
     }

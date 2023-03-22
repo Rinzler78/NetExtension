@@ -58,8 +58,10 @@ public abstract class ObservableObject : IObservableObject, IDisposable
             checkValidity ??= arg => EqualityComparer<T>.Default.Equals(arg.OldValue, arg.NewValue);
 
             if (checkValidity.Invoke((target, source)))
+            {
                 //if (EqualityComparer<T>.Default.Equals(target, source))
                 return false;
+            }
 
             var oldValue = target;
 
@@ -103,12 +105,16 @@ public abstract class ObservableObject : IObservableObject, IDisposable
     private void DependenciesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
         if (e.NewItems is not null)
+        {
             foreach (var item in e.NewItems)
                 (item as IObservableObject).PropertyChanged += OnDependenciesPropertyChanged;
+        }
 
         if (e.OldItems is not null)
+        {
             foreach (var item in e.OldItems)
                 (item as IObservableObject).PropertyChanged -= OnDependenciesPropertyChanged;
+        }
     }
 
     ~ObservableObject()
