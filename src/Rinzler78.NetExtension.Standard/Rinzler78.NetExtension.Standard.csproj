@@ -13,7 +13,7 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="MeziAntou.Analyzer" Version="2.0.20">
+		<PackageReference Include="MeziAntou.Analyzer" Version="2.0.29">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
