@@ -6,26 +6,26 @@ namespace Rinzler78.NetExtension.Objects;
 
 public abstract class UpdatableProperty : ObservableObject
 {
-    private readonly object _locker;
+    private readonly object _locker = new object();
 
-    private Task<object> _getTask;
+    private Task<object?>? _getTask;
 
-    private object _property;
+    private object? _property;
 
-    private Task _updateTask;
+    private Task? _updateTask;
 
     protected UpdatableProperty()
     {
-        _locker = new object();
+
     }
 
-    public object Property
+    public object? Property
     {
         get => _property;
         protected set => SetProperty(ref _property, value);
     }
 
-    public Task<object> Get(bool force = false)
+    public Task<object?> Get(bool force = false)
     {
         lock (_locker)
         {

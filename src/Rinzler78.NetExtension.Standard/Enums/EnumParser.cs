@@ -32,7 +32,7 @@ public static class EnumParser<Enumtype>
         })
         .ToDictionary(i => i.Item1, i => i.Item2, StringComparer.OrdinalIgnoreCase));
 
-    public static Enumtype Parse(string str)
+    public static Enumtype? Parse(string str)
     {
         try
         {

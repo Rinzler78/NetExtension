@@ -22,7 +22,7 @@ public static class ObjectExtension
     }
 
     public static Tu CopyTo<Tu>(this object source,
-        OnCopyToFailedForPropertyDelegate getValueOnFailedCopyDelegate = null)
+        OnCopyToFailedForPropertyDelegate? getValueOnFailedCopyDelegate = null)
         where Tu : new()
     {
         var dest = new Tu();
@@ -31,7 +31,7 @@ public static class ObjectExtension
     }
 
     public static void CopyTo<Tu>(this object source, Tu target,
-        OnCopyToFailedForPropertyDelegate onCopyToFailedForProperty = null)
+        OnCopyToFailedForPropertyDelegate? onCopyToFailedForProperty = null)
     {
         var sourceProperties = source.GetType().GetPublicProperties().Where(x => x.CanRead).ToList();
         var targetProperties = typeof(Tu).GetPublicProperties()

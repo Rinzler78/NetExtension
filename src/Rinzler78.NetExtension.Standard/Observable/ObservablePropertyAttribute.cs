@@ -1,12 +1,12 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿//using System;
+//using System.Runtime.CompilerServices;
 
-namespace Rinzler78.NetExtension.Observable;
+//namespace Rinzler78.NetExtension.Observable;
 
-[AttributeUsage(AttributeTargets.Property)]
-public sealed class ObservablePropertyAttribute : Attribute
-{
-    public ObservablePropertyAttribute([CallerMemberName] string propertyName = null)
-    {
-    }
-}
+//[AttributeUsage(AttributeTargets.Property)]
+//public sealed class ObservablePropertyAttribute : Attribute
+//{
+//    public ObservablePropertyAttribute([CallerMemberName] string? propertyName = null)
+//    {
+//    }
+//}

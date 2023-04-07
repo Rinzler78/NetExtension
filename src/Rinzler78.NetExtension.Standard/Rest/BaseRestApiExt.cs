@@ -4,7 +4,7 @@ namespace Rinzler78.NetExtension.Rest;
 
 public static class BaseRestApiExt
 {
-    public static string CreateUrlPath(this string baseUrl, object[] args, string[] argsNames)
+    public static string CreateUrlPath(this string baseUrl, object[]? args, string[] argsNames)
     {
         if (args is not null && argsNames is not null && args.Length == argsNames.Length)
         {

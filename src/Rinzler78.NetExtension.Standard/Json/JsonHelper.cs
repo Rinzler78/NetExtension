@@ -12,20 +12,11 @@ public static class JsonHelper
 
     public static string SerializeObject(this object obj, Formatting formatting, JsonSerializerSettings settings) => JsonConvert.SerializeObject(obj, formatting, settings);
 
-    public static object DeSerializeObject(this string str)
-    {
-        return JsonConvert.DeserializeObject(str);
-    }
+    public static object? DeSerializeObject(this string str) => JsonConvert.DeserializeObject(str);
 
-    public static ObjectType DeSerializeObject<ObjectType>(this string str)
-    {
-        return JsonConvert.DeserializeObject<ObjectType>(str);
-    }
+    public static ObjectType? DeSerializeObject<ObjectType>(this string str) => JsonConvert.DeserializeObject<ObjectType>(str);
 
-    public static ObjectType DeSerializeObject<ObjectType>(this string str, JsonSerializerSettings settings)
-    {
-        return JsonConvert.DeserializeObject<ObjectType>(str, settings);
-    }
+    public static ObjectType? DeSerializeObject<ObjectType>(this string str, JsonSerializerSettings settings) => JsonConvert.DeserializeObject<ObjectType>(str, settings);
 
     public static string SerializeObjectWithoutQuote(this object value)
     {
@@ -41,7 +32,7 @@ public static class JsonHelper
         }
     }
 
-    public static object DeSerializeObjectFromFile(this string filePath)
+    public static object? DeSerializeObjectFromFile(this string filePath)
     {
         if (File.Exists(filePath))
         {
@@ -55,7 +46,7 @@ public static class JsonHelper
         return null;
     }
 
-    public static ObjectType DeSerializeObjectFromFile<ObjectType>(this string filePath)
+    public static ObjectType? DeSerializeObjectFromFile<ObjectType>(this string filePath)
     {
         if (File.Exists(filePath))
         {
@@ -69,7 +60,7 @@ public static class JsonHelper
         return default;
     }
 
-    public static ObjectType DeSerializeObjectFromFile<ObjectType>(this string filePath, JsonSerializerSettings settings)
+    public static ObjectType? DeSerializeObjectFromFile<ObjectType>(this string filePath, JsonSerializerSettings settings)
     {
         if (File.Exists(filePath))
         {

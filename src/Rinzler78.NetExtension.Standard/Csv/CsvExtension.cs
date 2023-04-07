@@ -11,12 +11,12 @@ namespace Rinzler78.NetExtension.Csv;
 
 public static class CsvExtension
 {
-    public static Task<IEnumerable<ReturnType>> LoadCsvAsync<ReturnType>(this string fileName, char separator = ';')
+    public static Task<IEnumerable<ReturnType>?> LoadCsvAsync<ReturnType>(this string fileName, char separator = ';')
     {
         return Task.Run(() => fileName.LoadCsv<ReturnType>(separator));
     }
 
-    public static IEnumerable<ReturnType> LoadCsv<ReturnType>(this string fileName, char separator = ';',
+    public static IEnumerable<ReturnType>? LoadCsv<ReturnType>(this string fileName, char separator = ';',
         bool hasHeaderRecord = false)
     {
         try

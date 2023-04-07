@@ -5,7 +5,7 @@ namespace Rinzler78.NetExtension.Array;
 
 public static class ArrayExtension
 {
-    public static unsafe byte[] GetBytes(this ulong[] array)
+    public static unsafe byte[]? GetBytes(this ulong[] array)
     {
         if (array?.Length > 0)
         {
@@ -28,7 +28,7 @@ public static class ArrayExtension
         return null;
     }
 
-    public static unsafe byte[] GetBytes(this uint[] array)
+    public static unsafe byte[]? GetBytes(this uint[] array)
     {
         if (array?.Length > 0)
         {

@@ -15,7 +15,7 @@ public static class PerformanceHelper
         duration = Stopwatch.GetElapsedTime(startTime);
     }
 
-    public static void MeasureDuration(this Action action, Action<TimeSpan> durationAction = null)
+    public static void MeasureDuration(this Action action, Action<TimeSpan>? durationAction = null)
     {
         action.MeasureDuration(out var duration);
 
@@ -34,7 +34,7 @@ public static class PerformanceHelper
     }
 
     public static ReturnType MeasureDuration<ReturnType>(this Func<ReturnType> func,
-        Action<TimeSpan, ReturnType> durationAction = null)
+        Action<TimeSpan, ReturnType>? durationAction = null)
     {
         var result = func.MeasureDuration(out var duration);
 
@@ -56,7 +56,7 @@ public static class PerformanceHelper
     }
 
     public static ReturnType MeasureDuration<InType, ReturnType>(this Func<InType, ReturnType> func, InType input,
-        Action<TimeSpan, ReturnType> durationAction = null)
+        Action<TimeSpan, ReturnType>? durationAction = null)
     {
         var startTime = Stopwatch.GetTimestamp();
 
@@ -68,13 +68,13 @@ public static class PerformanceHelper
     }
 
     public static async Task<ReturnType> MeasureDurationAsync<ReturnType>(this Func<ReturnType> func,
-        Action<TimeSpan, ReturnType> durationAction = null)
+        Action<TimeSpan, ReturnType>? durationAction = null)
     {
         return await Task.Run(() => MeasureDuration(func, durationAction)).ConfigureAwait(false);
     }
 
     public static async Task<ReturnType> MeasureDurationAsync<InType, ReturnType>(this Func<InType, ReturnType> func,
-        InType input, Action<TimeSpan, ReturnType> durationAction = null)
+        InType input, Action<TimeSpan, ReturnType>? durationAction = null)
     {
         return await Task.Run(() => MeasureDuration(func, input, durationAction)).ConfigureAwait(false);
     }

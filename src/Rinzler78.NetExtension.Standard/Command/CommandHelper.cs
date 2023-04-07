@@ -4,7 +4,7 @@ namespace Rinzler78.NetExtension.Command;
 
 public static class CommandHelper
 {
-    public static bool TryExecute(this ICommand command, object caller = null)
+    public static bool TryExecute(this ICommand command, object? caller = null)
     {
         if (command?.CanExecute(caller) ?? false)
         {

@@ -12,7 +12,7 @@ public static class NetworkHelper
         return new Ping().Send(hostName);
     }
 
-    public static IPAddress Resolve(this string host)
+    public static IPAddress? Resolve(this string host)
     {
         if (host?.Length > 0)
             return Dns.GetHostAddresses(host)[0];
@@ -23,7 +23,7 @@ public static class NetworkHelper
     public static bool IsPortOpened(this string host, uint portNumber)
     {
         if (host?.Length > 0 && portNumber < ushort.MaxValue)
-            return host.Resolve().IsPortOpened(portNumber);
+            return host.Resolve()?.IsPortOpened(portNumber) ?? false;
 
         return false;
     }
@@ -54,7 +54,7 @@ public static class NetworkHelper
                 socket.Close();
                 throw new ApplicationException("Failed to connect server.");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }

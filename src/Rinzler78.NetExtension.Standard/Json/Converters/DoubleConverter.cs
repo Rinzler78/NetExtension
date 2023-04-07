@@ -12,7 +12,7 @@ public sealed class DoubleConverter : JsonConverter
         return t == typeof(double) || t == typeof(double?);
     }
 
-    public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+    public override object? ReadJson(JsonReader reader, Type t, object? existingValue, JsonSerializer serializer)
     {
         if (reader.TokenType == JsonToken.Null) return null;
         var value = serializer.Deserialize<string>(reader);
@@ -26,7 +26,7 @@ public sealed class DoubleConverter : JsonConverter
         throw new Exception($"Cannot unmarshal type double : Path : {reader.Path}, Value : {reader.Value}");
     }
 
-    public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, object? untypedValue, JsonSerializer serializer)
     {
         if (untypedValue is null)
         {

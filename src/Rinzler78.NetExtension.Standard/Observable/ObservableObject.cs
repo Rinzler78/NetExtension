@@ -48,10 +48,10 @@ public abstract class ObservableObject : IObservableObject, IDisposable
     [JsonIgnore]
     public virtual string NickName { get; }
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
-    protected bool SetProperty<T>(ref T target, T source, Action<(T OldValue, T NewValue)> propertyChanged = null,
-        Func<(T OldValue, T NewValue), bool> checkValidity = null, [CallerMemberName] string propertyName = null)
+    protected bool SetProperty<T>(ref T target, T source, Action<(T OldValue, T NewValue)>? propertyChanged = null,
+        Func<(T OldValue, T NewValue), bool>? checkValidity = null, [CallerMemberName] string? propertyName = null)
     {
         lock (Dependencies)
         {
@@ -80,8 +80,8 @@ public abstract class ObservableObject : IObservableObject, IDisposable
         }
     }
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null, object oldValue = null,
-        object newValue = null)
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null, object? oldValue = null,
+        object? newValue = null)
     {
         if (PropertyChanged is not null)
         {
@@ -102,18 +102,18 @@ public abstract class ObservableObject : IObservableObject, IDisposable
         }
     }
 
-    private void DependenciesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    private void DependenciesCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         if (e.NewItems is not null)
         {
-            foreach (var item in e.NewItems)
-                (item as IObservableObject).PropertyChanged += OnDependenciesPropertyChanged;
+            foreach (var item in e.NewItems.Cast<IObservableObject>())
+                item.PropertyChanged += OnDependenciesPropertyChanged;
         }
 
         if (e.OldItems is not null)
         {
-            foreach (var item in e.OldItems)
-                (item as IObservableObject).PropertyChanged -= OnDependenciesPropertyChanged;
+            foreach (var item in e.OldItems.Cast<IObservableObject>())
+                item.PropertyChanged -= OnDependenciesPropertyChanged;
         }
     }
 
@@ -124,7 +124,7 @@ public abstract class ObservableObject : IObservableObject, IDisposable
 
     protected void AttachDependencies(params IObservableObject[] observableObject)
     {
-        lock (this)
+        lock (Locker)
         {
             var toAttach = observableObject.Where(arg => !Dependencies.Contains(arg));
 
@@ -138,11 +138,13 @@ public abstract class ObservableObject : IObservableObject, IDisposable
         }
     }
 
+    private readonly object Locker = new();
+
     protected void DetachDependencies(params IObservableObject[] observableObject)
     {
-        lock (this)
+        lock (Locker)
         {
-            var toAttach = observableObject?.Where(arg => Dependencies.Contains(arg)) ?? Dependencies;
+            var toAttach = observableObject?.Where(Dependencies.Contains) ?? Dependencies;
 
             foreach (var dep in toAttach)
             {
@@ -154,7 +156,7 @@ public abstract class ObservableObject : IObservableObject, IDisposable
         }
     }
 
-    protected virtual void OnDependenciesPropertyChanged(object sender, PropertyChangedEventArgs e)
+    protected virtual void OnDependenciesPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
     }
 }

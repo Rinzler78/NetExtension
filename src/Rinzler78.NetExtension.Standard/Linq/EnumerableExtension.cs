@@ -6,7 +6,7 @@ namespace Rinzler78.NetExtension.Linq;
 
 public static class EnumerableExtension
 {
-    public static TSource TryAggregate<TSource>(this IEnumerable<TSource> source, Func<TSource, TSource, TSource> func)
+    public static TSource? TryAggregate<TSource>(this IEnumerable<TSource> source, Func<TSource, TSource, TSource> func)
     {
         try
         {
