@@ -16,7 +16,6 @@ public abstract class UpdatableProperty : ObservableObject
 
     protected UpdatableProperty()
     {
-
     }
 
     public object? Property

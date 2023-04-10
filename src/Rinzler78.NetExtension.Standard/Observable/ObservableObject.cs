@@ -124,7 +124,7 @@ public abstract class ObservableObject : IObservableObject, IDisposable
 
     protected void AttachDependencies(params IObservableObject[] observableObject)
     {
-        lock (Locker)
+        lock (_locker)
         {
             var toAttach = observableObject.Where(arg => !Dependencies.Contains(arg));
 
@@ -138,11 +138,11 @@ public abstract class ObservableObject : IObservableObject, IDisposable
         }
     }
 
-    private readonly object Locker = new();
+    private readonly object _locker = new();
 
     protected void DetachDependencies(params IObservableObject[] observableObject)
     {
-        lock (Locker)
+        lock (_locker)
         {
             var toAttach = observableObject?.Where(Dependencies.Contains) ?? Dependencies;
 

@@ -1,23 +1,32 @@
-﻿using Newtonsoft.Json;
 using System;
+using System.Linq;
+using Newtonsoft.Json;
 
 namespace Rinzler78.NetExtension.Json.Converters;
 
-public sealed class DecimalConverter : JsonConverter
+public sealed class ULongArrayConverter : JsonConverter
 {
-    public static readonly DecimalConverter Singleton = new();
+    public static readonly ULongArrayConverter Singleton = new();
 
     public override bool CanConvert(Type t)
     {
-        return t == typeof(decimal) || t == typeof(decimal?);
+        return t == typeof(ulong[]);
     }
 
     public override object? ReadJson(JsonReader reader, Type t, object? existingValue, JsonSerializer serializer)
     {
         if (reader.TokenType == JsonToken.Null) return null;
-        var value = serializer.Deserialize<string>(reader);
-        if (decimal.TryParse(value, out decimal l)) return l;
-        throw new Exception("Cannot unmarshal type decimal");
+        var value = serializer.Deserialize<string[]>(reader);
+
+        try
+        {
+            return value.Select(ulong.Parse).ToArray();
+        }
+        finally
+        {
+        }
+
+        throw new Exception("Cannot unmarshal type ulong[]");
     }
 
     public override void WriteJson(JsonWriter writer, object? untypedValue, JsonSerializer serializer)
@@ -28,7 +37,7 @@ public sealed class DecimalConverter : JsonConverter
             return;
         }
 
-        var value = (decimal)untypedValue;
+        var value = (ulong[])untypedValue;
         serializer.Serialize(writer, value.ToString());
     }
 }

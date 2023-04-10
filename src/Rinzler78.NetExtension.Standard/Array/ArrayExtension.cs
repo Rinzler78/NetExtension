@@ -5,50 +5,40 @@ namespace Rinzler78.NetExtension.Array;
 
 public static class ArrayExtension
 {
-    public static unsafe byte[]? GetBytes(this ulong[] array)
+    public static unsafe byte[] GetBytes(this ulong[] array)
     {
-        if (array?.Length > 0)
+        var bytesArray = new byte[array.Length * sizeof(ulong)];
+
+        fixed (ulong* pArray = array)
         {
-            var bytesArray = new byte[array.Length * sizeof(ulong)];
+            var pArrayAsBytes = (byte*)pArray;
 
-            fixed (ulong* pArray = array)
+            fixed (byte* pBytesArray = bytesArray)
             {
-                var pArrayAsBytes = (byte*)pArray;
-
-                fixed (byte* pBytesArray = bytesArray)
-                {
-                    for (var i = 0; i < bytesArray.Length; ++i)
-                        pBytesArray[i] = pArrayAsBytes[i];
-                }
+                for (var i = 0; i < bytesArray.Length; ++i)
+                    pBytesArray[i] = pArrayAsBytes[i];
             }
-
-            return bytesArray;
         }
 
-        return null;
+        return bytesArray;
     }
 
-    public static unsafe byte[]? GetBytes(this uint[] array)
+    public static unsafe byte[] GetBytes(this uint[] array)
     {
-        if (array?.Length > 0)
+        var bytesArray = new byte[array.Length * sizeof(uint)];
+
+        fixed (uint* pArray = array)
         {
-            var bytesArray = new byte[array.Length * sizeof(uint)];
+            var pArrayAsBytes = (byte*)pArray;
 
-            fixed (uint* pArray = array)
+            fixed (byte* pBytesArray = bytesArray)
             {
-                var pArrayAsBytes = (byte*)pArray;
-
-                fixed (byte* pBytesArray = bytesArray)
-                {
-                    for (var i = 0; i < bytesArray.Length; ++i)
-                        pBytesArray[i] = pArrayAsBytes[i];
-                }
+                for (var i = 0; i < bytesArray.Length; ++i)
+                    pBytesArray[i] = pArrayAsBytes[i];
             }
-
-            return bytesArray;
         }
 
-        return null;
+        return bytesArray;
     }
 
     public static byte[] GetBytes(this string[] strings)
