@@ -1,28 +1,18 @@
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Rinzler78.NetExtension.Rest;
 
 public static class BaseRestApiExt
 {
-    public static string CreateUrlPath(this string baseUrl, object[]? args, string[] argsNames)
+    public static string CreateUrlPath(this string baseUrl, IReadOnlyDictionary<string, object?>? args = null)
     {
-        if (args is not null && argsNames is not null && args.Length == argsNames.Length)
+        if (args?.Count > 0)
         {
-            if (args.Any(o => o is not null))
-            {
-                baseUrl += "?";
+            var argsString = string.Join("&", args.Where(a => a.Value is not null).Select(a => $"{a.Key}={a.Value}"));
 
-                for (var i = 0; i < args.Length; ++i)
-                {
-                    var value = args[i];
-                    var name = argsNames[i];
-
-                    baseUrl += $"{name}={value}";
-
-                    if (i + 1 < args.Length)
-                        baseUrl += "&";
-                }
-            }
+            if (argsString.Length > 0)
+                baseUrl += argsString;
         }
 
         return baseUrl;
