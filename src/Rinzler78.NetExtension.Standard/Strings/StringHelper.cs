@@ -181,11 +181,11 @@ public static class StringHelper
         }
     }
 
-    //public static async Task<ReturnType> HttpGetAsync<ImplementationType, ReturnType>(this string url, JsonSerializerSettings? settings = null)
-    //    where ImplementationType : ReturnType
-    //{
-    //    return await url.HttpGetAsync<ImplementationType>(settings).ConfigureAwait(false);
-    //}
+    public static async Task<ReturnType> HttpGetAsync<ImplementationType, ReturnType>(this string url, JsonSerializerSettings? settings = null)
+        where ImplementationType : ReturnType
+    {
+        return await url.HttpGetAsync<ImplementationType>(settings).ConfigureAwait(false);
+    }
 
     public static Task<string> HttpPostString<RequestType>(this string url, RequestType? obj)
     {
