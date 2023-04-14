@@ -6,9 +6,9 @@ namespace Rinzler78.NetExtension.Tasks;
 
 public sealed class ReusableTask
 {
-    private CancellationTokenSource _cancellationTokenSource;
+    private CancellationTokenSource _cancellationTokenSource = new(0);
 
-    private Task _invokeTask;
+    private Task _invokeTask = Task.CompletedTask;
 
     public ReusableTask(Action action)
     {
@@ -19,27 +19,25 @@ public sealed class ReusableTask
 
     public Task Invoke()
     {
-        lock (this)
+        lock (_invokeTask)
         {
-            if (_invokeTask?.IsCompleted ?? true)
-                _invokeTask = Task.Run(() => Action(), _cancellationTokenSource.Token);
+            if (!_invokeTask.IsCompleted) 
+                return _invokeTask;
+            
+            _cancellationTokenSource = new CancellationTokenSource();
+            _invokeTask = Task.Run(() => Action(), _cancellationTokenSource.Token);
+
             return _invokeTask;
         }
     }
 
     public bool Cancel()
     {
-        lock (this)
+        lock (_cancellationTokenSource)
         {
-            if (_cancellationTokenSource is not null)
-            {
-                _cancellationTokenSource.Cancel();
-                _cancellationTokenSource = null;
+            _cancellationTokenSource.Cancel();
 
-                return true;
-            }
-
-            return false;
+            return true;
         }
     }
 

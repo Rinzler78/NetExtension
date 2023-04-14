@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Globalization;
 
 namespace Rinzler78.NetExtension.Json.Converters;
 
@@ -16,7 +17,7 @@ public sealed class DecimalConverter : JsonConverter
     {
         if (reader.TokenType == JsonToken.Null) return null;
         var value = serializer.Deserialize<string>(reader);
-        if (decimal.TryParse(value, out decimal l)) return l;
+        if (decimal.TryParse(value, CultureInfo.InvariantCulture, out decimal l)) return l;
         throw new Exception("Cannot unmarshal type decimal");
     }
 
@@ -29,6 +30,6 @@ public sealed class DecimalConverter : JsonConverter
         }
 
         var value = (decimal)untypedValue;
-        serializer.Serialize(writer, value.ToString());
+        serializer.Serialize(writer, value.ToString(CultureInfo.InvariantCulture));
     }
 }

@@ -8,11 +8,11 @@ public abstract class UpdatableProperty : ObservableObject
 {
     private readonly object _locker = new object();
 
-    private Task<object?>? _getTask;
+    private Task<object?> _getTask = Task.FromResult<object?>(null);
 
     private object? _property;
 
-    private Task? _updateTask;
+    private Task _updateTask = Task.CompletedTask;
 
     protected UpdatableProperty()
     {
@@ -28,7 +28,7 @@ public abstract class UpdatableProperty : ObservableObject
     {
         lock (_locker)
         {
-            if (_getTask?.IsCompleted ?? true)
+            if (_getTask.IsCompleted)
             {
                 _getTask = Task.Run(async () =>
                 {
@@ -47,7 +47,7 @@ public abstract class UpdatableProperty : ObservableObject
     {
         lock (_locker)
         {
-            if (_updateTask?.IsCompleted ?? true) _updateTask = InnerUpdate();
+            if (_updateTask.IsCompleted) _updateTask = InnerUpdate();
             return _updateTask;
         }
     }
@@ -59,19 +59,19 @@ public sealed class UpdatableProperty<PropertyType> : UpdatableProperty
 {
     public UpdatableProperty(Func<Task<PropertyType>> updatableFunction)
     {
-        UpdatableFunction = updatableFunction;
+        UpdatableFunction = updatableFunction ?? throw new ArgumentNullException(nameof(updatableFunction), $"{nameof(updatableFunction)} must be set");
     }
 
-    public new PropertyType Property => (PropertyType)base.Property;
+    public new PropertyType? Property => (PropertyType?)base.Property;
     private Func<Task<PropertyType>> UpdatableFunction { get; }
 
-    public new async Task<PropertyType> Get(bool force = false)
+    public new async Task<PropertyType?> Get(bool force = false)
     {
-        return (PropertyType)await base.Get(force).ConfigureAwait(false);
+        return (PropertyType?)await base.Get(force).ConfigureAwait(false);
     }
 
     protected override async Task InnerUpdate()
     {
-        base.Property = await (UpdatableFunction?.Invoke()).ConfigureAwait(false);
+        base.Property = await UpdatableFunction.Invoke().ConfigureAwait(false);
     }
 }

@@ -11,8 +11,8 @@ public sealed class CollectionInterfaceConverterFactory<CollectionElement> : Jso
 
     public override bool CanConvert(Type typeToConvert)
     {
-        if (typeToConvert.Equals(typeof(ICollection<>).MakeGenericType(_collectionElementType))
-            && typeToConvert.GenericTypeArguments[0].Equals(_collectionElementType))
+        if (typeToConvert == typeof(ICollection<>).MakeGenericType(_collectionElementType)
+            && typeToConvert.GenericTypeArguments[0] == _collectionElementType)
         {
             return true;
         }
@@ -20,9 +20,8 @@ public sealed class CollectionInterfaceConverterFactory<CollectionElement> : Jso
         return false;
     }
 
-    public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
+    public override JsonConverter? CreateConverter(Type typeToConvert, JsonSerializerOptions options)
     {
-        return (JsonConverter)Activator.CreateInstance(
-            typeof(CollectionConverter<>).MakeGenericType(_collectionElementType));
+        return (JsonConverter?)Activator.CreateInstance(typeof(CollectionConverter<>).MakeGenericType(_collectionElementType));
     }
 }

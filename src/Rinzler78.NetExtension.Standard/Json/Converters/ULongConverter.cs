@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Globalization;
 
 namespace Rinzler78.NetExtension.Json.Converters;
 
@@ -16,7 +17,7 @@ public sealed class ULongConverter : JsonConverter
     {
         if (reader.TokenType == JsonToken.Null) return null;
         var value = serializer.Deserialize<string>(reader);
-        if (ulong.TryParse(value, out ulong l)) return l;
+        if (ulong.TryParse(value, CultureInfo.InvariantCulture, out ulong l)) return l;
         throw new Exception("Cannot unmarshal type double");
     }
 
@@ -29,6 +30,6 @@ public sealed class ULongConverter : JsonConverter
         }
 
         var value = (ulong)untypedValue;
-        serializer.Serialize(writer, value.ToString());
+        serializer.Serialize(writer, value.ToString(CultureInfo.InvariantCulture));
     }
 }

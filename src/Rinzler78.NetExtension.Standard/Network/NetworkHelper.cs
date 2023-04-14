@@ -52,7 +52,8 @@ public static class NetworkHelper
                 }
 
                 socket.Close();
-                throw new ApplicationException("Failed to connect server.");
+
+                throw new SocketException();
             }
             catch (Exception)
             {

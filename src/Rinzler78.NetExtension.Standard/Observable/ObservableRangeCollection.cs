@@ -17,7 +17,7 @@ public sealed class ObservableRangeCollection<T> : ObservableCollection<T>
     {
     }
 
-    public void AddRange(IEnumerable<T> collection,
+    public void AddRange(IEnumerable<T>? collection,
         NotifyCollectionChangedAction notificationMode = NotifyCollectionChangedAction.Add)
     {
         if (notificationMode != NotifyCollectionChangedAction.Add &&
@@ -33,7 +33,7 @@ public sealed class ObservableRangeCollection<T> : ObservableCollection<T>
 
         var startIndex = Count;
 
-        var itemsAdded = AddArrangeCore(collection);
+        var itemsAdded = AddRangeCore(collection);
 
         if (!itemsAdded)
             return;
@@ -107,7 +107,7 @@ public sealed class ObservableRangeCollection<T> : ObservableCollection<T>
         ReplaceRange(new[] { item });
     }
 
-    public void ReplaceRange(IEnumerable<T> collection)
+    public void ReplaceRange(IEnumerable<T>? collection)
     {
         if (collection is null)
             throw new ArgumentNullException(nameof(collection));
@@ -118,7 +118,7 @@ public sealed class ObservableRangeCollection<T> : ObservableCollection<T>
 
         Items.Clear();
 
-        AddArrangeCore(collection);
+        AddRangeCore(collection);
 
         var currentlyEmpty = Items.Count == 0;
 
@@ -128,14 +128,15 @@ public sealed class ObservableRangeCollection<T> : ObservableCollection<T>
         RaiseChangeNotificationEvents(NotifyCollectionChangedAction.Reset);
     }
 
-    private bool AddArrangeCore(IEnumerable<T> collection)
+    private bool AddRangeCore(IEnumerable<T>? collection)
     {
         var itemAdded = false;
-        foreach (var item in collection)
-        {
-            Items.Add(item);
-            itemAdded = true;
-        }
+        if (collection != null)
+            foreach (var item in collection)
+            {
+                Items.Add(item);
+                itemAdded = true;
+            }
 
         return itemAdded;
     }

@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Rinzler78.NetExtension.Json.Converters;
 
+[SuppressMessage("Usage", "MA0011:IFormatProvider is missing")]
 public sealed class DoubleConverter : JsonConverter
 {
     public static readonly DoubleConverter Singleton = new();
@@ -17,11 +19,14 @@ public sealed class DoubleConverter : JsonConverter
         if (reader.TokenType == JsonToken.Null) return null;
         var value = serializer.Deserialize<string>(reader);
 
-        if (double.TryParse(value, out double l))
-            return l;
+        if (value is not null)
+        {
+            if (double.TryParse(value, out double l))
+                return l;
 
-        if (double.TryParse(value.Replace('.', ','), out l))
-            return l;
+            if (double.TryParse(value.Replace('.', ','), out l))
+                return l;
+        }
 
         throw new Exception($"Cannot unmarshal type double : Path : {reader.Path}, Value : {reader.Value}");
     }

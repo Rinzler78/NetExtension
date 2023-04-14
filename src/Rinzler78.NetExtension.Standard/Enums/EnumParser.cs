@@ -1,14 +1,14 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 
 namespace Rinzler78.NetExtension.Enums;
 
-public static class EnumParser<Enumtype>
-    where Enumtype : Enum
+public sealed class EnumParser<Enumtype> where Enumtype : Enum
 {
-    public static readonly ReadOnlyDictionary<string, Enumtype> EnumValuesDictionary = new(Enum
+    public readonly ReadOnlyDictionary<string, Enumtype> EnumValuesDictionary = new(Enum
         .GetValues(typeof(Enumtype))
         .Cast<Enumtype>()
         .AsParallel()
@@ -16,10 +16,10 @@ public static class EnumParser<Enumtype>
         {
             var lst = new List<(string, Enumtype)>
             {
-                (((int)(object)v).ToString(), v)
+                (((int)(object)v).ToString(CultureInfo.InvariantCulture), v)
             };
 
-            var vAsString = v.ToString().ToLower();
+            var vAsString = v.ToString().ToLower(CultureInfo.InvariantCulture);
 
             lst.Add((vAsString, v));
 
@@ -32,7 +32,7 @@ public static class EnumParser<Enumtype>
         })
         .ToDictionary(i => i.Item1, i => i.Item2, StringComparer.OrdinalIgnoreCase));
 
-    public static Enumtype? Parse(string str)
+    public Enumtype? Parse(string str)
     {
         try
         {

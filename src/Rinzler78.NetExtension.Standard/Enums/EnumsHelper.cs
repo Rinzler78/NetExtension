@@ -11,7 +11,8 @@ public static class EnumsHelper
         try
         {
             var fromEnumString = obj.ToString();
-            return fromEnumString.Convert<ToEnumType>();
+            if (fromEnumString != null)
+                return fromEnumString.Convert<ToEnumType>();
         }
         catch (Exception)
         {
@@ -35,9 +36,9 @@ public static class EnumsHelper
         return default;
     }
 
-    public static Enumtype Parse<Enumtype>(this string str)
-        where Enumtype : Enum
+    public static EnumType? Parse<EnumType>(this string str)
+        where EnumType : Enum
     {
-        return EnumParser<Enumtype>.Parse(str);
+        return GlobalEnumParser.Parse<EnumType>(str);
     }
 }

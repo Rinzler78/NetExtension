@@ -7,7 +7,7 @@ namespace Rinzler78.NetExtension.Json.Converters;
 public sealed class InterfaceConverter<Implementation, Interface> : JsonConverter<Interface>
     where Implementation : class, Interface
 {
-    public override Interface Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override Interface? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions? options)
     {
         return JsonSerializer.Deserialize<Implementation>(ref reader, options);
     }

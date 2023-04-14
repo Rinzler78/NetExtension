@@ -8,8 +8,9 @@ namespace Rinzler78.NetExtension.Objects;
 
 public static class ObjectExtension
 {
-    public delegate void OnCopyToFailedForPropertyDelegate((PropertyInfo propertyInfo, object obj) source,
-        (PropertyInfo propertyInfo, object obj) target);
+    public delegate void OnCopyToFailedForPropertyDelegate(
+        (PropertyInfo propertyInfo, object? obj) source,
+        (PropertyInfo propertyInfo, object? obj) target);
 
     public static IEnumerable<PropertyInfo> GetPublicProperties(this Type type)
     {
@@ -30,8 +31,7 @@ public static class ObjectExtension
         return dest;
     }
 
-    public static void CopyTo<Tu>(this object source, Tu target,
-        OnCopyToFailedForPropertyDelegate? onCopyToFailedForProperty = null)
+    public static void CopyTo<Tu>(this object source, Tu? target, OnCopyToFailedForPropertyDelegate? onCopyToFailedForProperty = null)
     {
         var sourceProperties = source.GetType().GetPublicProperties().Where(x => x.CanRead).ToList();
         var targetProperties = typeof(Tu).GetPublicProperties()
@@ -53,8 +53,9 @@ public static class ObjectExtension
                     }
                     catch (Exception)
                     {
-                        onCopyToFailedForProperty?.Invoke(new ValueTuple<PropertyInfo, object>(sourceProperty, source),
-                            new ValueTuple<PropertyInfo, object>(targetPropertyInfo, target));
+                        onCopyToFailedForProperty?.Invoke(
+                            new ValueTuple<PropertyInfo, object?>(sourceProperty, source),
+                            new ValueTuple<PropertyInfo, object?>(targetPropertyInfo, target));
                     }
                 }
             }
@@ -69,10 +70,10 @@ public static class ObjectExtension
             var ignoreList = new List<string>(ignore);
             var unequalProperties =
                 from pi in type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                where !ignoreList.Contains(pi.Name, StringComparer.Ordinal) && pi.GetUnderlyingType().IsSimpleType() &&
+                where !ignoreList.Contains(pi.Name, StringComparer.Ordinal) && (pi.GetUnderlyingType()?.IsSimpleType() ?? false) &&
                       pi.GetIndexParameters().Length == 0
-                let selfValue = type.GetProperty(pi.Name).GetValue(self, null)
-                let toValue = type.GetProperty(pi.Name).GetValue(to, null)
+                let selfValue = type.GetProperty(pi.Name)?.GetValue(self, null)
+                let toValue = type.GetProperty(pi.Name)?.GetValue(to, null)
                 where selfValue != toValue && (selfValue?.Equals(toValue) != true)
                 select selfValue;
             return !unequalProperties.Any();
@@ -81,8 +82,8 @@ public static class ObjectExtension
         return self == to;
     }
 
-    public static ReturnType GetPropertyValue<ReturnType>(this object src, string propName)
+    public static ReturnType? GetPropertyValue<ReturnType>(this object src, string propName)
     {
-        return (ReturnType)src.GetType().GetProperty(propName).GetValue(src, null);
+        return (ReturnType?)src.GetType().GetProperty(propName)?.GetValue(src, null);
     }
 }

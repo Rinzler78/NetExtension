@@ -117,10 +117,10 @@ public abstract class ObservableObject : IObservableObject, IDisposable
         }
     }
 
-    ~ObservableObject()
-    {
-        Dispose(false);
-    }
+    //~ObservableObject()
+    //{
+    //    Dispose(false);
+    //}
 
     protected void AttachDependencies(params IObservableObject[] observableObject)
     {

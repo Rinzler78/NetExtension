@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Globalization;
 using System.Numerics;
 
 namespace Rinzler78.NetExtension.Json.Converters;
@@ -17,7 +18,7 @@ public sealed class BigIntegerConverter : JsonConverter
     {
         if (reader.TokenType == JsonToken.Null) return null;
         var value = serializer.Deserialize<string>(reader);
-        if (BigInteger.TryParse(value, out BigInteger l)) return l;
+        if (BigInteger.TryParse(value, CultureInfo.InvariantCulture, out BigInteger l)) return l;
         throw new Exception("Cannot unmarshal type double");
     }
 
@@ -30,6 +31,6 @@ public sealed class BigIntegerConverter : JsonConverter
         }
 
         var value = (BigInteger)untypedValue;
-        serializer.Serialize(writer, value.ToString());
+        serializer.Serialize(writer, value.ToString(CultureInfo.InvariantCulture));
     }
 }

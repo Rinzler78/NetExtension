@@ -16,10 +16,10 @@ public sealed class InterfaceConverterFactory<Interface, Implementation> : JsonC
         return typeToConvert == _interfaceType;
     }
 
-    public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
+    public override JsonConverter? CreateConverter(Type typeToConvert, JsonSerializerOptions options)
     {
         var converterType = typeof(InterfaceConverter<,>).MakeGenericType(_implementationType, _interfaceType);
 
-        return (JsonConverter)Activator.CreateInstance(converterType);
+        return (JsonConverter?)Activator.CreateInstance(converterType);
     }
 }

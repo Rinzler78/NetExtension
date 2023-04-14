@@ -65,6 +65,7 @@ public static class ArrayExtension
         return result;
     }
 
+/*
     public static int ComputeHashCode<ArrayType>(this ArrayType[] array)
     {
         var hash = 0;
@@ -72,4 +73,5 @@ public static class ArrayExtension
             hash ^= array[i].GetHashCode();
         return hash;
     }
+*/
 }

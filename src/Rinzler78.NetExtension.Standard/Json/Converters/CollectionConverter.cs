@@ -8,8 +8,8 @@ namespace Rinzler78.NetExtension.Json.Converters;
 
 public sealed class CollectionConverter<CollectionElement> : JsonConverter<ICollection<CollectionElement>>
 {
-    public override ICollection<CollectionElement> Read(ref Utf8JsonReader reader, Type typeToConvert,
-        JsonSerializerOptions options)
+    public override ICollection<CollectionElement>? Read(ref Utf8JsonReader reader, Type typeToConvert,
+        JsonSerializerOptions? options)
     {
         return JsonSerializer.Deserialize<Collection<CollectionElement>>(ref reader, options);
     }

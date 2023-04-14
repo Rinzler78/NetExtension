@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -105,45 +106,36 @@ public static class StringHelper
 
     public static string BeginByLowerCase(this string str)
     {
-        if (str?.Length > 0)
-            return $"{char.ToLower(str[0])}{(str.Length > 1 ? str.Substring(1) : "")}";
-
-        return null;
+        return $"{char.ToLower(str[0], CultureInfo.InvariantCulture)}{(str.Length > 1 ? str.Substring(1) : "")}";
     }
 
     public static string BeginByUpperCase(this string str)
     {
-        if (str?.Length > 0)
-            return $"{char.ToUpper(str[0])}{(str.Length > 1 ? str.Substring(1) : "")}";
-
-        return null;
+        return $"{char.ToUpper(str[0], CultureInfo.InvariantCulture)}{(str.Length > 1 ? str.Substring(1) : "")}";
     }
 
     public static string ToStartByUpperCase(this string str)
     {
-        return str.ToLower().BeginByUpperCase();
+        return str.ToLower(CultureInfo.InvariantCulture).BeginByUpperCase();
     }
 
     public static string ToPascalCase(this string str)
     {
-        var sample = string.Join("",
-            str?.Select(c => char.IsLetterOrDigit(c) ? c.ToString().ToLower() : "_").ToArray());
+        var sample = string.Join("", str.Select(c => char.IsLetterOrDigit(c) ? c.ToString().ToLower(CultureInfo.InvariantCulture) : "_").ToArray());
 
-        return string.Join("", sample?
+        return string.Join("", sample
             .Split(new[] { '_' }, StringSplitOptions.RemoveEmptyEntries)
-            .Select(s => $"{s.Substring(0, 1).ToUpper()}{s.Substring(1)}"));
+            .Select(s => $"{s.Substring(0, 1).ToUpper(CultureInfo.InvariantCulture)}{s.Substring(1)}"));
     }
 
-    public static IEnumerable<string> MakeAllCombinatiions(this IEnumerable<string> allStrings)
+    public static IEnumerable<string> MakeAllCombinations(this IEnumerable<string> allStrings)
     {
         var list = new List<string>();
 
-        if ((allStrings?.Count() ?? 0) > 0)
-        {
-            foreach (var leftStr in allStrings)
-                foreach (var rightStr in allStrings)
-                    list.Add($"{leftStr}{rightStr}");
-        }
+        var rightStrs = allStrings as string[] ?? allStrings.ToArray();
+        foreach (var leftStr in rightStrs)
+            foreach (var rightStr in rightStrs)
+                list.Add($"{leftStr}{rightStr}");
 
         return list;
     }
@@ -155,7 +147,7 @@ public static class StringHelper
 
     public static string Join(this string[] strs, char separator)
     {
-        return strs?.Length > 0 ? string.Join(separator, strs) : null;
+        return string.Join(separator, strs);
     }
 
     public static Task<Stream> HttpGetStreamAsync(this string url)
@@ -177,55 +169,25 @@ public static class StringHelper
         return contentString;
     }
 
-    public static async Task<object> HttpGetAsync(this string url)
+    public static async Task<ReturnType> HttpGetAsync<ReturnType>(this string url, JsonSerializerSettings? settings = null)
     {
-        await using (var s = await url.HttpGetStreamAsync().ConfigureAwait(false))
-        using (var sr = new StreamReader(s))
-        using (JsonReader reader = new JsonTextReader(sr))
-        {
-            var serializer = JsonSerializer.Create();
-            var obj = serializer.Deserialize(reader);
-            return obj;
-        }
-    }
-
-    public static async Task<object> HttpGetAsync(this string url, JsonSerializerSettings settings)
-    {
-        await using (var s = await url.HttpGetStreamAsync().ConfigureAwait(false))
+        var s = await url.HttpGetStreamAsync().ConfigureAwait(false);
+        await using (s.ConfigureAwait(false))
         using (var sr = new StreamReader(s))
         using (JsonReader reader = new JsonTextReader(sr))
         {
             var serializer = JsonSerializer.Create(settings);
-            var obj = serializer.Deserialize(reader);
-            return obj;
+            return serializer.Deserialize<ReturnType>(reader) ?? throw new InvalidOperationException();
         }
     }
 
-    public static async Task<ReturnType> HttpGetAsync<ReturnType>(this string url)
-    {
-        await using (var s = await url.HttpGetStreamAsync().ConfigureAwait(false))
-        using (var sr = new StreamReader(s))
-        using (JsonReader reader = new JsonTextReader(sr))
-        {
-            var serializer = JsonSerializer.Create();
-            var obj = serializer.Deserialize<ReturnType>(reader);
-            return obj;
-        }
-    }
+    //public static async Task<ReturnType> HttpGetAsync<ImplementationType, ReturnType>(this string url, JsonSerializerSettings? settings = null)
+    //    where ImplementationType : ReturnType
+    //{
+    //    return await url.HttpGetAsync<ImplementationType>(settings).ConfigureAwait(false);
+    //}
 
-    public static async Task<ReturnType> HttpGetAsync<ReturnType>(this string url, JsonSerializerSettings settings)
-    {
-        await using (var s = await url.HttpGetStreamAsync().ConfigureAwait(false))
-        using (var sr = new StreamReader(s))
-        using (JsonReader reader = new JsonTextReader(sr))
-        {
-            var serializer = JsonSerializer.Create(settings);
-            var obj = serializer.Deserialize<ReturnType>(reader);
-            return obj;
-        }
-    }
-
-    public static Task<string> HttpPostString<RequestType>(this string url, RequestType obj)
+    public static Task<string> HttpPostString<RequestType>(this string url, RequestType? obj)
     {
         return Task.Run(async () =>
         {
@@ -236,7 +198,7 @@ public static class StringHelper
             strb.AppendLine($"Payload :");
             strb.AppendLine($"{JsonConvert.SerializeObject(obj)}");
 #endif
-            var httpResponse = await HttpClient.PostAsync(url, obj.GetStringContent()).ConfigureAwait(false);
+            var httpResponse = await HttpClient.PostAsync(url, obj?.GetStringContent()).ConfigureAwait(false);
             var result = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
 #if SHOW_HTTP_TRACE
             strb.AppendLine($"Answer ({url}) :");
@@ -247,22 +209,25 @@ public static class StringHelper
         });
     }
 
-    public static async Task<ReturnType> HttpPostString<ReturnType>(this string url, string obj)
-    {
-        return JsonConvert.DeserializeObject<ReturnType>(await url.HttpPostString(obj).ConfigureAwait(false));
-    }
+    // public static async Task<ReturnType> HttpPostString<ReturnType>(this string url, string obj)
+    // {
+    //     var result = await url.HttpPostString(obj).ConfigureAwait(false);
+    //     return JsonConvert.DeserializeObject<ReturnType>(result) ?? throw new InvalidOperationException();
+    // }
+    //
+    // public static async Task<object> HttpPost<RequestType>(this string url, RequestType obj)
+    // {
+    //     return JsonConvert.DeserializeObject(await url.HttpPostString(obj).ConfigureAwait(false));
+    // }
 
-    public static async Task<object> HttpPost<RequestType>(this string url, RequestType obj)
+    public static Task<ReturnType> HttpPost<RequestType, ReturnType>(this string url, RequestType obj)
     {
-        return JsonConvert.DeserializeObject(await url.HttpPostString(obj).ConfigureAwait(false));
+        return Task.Run(async () =>
+        {
+            var str = await url.HttpPostString(obj).ConfigureAwait(false);
+            return JsonConvert.DeserializeObject<ReturnType>(str) ?? throw new InvalidOperationException();
+        });
     }
-
-    //public static Task<ReturnType> HttpPost<RequestType, ReturnType>(this string url, RequestType obj)
-    //    => Task.Run(async () =>
-    //    {
-    //        var str = await url.HttpPostString(obj).ConfigureAwait(false);
-    //        return JsonConvert.DeserializeObject<ReturnType>(str);
-    //    });
 
     public static string ToJsonFormatedString(this string jsonString)
     {
@@ -314,13 +279,13 @@ public static class StringHelper
         }
         else
         {
-            return i.ToString("0 B"); // Byte
+            return i.ToString("0 B", CultureInfo.InvariantCulture); // Byte
         }
 
         // Divide by 1024 to get fractional value
         readable /= 1024;
         // Return formatted number with suffix
-        return readable.ToString("0.### ") + suffix;
+        return readable.ToString("0.### ", CultureInfo.InvariantCulture) + suffix;
     }
 
     public static byte[] GetBytes(this string str)

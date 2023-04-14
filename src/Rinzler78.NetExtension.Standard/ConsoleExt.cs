@@ -7,7 +7,7 @@ public static class ConsoleExt
     public static readonly ConsoleColor DefaultForegroundColor = Console.ForegroundColor;
     public static readonly ConsoleColor DefaultBackgroundColor = Console.BackgroundColor;
 
-    public static readonly object Locker = new();
+    private static readonly object Locker = new();
 
     public static void ConsoleWriteLine(this string str, ConsoleColor? backgroundColor = null, ConsoleColor? foregroundColor = null)
     {

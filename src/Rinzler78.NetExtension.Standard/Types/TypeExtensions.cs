@@ -29,7 +29,7 @@ public static class TypeExtensions
             Convert.GetTypeCode(type) != TypeCode.Object;
     }
 
-    public static Type GetUnderlyingType(this MemberInfo member)
+    public static Type? GetUnderlyingType(this MemberInfo member)
     {
         switch (member.MemberType)
         {
