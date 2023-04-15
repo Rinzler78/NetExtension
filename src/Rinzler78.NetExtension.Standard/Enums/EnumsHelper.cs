@@ -11,7 +11,7 @@ public static class EnumsHelper
         try
         {
             var fromEnumString = obj.ToString();
-            if (fromEnumString != null)
+            if (fromEnumString is not null)
                 return fromEnumString.Convert<ToEnumType>();
         }
         catch (Exception)

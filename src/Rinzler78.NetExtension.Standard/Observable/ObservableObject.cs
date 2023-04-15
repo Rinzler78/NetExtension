@@ -46,7 +46,7 @@ public abstract class ObservableObject : IObservableObject, IDisposable
     }
 
     [JsonIgnore]
-    public virtual string NickName { get; }
+    public virtual string? NickName { get; }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

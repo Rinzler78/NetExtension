@@ -14,10 +14,6 @@ public abstract class UpdatableProperty : ObservableObject
 
     private Task _updateTask = Task.CompletedTask;
 
-    protected UpdatableProperty()
-    {
-    }
-
     public object? Property
     {
         get => _property;

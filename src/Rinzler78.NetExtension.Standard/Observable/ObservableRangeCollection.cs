@@ -131,7 +131,7 @@ public sealed class ObservableRangeCollection<T> : ObservableCollection<T>
     private bool AddRangeCore(IEnumerable<T>? collection)
     {
         var itemAdded = false;
-        if (collection != null)
+        if (collection is not null)
             foreach (var item in collection)
             {
                 Items.Add(item);
