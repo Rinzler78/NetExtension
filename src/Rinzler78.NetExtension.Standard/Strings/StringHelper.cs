@@ -91,7 +91,7 @@ public static class StringHelper
             return string.IsNullOrEmpty(source) ? 1 : 0;
 
         double stepsToSame = ComputeLevenshteInDistance(source, target);
-        return 1.0 - (stepsToSame / System.Math.Max(source.Length, target.Length));
+        return 1.0 - stepsToSame / System.Math.Max(source.Length, target.Length);
     }
 
     public static bool ContainsAll(this string str, string[] words)

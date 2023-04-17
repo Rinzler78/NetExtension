@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 
 namespace Rinzler78.NetExtension.Math;
 
@@ -10,8 +11,9 @@ public static class BigIntegerExt
         {
             return (ulong)bigInteger;
         }
-        catch
+        catch (Exception)
         {
+            // ignored
         }
 
         ulong result;
@@ -30,8 +32,9 @@ public static class BigIntegerExt
         {
             return (double)bigInteger;
         }
-        catch
+        catch (Exception)
         {
+            // ignored
         }
 
         double result;
@@ -50,8 +53,9 @@ public static class BigIntegerExt
         {
             return (decimal)bigInteger;
         }
-        catch
+        catch (Exception)
         {
+            // ignored
         }
 
         decimal result;

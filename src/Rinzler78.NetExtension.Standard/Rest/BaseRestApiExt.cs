@@ -12,7 +12,7 @@ public static class BaseRestApiExt
             var argsString = string.Join("&", args.Where(a => a.Value is not null).Select(a => $"{a.Key}={a.Value}"));
 
             if (argsString.Length > 0)
-                baseUrl += argsString;
+                baseUrl += $"?{argsString}";
         }
 
         return baseUrl;

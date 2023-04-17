@@ -74,7 +74,7 @@ public static class ObjectExtension
                       pi.GetIndexParameters().Length == 0
                 let selfValue = type.GetProperty(pi.Name)?.GetValue(self, null)
                 let toValue = type.GetProperty(pi.Name)?.GetValue(to, null)
-                where selfValue != toValue && (selfValue?.Equals(toValue) != true)
+                where selfValue != toValue && selfValue?.Equals(toValue) != true
                 select selfValue;
             return !unequalProperties.Any();
         }

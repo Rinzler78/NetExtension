@@ -13,19 +13,11 @@ public abstract class BaseRestApi
 
     protected BaseRestApi(Uri baseUri, string? path = null)
     {
-        if (!baseUri.AbsoluteUri.EndsWith("/", StringComparison.Ordinal))
-            baseUri = new Uri($"{baseUri.AbsoluteUri}/");
-
-        if (path is not null)
+        if (baseUri is null)
         {
-            if (!path.EndsWith("/", StringComparison.Ordinal))
-                path = $"{path}/";
+            throw new ArgumentNullException(nameof(baseUri));
+        }
 
-            BaseUri = new Uri(baseUri.AbsoluteUri + path);
-        }
-        else
-        {
-            BaseUri = new Uri(baseUri.AbsoluteUri);
-        }
+        BaseUri = path is null ? baseUri : new Uri(baseUri.AbsoluteUri + (baseUri.AbsoluteUri.EndsWith('/') ? "" : "/") + path);
     }
 }
