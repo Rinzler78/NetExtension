@@ -4,7 +4,7 @@ namespace Rinzler78.NetExtension.Types;
 
 public static class ActivatorHelper
 {
-    private static object? CreateInstance(this Type type, params object[] args)
+    public static object? CreateInstance(this Type type, params object[] args)
     {
         return Activator.CreateInstance(type, args);
     }
