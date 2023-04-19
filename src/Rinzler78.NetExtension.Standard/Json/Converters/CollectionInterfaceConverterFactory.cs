@@ -7,12 +7,12 @@ namespace Rinzler78.NetExtension.Json.Converters;
 
 public sealed class CollectionInterfaceConverterFactory<CollectionElement> : JsonConverterFactory
 {
-    public readonly Type _collectionElementType = typeof(CollectionElement);
+    public readonly Type CollectionElementType = typeof(CollectionElement);
 
     public override bool CanConvert(Type typeToConvert)
     {
-        if (typeToConvert == typeof(ICollection<>).MakeGenericType(_collectionElementType)
-            && typeToConvert.GenericTypeArguments[0] == _collectionElementType)
+        if (typeToConvert == typeof(ICollection<>).MakeGenericType(CollectionElementType)
+            && typeToConvert.GenericTypeArguments[0] == CollectionElementType)
         {
             return true;
         }
@@ -22,6 +22,6 @@ public sealed class CollectionInterfaceConverterFactory<CollectionElement> : Jso
 
     public override JsonConverter? CreateConverter(Type typeToConvert, JsonSerializerOptions options)
     {
-        return (JsonConverter?)Activator.CreateInstance(typeof(CollectionConverter<>).MakeGenericType(_collectionElementType));
+        return (JsonConverter?)Activator.CreateInstance(typeof(CollectionConverter<>).MakeGenericType(CollectionElementType));
     }
 }

@@ -8,17 +8,17 @@ public sealed class InterfaceConverterFactory<Interface, Implementation> : JsonC
     where Implementation : class, Interface, new()
 
 {
-    public readonly Type _implementationType = typeof(Implementation);
-    public readonly Type _interfaceType = typeof(Interface);
+    public readonly Type ImplementationType = typeof(Implementation);
+    public readonly Type InterfaceType = typeof(Interface);
 
     public override bool CanConvert(Type typeToConvert)
     {
-        return typeToConvert == _interfaceType;
+        return typeToConvert == InterfaceType;
     }
 
     public override JsonConverter? CreateConverter(Type typeToConvert, JsonSerializerOptions options)
     {
-        var converterType = typeof(InterfaceConverter<,>).MakeGenericType(_implementationType, _interfaceType);
+        var converterType = typeof(InterfaceConverter<,>).MakeGenericType(ImplementationType, InterfaceType);
 
         return (JsonConverter?)Activator.CreateInstance(converterType);
     }
