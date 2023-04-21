@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -220,12 +221,14 @@ public static class StringHelper
     //     return JsonConvert.DeserializeObject(await url.HttpPostString(obj).ConfigureAwait(false));
     // }
 
-    public static Task<ReturnType> HttpPost<RequestType, ReturnType>(this string url, RequestType obj)
+    public static Task<ReturnType> HttpPost<RequestType, ImplementationType, ReturnType>(this string url, RequestType obj)
+        where ImplementationType : ReturnType
+        where ReturnType : class
     {
         return Task.Run(async () =>
         {
             var str = await url.HttpPostString(obj).ConfigureAwait(false);
-            return JsonConvert.DeserializeObject<ReturnType>(str) ?? throw new InvalidOperationException();
+            return JsonConvert.DeserializeObject<ImplementationType>(str) as ReturnType ?? throw new InvalidOperationException();
         });
     }
 
