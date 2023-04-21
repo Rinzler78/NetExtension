@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.IO;
 using System.Text;
+using System.Linq;
 
 namespace Rinzler78.NetExtension.Json;
 
@@ -15,11 +16,17 @@ public static class JsonHelper
 
     public static object? DeSerializeObject(this string str) => JsonConvert.DeserializeObject(str);
 
-    public static ObjectType DeSerializeObject<ObjectType>(this string str) 
+    public static ObjectType DeSerialize<ObjectType>(this string str)
         => JsonConvert.DeserializeObject<ObjectType>(str) ?? throw new InvalidOperationException();
 
-    public static ObjectType DeSerializeObject<ObjectType>(this string str, JsonSerializerSettings settings) 
+    public static ObjectType[] DeSerialize<ObjectType>(this string[] strs)
+        => strs.Select(str => str.DeSerialize<ObjectType>()).ToArray();
+
+    public static ObjectType DeSerialize<ObjectType>(this string str, JsonSerializerSettings settings)
         => JsonConvert.DeserializeObject<ObjectType>(str, settings) ?? throw new InvalidOperationException();
+
+    public static ObjectType[] DeSerialize<ObjectType>(this string[] strs, JsonSerializerSettings settings)
+        => strs.Select(str => str.DeSerialize<ObjectType>(settings)).ToArray();
 
     public static string SerializeObjectWithoutQuote(this object value)
     {

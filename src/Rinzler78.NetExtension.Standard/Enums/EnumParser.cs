@@ -12,23 +12,23 @@ public sealed class EnumParser<Enumtype> where Enumtype : Enum
         .GetValues(typeof(Enumtype))
         .Cast<Enumtype>()
         .AsParallel()
-        .SelectMany(v =>
+        .SelectMany(enumValue =>
         {
-            var lst = new List<(string, Enumtype)>
+            var result = new List<(string, Enumtype)>
             {
-                (((int)(object)v).ToString(CultureInfo.InvariantCulture), v)
+                (((int)(object)enumValue).ToString(CultureInfo.InvariantCulture), enumValue)
             };
 
-            var vAsString = v.ToString().ToLower(CultureInfo.InvariantCulture);
+            var enumValueAsString = enumValue.ToString().ToLower(CultureInfo.InvariantCulture);
 
-            lst.Add((vAsString, v));
+            result.Add((enumValueAsString, enumValue));
 
-            vAsString = vAsString.Replace("_", ".", StringComparison.Ordinal);
+            enumValueAsString = enumValueAsString.Replace("_", ".", StringComparison.Ordinal);
 
-            if (!lst.AsParallel().Any(arg => string.Equals(arg.Item1, vAsString, StringComparison.Ordinal)))
-                lst.Add((vAsString, v));
+            if (!result.AsParallel().Any(arg => string.Equals(arg.Item1, enumValueAsString, StringComparison.Ordinal)))
+                result.Add((enumValueAsString, enumValue));
 
-            return lst;
+            return result;
         })
         .ToDictionary(i => i.Item1, i => i.Item2, StringComparer.OrdinalIgnoreCase));
 
