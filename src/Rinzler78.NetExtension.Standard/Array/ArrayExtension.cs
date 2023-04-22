@@ -1,5 +1,6 @@
-﻿using Rinzler78.NetExtension.Strings;
-using System.Linq;
+﻿using System.Linq;
+using Microsoft.VisualBasic;
+using Rinzler78.NetExtension.Strings;
 
 namespace Rinzler78.NetExtension.Array;
 
@@ -42,10 +43,7 @@ public static class ArrayExtension
     }
 
     public static byte[] GetBytes(this string[] strings)
-    {
-        return string.Join("", strings).GetBytes();
-        // strings.SelectMany(str => str.GetBytes()).ToArray();
-    }
+        => string.Join("", strings).GetBytes();
 
     public static double[] SumArrays(params double[][] arrays)
     {
@@ -64,14 +62,4 @@ public static class ArrayExtension
 
         return result;
     }
-
-/*
-    public static int ComputeHashCode<ArrayType>(this ArrayType[] array)
-    {
-        var hash = 0;
-        for (var i = 0; i < array.Length; i++)
-            hash ^= array[i].GetHashCode();
-        return hash;
-    }
-*/
 }
