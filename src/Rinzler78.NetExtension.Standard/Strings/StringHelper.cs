@@ -170,16 +170,19 @@ public static class StringHelper
         return contentString;
     }
 
-    public static async Task<ReturnType> HttpGetAsync<ReturnType>(this string url, JsonSerializerSettings? settings = null)
+    public static Task<ReturnType> HttpGetAsync<ReturnType>(this string url, JsonSerializerSettings? settings = null)
     {
-        var s = await url.HttpGetStreamAsync().ConfigureAwait(false);
-        await using (s.ConfigureAwait(false))
-        using (var sr = new StreamReader(s))
-        using (JsonReader reader = new JsonTextReader(sr))
+        return Task.Run(async () =>
         {
-            var serializer = JsonSerializer.Create(settings);
-            return serializer.Deserialize<ReturnType>(reader) ?? throw new InvalidOperationException();
-        }
+            var s = await url.HttpGetStreamAsync().ConfigureAwait(false);
+            await using (s.ConfigureAwait(false))
+            using (var sr = new StreamReader(s))
+            using (JsonReader reader = new JsonTextReader(sr))
+            {
+                var serializer = JsonSerializer.Create(settings);
+                return serializer.Deserialize<ReturnType>(reader) ?? throw new InvalidOperationException();
+            }
+        });
     }
 
     public static async Task<ReturnType> HttpGetAsync<ImplementationType, ReturnType>(this string url, JsonSerializerSettings? settings = null)
