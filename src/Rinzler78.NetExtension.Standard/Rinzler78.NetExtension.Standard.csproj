@@ -14,7 +14,7 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="MeziAntou.Analyzer" Version="2.0.29">
+		<PackageReference Include="MeziAntou.Analyzer" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " Version="2.0.60">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
