@@ -13,11 +13,13 @@
 		<LangVersion>latest</LangVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="MeziAntou.Analyzer" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " Version="2.0.60">
+	<ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<PackageReference Include="MeziAntou.Analyzer" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " Version="2.0.82">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
+	</ItemGroup>
+	<ItemGroup>
 		<PackageReference Include="NuGet.Build.Packaging" Version="0.2.2">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
