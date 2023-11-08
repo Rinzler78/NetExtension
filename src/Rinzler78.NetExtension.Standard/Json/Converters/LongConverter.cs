@@ -1,24 +1,23 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Globalization;
-using System.Numerics;
 
 namespace Rinzler78.NetExtension.Json.Converters;
 
-public sealed class BigIntegerConverter : JsonConverter
+public sealed class LongConverter : JsonConverter
 {
-    public static readonly BigIntegerConverter Singleton = new();
+    public static readonly LongConverter Singleton = new();
 
     public override bool CanConvert(Type t)
     {
-        return t == typeof(BigInteger) || t == typeof(BigInteger?);
+        return t == typeof(long) || t == typeof(long?);
     }
 
     public override object? ReadJson(JsonReader reader, Type t, object? existingValue, JsonSerializer serializer)
     {
         if (reader.TokenType == JsonToken.Null) return null;
         var value = serializer.Deserialize<string>(reader);
-        if (BigInteger.TryParse(value, CultureInfo.InvariantCulture, out BigInteger l)) return l;
+        if (long.TryParse(value, CultureInfo.InvariantCulture, out long l)) return l;
         throw new Exception("Cannot unmarshal type double");
     }
 
@@ -30,7 +29,7 @@ public sealed class BigIntegerConverter : JsonConverter
             return;
         }
 
-        var value = (BigInteger)untypedValue;
+        var value = (long)untypedValue;
         serializer.Serialize(writer, value.ToString(CultureInfo.InvariantCulture));
     }
 }
