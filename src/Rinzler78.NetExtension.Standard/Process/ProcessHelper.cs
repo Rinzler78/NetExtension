@@ -5,12 +5,12 @@ namespace Rinzler78.NetExtension.Process;
 
 public static class ProcessHelper
 {
-    public static ProcessOutputs WaitProcessOutputs(this System.Diagnostics.Process process)
+    public static async Task<ProcessOutputs> WaitProcessOutputs(this System.Diagnostics.Process process)
     {
         var stdOut = process.StandardOutput.ReadToEnd();
         var stdErr = process.StandardError.ReadToEnd();
 
-        process.WaitForExitAsync();
+        await process.WaitForExitAsync().ConfigureAwait(false);
 
         return new ProcessOutputs(stdOut, stdErr);
     }

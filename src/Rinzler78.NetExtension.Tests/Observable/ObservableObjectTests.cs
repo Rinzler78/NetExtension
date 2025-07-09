@@ -73,7 +73,7 @@ public class ObservableObjectTests
     }
 
     [Fact]
-    public void SetProperty_ShouldBeThreadSafe_WhenCalledConcurrently()
+    public async Task SetProperty_ShouldBeThreadSafe_WhenCalledConcurrently()
     {
         // Arrange
         var testObj = new TestObservableObject();
@@ -103,7 +103,7 @@ public class ObservableObjectTests
             }));
         }
 
-        Task.WaitAll(tasks.ToArray());
+        await Task.WhenAll(tasks);
 
         // Assert
         exceptions.Should().BeEmpty();

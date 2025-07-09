@@ -209,7 +209,7 @@ public class ObservableRangeCollectionTests
     }
 
     [Fact]
-    public void Operations_ShouldBeThreadSafe()
+    public async Task Operations_ShouldBeThreadSafe()
     {
         // Arrange
         var collection = new ObservableRangeCollection<int>();
@@ -229,7 +229,7 @@ public class ObservableRangeCollectionTests
             }));
         }
 
-        Task.WaitAll(tasks.ToArray());
+        await Task.WhenAll(tasks);
 
         // Assert
         collection.Should().HaveCount(threadCount * itemsPerThread);

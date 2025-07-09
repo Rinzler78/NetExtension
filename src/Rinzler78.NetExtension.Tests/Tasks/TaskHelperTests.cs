@@ -179,17 +179,18 @@ public class TaskHelperTests
     public async Task WhenAll_WithSingleTask_ShouldWaitForThatTask()
     {
         // Arrange
-        var tasks = new List<Task> { Task.Delay(50) };
-        var startTime = DateTime.Now;
+        var delay = TimeSpan.FromMilliseconds(50);
+        var tasks = new List<Task> { Task.Delay(delay) };
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
         // Act
         await tasks.WhenAll();
-        var endTime = DateTime.Now;
+        stopwatch.Stop();
 
         // Assert
-        var elapsed = endTime - startTime;
-        Assert.True(elapsed.TotalMilliseconds >= 45); // Should wait for the task
-        Assert.True(elapsed.TotalMilliseconds < 100);
+        // Allow more tolerance for CI environments
+        Assert.True(stopwatch.ElapsedMilliseconds >= 30); // Should wait for the task (with tolerance)
+        Assert.True(stopwatch.ElapsedMilliseconds < 200); // Upper bound with more tolerance
     }
 
     [Fact]

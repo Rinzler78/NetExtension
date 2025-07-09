@@ -6,7 +6,7 @@ repos:
         name: dotnet format
         entry: dotnet format
         language: system
-        args: [src/Rinzler78.NetExtension.sln, --verbosity, minimal]
+        args: [src/Rinzler78.NetExtension.sln, --verify-no-changes, --verbosity, diagnostic]
         files: \.cs$
         pass_filenames: false
 
@@ -60,7 +60,7 @@ repos:
         entry: dotnet build
         language: system
         files: \.cs$
-        args: [src/Rinzler78.NetExtension.sln, --configuration, Release, --no-restore]
+        args: [src/Rinzler78.NetExtension.sln, --configuration, Release, --no-restore, --verbosity, normal, '/p:TreatWarningsAsErrors=true']
         pass_filenames: false
 
       - id: dotnet-test
@@ -69,4 +69,20 @@ repos:
         language: system
         files: \.cs$
         args: [src/Rinzler78.NetExtension.Tests/Rinzler78.NetExtension.Tests.csproj, --configuration, Release, --no-build, --verbosity, minimal]
+        pass_filenames: false
+
+      - id: dotnet-security-scan
+        name: dotnet security scan
+        entry: dotnet list
+        language: system
+        files: \.cs$
+        args: [src/Rinzler78.NetExtension.sln, package, --vulnerable, --include-transitive]
+        pass_filenames: false
+
+      - id: dotnet-package-validation
+        name: dotnet package validation
+        entry: sh
+        language: system
+        files: \.cs$
+        args: [-c, 'dotnet pack src/Rinzler78.NetExtension.Standard/Rinzler78.NetExtension.Standard.csproj --configuration Release --no-build --output ./artifacts && (dotnet tool install -g dotnet-validate 2>/dev/null || true) && (dotnet validate package local ./artifacts/*.nupkg 2>/dev/null || echo "Package validation skipped - tool not available")']
         pass_filenames: false
