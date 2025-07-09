@@ -1,4 +1,4 @@
-﻿namespace Rinzler78.NetExtension.Math;
+namespace Rinzler78.NetExtension.Math;
 
 public static class DecimalHelper
 {

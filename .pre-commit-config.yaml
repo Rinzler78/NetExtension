@@ -1,0 +1,72 @@
+repos:
+  # C# formatting and linting
+  - repo: local
+    hooks:
+      - id: dotnet-format
+        name: dotnet format
+        entry: dotnet format
+        language: system
+        args: [src/Rinzler78.NetExtension.sln, --verbosity, minimal]
+        files: \.cs$
+        pass_filenames: false
+
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: \.md$
+      - id: end-of-file-fixer
+        exclude: \.md$
+      - id: check-yaml
+      - id: check-json
+      - id: check-xml
+      - id: check-added-large-files
+        args: [--maxkb=1000]
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: mixed-line-ending
+        args: [--fix=lf]
+
+  # EditorConfig validation
+  - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
+    rev: 2.7.3
+    hooks:
+      - id: editorconfig-checker
+        exclude: \.md$
+
+  # Comments language check
+  - repo: local
+    hooks:
+      - id: check-comments-language
+        name: Check comments are in English
+        entry: python3 scripts/check-comments-language.py
+        language: system
+        files: \.cs$
+        pass_filenames: true
+
+  # Security checks (disabled due to version compatibility issues)
+  # - repo: https://github.com/Yelp/detect-secrets
+  #   rev: v1.4.0
+  #   hooks:
+  #     - id: detect-secrets
+  #       args: [--baseline, .secrets.baseline]
+
+  # C# specific linting and testing
+  - repo: local
+    hooks:
+      - id: dotnet-build
+        name: dotnet build
+        entry: dotnet build
+        language: system
+        files: \.cs$
+        args: [src/Rinzler78.NetExtension.sln, --configuration, Release, --no-restore]
+        pass_filenames: false
+
+      - id: dotnet-test
+        name: dotnet test
+        entry: dotnet test
+        language: system
+        files: \.cs$
+        args: [src/Rinzler78.NetExtension.Tests/Rinzler78.NetExtension.Tests.csproj, --configuration, Release, --no-build, --verbosity, minimal]
+        pass_filenames: false

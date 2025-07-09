@@ -1,4 +1,4 @@
-﻿#if DEBUG
+#if DEBUG
 //#define SHOW_HTTP_TRACE
 #endif
 

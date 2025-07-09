@@ -9,7 +9,7 @@ public static class MockHelpers
     public static Mock<HttpMessageHandler> CreateHttpMessageHandlerMock(string responseContent, HttpStatusCode statusCode = HttpStatusCode.OK)
     {
         var handlerMock = new Mock<HttpMessageHandler>();
-        
+
         handlerMock
             .Protected()
             .Setup<Task<HttpResponseMessage>>(
@@ -35,7 +35,7 @@ public static class MockHelpers
         where TException : Exception, new()
     {
         var handlerMock = new Mock<HttpMessageHandler>();
-        
+
         handlerMock
             .Protected()
             .Setup<Task<HttpResponseMessage>>(
@@ -51,7 +51,7 @@ public static class MockHelpers
     public static async Task<T> RunConcurrentlyAsync<T>(int threadCount, Func<Task<T>> action)
     {
         var tasks = new List<Task<T>>();
-        
+
         for (int i = 0; i < threadCount; i++)
         {
             tasks.Add(Task.Run(action));
@@ -64,7 +64,7 @@ public static class MockHelpers
     public static async Task RunConcurrentlyAsync(int threadCount, Func<Task> action)
     {
         var tasks = new List<Task>();
-        
+
         for (int i = 0; i < threadCount; i++)
         {
             tasks.Add(Task.Run(action));
@@ -76,7 +76,7 @@ public static class MockHelpers
     public static void RunConcurrently(int threadCount, Action action)
     {
         var tasks = new List<Task>();
-        
+
         for (int i = 0; i < threadCount; i++)
         {
             tasks.Add(Task.Run(action));

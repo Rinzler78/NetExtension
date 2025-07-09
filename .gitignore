@@ -233,6 +233,9 @@ DocProject/Help/*.hhp
 DocProject/Help/Html2
 DocProject/Help/html
 
+# Allow docs directory for NetExtension documentation
+!docs/
+
 # Click-Once directory
 publish/
 

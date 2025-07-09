@@ -1,46 +1,47 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<RootNamespace>Rinzler78.NetExtension</RootNamespace>
-		<Nullable>enable</Nullable>
-		
-		<!-- NuGet Package Properties -->
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<IsPackable>true</IsPackable>
-		<PackageId>Rinzler78.NetExtension</PackageId>
-		<PackageVersion>1.0.0</PackageVersion>
-		<Title>Rinzler78 .NET Extensions</Title>
-		<Description>A comprehensive collection of .NET extensions and utilities</Description>
-		<Authors>bleclereperso</Authors>
-		<Company>Rinzler78</Company>
-		<Product>NetExtension</Product>
-		<Copyright>Copyright © 2025</Copyright>
-		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-		<PackageProjectUrl>https://github.com/yourusername/NetExtension</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/yourusername/NetExtension</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<PackageTags>extensions utilities dotnet csharp</PackageTags>
-		<PackageReleaseNotes>Initial release of NetExtension utilities</PackageReleaseNotes>
-	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-		<LangVersion>latest</LangVersion>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-		<LangVersion>latest</LangVersion>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	</PropertyGroup>
-	<ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-		<PackageReference Include="MeziAntou.Analyzer" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " Version="2.0.105">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
-	</ItemGroup>
-	<ItemGroup>
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="CsvHelper" Version="30.0.1" />
-		<PackageReference Include="System.Data.HashFunction.CRC" Version="2.0.0" />
-		<PackageReference Include="bigrational" Version="1.0.0.7" />
-	</ItemGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <RootNamespace>Rinzler78.NetExtension</RootNamespace>
+        <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <IsPackable>true</IsPackable>
+        <PackageId>Rinzler78.NetExtension</PackageId>
+        <PackageVersion>1.0.0</PackageVersion>
+        <Title>Rinzler78 .NET Extensions</Title>
+        <Description>A comprehensive collection of .NET extensions and utilities</Description>
+        <Authors>bleclereperso</Authors>
+        <Company>Rinzler78</Company>
+        <Product>NetExtension</Product>
+        <Copyright>Copyright © 2025</Copyright>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageProjectUrl>https://github.com/yourusername/NetExtension</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/yourusername/NetExtension</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>extensions utilities dotnet csharp</PackageTags>
+        <PackageReleaseNotes>Initial release of NetExtension utilities</PackageReleaseNotes>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <LangVersion>latest</LangVersion>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <LangVersion>latest</LangVersion>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <PackageReference Include="MeziAntou.Analyzer" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " Version="2.0.105">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+        <PackageReference Include="CsvHelper" Version="30.0.1"/>
+        <PackageReference Include="System.Data.HashFunction.CRC" Version="2.0.0"/>
+        <PackageReference Include="bigrational" Version="1.0.0.7"/>
+    </ItemGroup>
 </Project>

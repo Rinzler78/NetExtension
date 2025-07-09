@@ -1,6 +1,6 @@
 using System;
-using Xunit;
 using Rinzler78.NetExtension.Enums;
+using Xunit;
 
 namespace Rinzler78.NetExtension.Tests.Enums;
 

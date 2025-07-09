@@ -1,26 +1,23 @@
 {
-    "dotnet.defaultSolution": "src/Rinzler78.NetExtension.sln",
-    // Configuration pour les tests
-    "dotnet.unitTests.runSettingsPath": "",
-    "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
-    "dotnet.inlayHints.enableInlayHintsForParameters": true,
-    "dotnet.inlayHints.enableInlayHintsForLiteralParameters": true,
-    "dotnet.inlayHints.enableInlayHintsForIndexerParameters": true,
-    "dotnet.inlayHints.enableInlayHintsForObjectCreationParameters": true,
-    "dotnet.inlayHints.enableInlayHintsForOtherParameters": true,
-    "dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix": true,
-    "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": true,
-    "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName": true,
-    
-    // Configuration pour l'explorateur de tests
-    "test.defaultGutterClickAction": "run",
-    "test.gutters.enabled": true,
-    
-    // Configuration pour les découvertes de tests
-    "dotnet.testing.runSettingsPath": "",
-    
-    // Configuration pour l'affichage des tests
-    "testing.automaticallyOpenPeekView": "failureInVisibleDocument",
-    "testing.followRunningTest": true,
-    "testing.openTesting": "neverOpen"
+      "dotnet.defaultSolution": "src/Rinzler78.NetExtension.sln",
+      "dotnet.unitTests.runSettingsPath": "",
+      "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
+      "dotnet.inlayHints.enableInlayHintsForParameters": true,
+      "dotnet.inlayHints.enableInlayHintsForLiteralParameters": true,
+      "dotnet.inlayHints.enableInlayHintsForIndexerParameters": true,
+      "dotnet.inlayHints.enableInlayHintsForObjectCreationParameters": true,
+      "dotnet.inlayHints.enableInlayHintsForOtherParameters": true,
+      "dotnet.inlayHints.suppressInlayHintsForParametersThatDifferOnlyBySuffix": true,
+      "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchMethodIntent": true,
+      "dotnet.inlayHints.suppressInlayHintsForParametersThatMatchArgumentName": true,
+
+      "test.defaultGutterClickAction": "run",
+      "test.gutters.enabled": true,
+
+      "dotnet.testing.runSettingsPath": "",
+
+      "testing.automaticallyOpenPeekView": "failureInVisibleDocument",
+      "testing.followRunningTest": true,
+      "testing.openTesting": "neverOpen",
+      "testing.automaticallyOpenTestResults": "neverOpen"
 }

@@ -1,8 +1,8 @@
-﻿using System;
-using Newtonsoft.Json;
+using System;
 using System.IO;
-using System.Text;
 using System.Linq;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace Rinzler78.NetExtension.Json;
 
@@ -20,7 +20,7 @@ public static class JsonHelper
     {
         if (string.IsNullOrEmpty(str))
             return default;
-        
+
         return JsonConvert.DeserializeObject<ObjectType>(str);
     }
 
@@ -31,7 +31,7 @@ public static class JsonHelper
     {
         if (string.IsNullOrEmpty(str))
             return default;
-        
+
         return JsonConvert.DeserializeObject<ObjectType>(str, settings);
     }
 

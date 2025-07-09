@@ -1,8 +1,8 @@
-﻿using Rinzler78.NetExtension.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Rinzler78.NetExtension.Types;
 
 namespace Rinzler78.NetExtension.Objects;
 
@@ -71,7 +71,7 @@ public static class ObjectExtension
             var unequalProperties =
                 from pi in type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 where !ignoreList.Contains(pi.Name, StringComparer.Ordinal) && (pi.GetUnderlyingType()?.IsSimpleType() ?? false) &&
-                      pi.GetIndexParameters().Length == 0
+                    pi.GetIndexParameters().Length == 0
                 let selfValue = type.GetProperty(pi.Name)?.GetValue(self, null)
                 let toValue = type.GetProperty(pi.Name)?.GetValue(to, null)
                 where selfValue != toValue && selfValue?.Equals(toValue) != true

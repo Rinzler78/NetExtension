@@ -26,12 +26,12 @@ public static class TestData
         public const int Negative = -42;
         public const int MaxInt = int.MaxValue;
         public const int MinInt = int.MinValue;
-        
+
         public const decimal DecimalPositive = 42.5m;
         public const decimal DecimalNegative = -42.5m;
         public const decimal DecimalMax = decimal.MaxValue;
         public const decimal DecimalMin = decimal.MinValue;
-        
+
         public static readonly BigInteger BigIntegerZero = BigInteger.Zero;
         public static readonly BigInteger BigIntegerPositive = new(42);
         public static readonly BigInteger BigIntegerNegative = new(-42);
@@ -61,11 +61,11 @@ public static class TestData
     {
         public record SimpleRecord(string Name, int Value);
         public record ComplexRecord(string Name, int Value, List<string> Items, Dictionary<string, object> Properties);
-        
+
         public static readonly SimpleRecord SimpleRecordInstance = new("Test", 42);
         public static readonly ComplexRecord ComplexRecordInstance = new(
-            "Complex", 
-            100, 
+            "Complex",
+            100,
             new List<string> { "item1", "item2" },
             new Dictionary<string, object> { { "key1", "value1" }, { "key2", 42 } }
         );

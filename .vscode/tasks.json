@@ -1,125 +1,125 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "build",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build",
-                "${workspaceFolder}/src/Rinzler78.NetExtension.sln",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary;ForceNoAlign"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "publish",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "publish",
-                "${workspaceFolder}/src/Rinzler78.NetExtension.sln",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary;ForceNoAlign"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "watch",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "watch",
-                "run",
-                "--project",
-                "${workspaceFolder}/src/Rinzler78.NetExtension.sln"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "test",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "test",
-                "${workspaceFolder}/src/Rinzler78.NetExtension.Tests/Rinzler78.NetExtension.Tests.csproj",
-                "--logger:trx",
-                "--logger:console;verbosity=detailed",
-                "--collect:XPlat Code Coverage"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "group": {
-                "kind": "test",
-                "isDefault": true
-            },
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "test-watch",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "watch",
-                "test",
-                "${workspaceFolder}/src/Rinzler78.NetExtension.Tests/Rinzler78.NetExtension.Tests.csproj"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "group": "test",
-            "isBackground": true,
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "dedicated",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": {
-                "base": "$msCompile",
-                "background": {
-                    "activeOnStart": true,
-                    "beginsPattern": "^dotnet watch",
-                    "endsPattern": "^(.*Failed.*|.*Passed.*|.*test.*total.*)$"
-                }
-            }
-        },
-        {
-            "label": "test-coverage",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "test",
-                "${workspaceFolder}/src/Rinzler78.NetExtension.Tests/Rinzler78.NetExtension.Tests.csproj",
-                "--collect:XPlat Code Coverage",
-                "--results-directory:${workspaceFolder}/TestResults",
-                "--logger:trx;LogFileName=TestResults.trx"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "group": "test",
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": true,
-                "clear": false
-            },
-            "problemMatcher": "$msCompile"
-        }
-    ]
+      "version": "2.0.0",
+      "tasks": [
+          {
+              "label": "build",
+              "command": "dotnet",
+              "type": "process",
+              "args": [
+                  "build",
+                  "${workspaceFolder}/src/Rinzler78.NetExtension.sln",
+                  "/property:GenerateFullPaths=true",
+                  "/consoleloggerparameters:NoSummary;ForceNoAlign"
+              ],
+              "problemMatcher": "$msCompile"
+          },
+          {
+              "label": "publish",
+              "command": "dotnet",
+              "type": "process",
+              "args": [
+                  "publish",
+                  "${workspaceFolder}/src/Rinzler78.NetExtension.sln",
+                  "/property:GenerateFullPaths=true",
+                  "/consoleloggerparameters:NoSummary;ForceNoAlign"
+              ],
+              "problemMatcher": "$msCompile"
+          },
+          {
+              "label": "watch",
+              "command": "dotnet",
+              "type": "process",
+              "args": [
+                  "watch",
+                  "run",
+                  "--project",
+                  "${workspaceFolder}/src/Rinzler78.NetExtension.sln"
+              ],
+              "problemMatcher": "$msCompile"
+          },
+          {
+              "label": "test",
+              "command": "dotnet",
+              "type": "process",
+              "args": [
+                  "test",
+                  "${workspaceFolder}/src/Rinzler78.NetExtension.Tests/Rinzler78.NetExtension.Tests.csproj",
+                  "--logger:trx",
+                  "--logger:console;verbosity=detailed",
+                  "--collect:XPlat Code Coverage"
+              ],
+              "options": {
+                  "cwd": "${workspaceFolder}"
+              },
+              "group": {
+                  "kind": "test",
+                  "isDefault": true
+              },
+              "presentation": {
+                  "echo": true,
+                  "reveal": "always",
+                  "focus": false,
+                  "panel": "shared",
+                  "showReuseMessage": true,
+                  "clear": false
+              },
+              "problemMatcher": "$msCompile"
+          },
+          {
+              "label": "test-watch",
+              "command": "dotnet",
+              "type": "process",
+              "args": [
+                  "watch",
+                  "test",
+                  "${workspaceFolder}/src/Rinzler78.NetExtension.Tests/Rinzler78.NetExtension.Tests.csproj"
+              ],
+              "options": {
+                  "cwd": "${workspaceFolder}"
+              },
+              "group": "test",
+              "isBackground": true,
+              "presentation": {
+                  "echo": true,
+                  "reveal": "always",
+                  "focus": false,
+                  "panel": "dedicated",
+                  "showReuseMessage": true,
+                  "clear": false
+              },
+              "problemMatcher": {
+                  "base": "$msCompile",
+                  "background": {
+                      "activeOnStart": true,
+                      "beginsPattern": "^dotnet watch",
+                      "endsPattern": "^(.*Failed.*|.*Passed.*|.*test.*total.*)$"
+                  }
+              }
+          },
+          {
+              "label": "test-coverage",
+              "command": "dotnet",
+              "type": "process",
+              "args": [
+                  "test",
+                  "${workspaceFolder}/src/Rinzler78.NetExtension.Tests/Rinzler78.NetExtension.Tests.csproj",
+                  "--collect:XPlat Code Coverage",
+                  "--results-directory:${workspaceFolder}/TestResults",
+                  "--logger:trx;LogFileName=TestResults.trx"
+              ],
+              "options": {
+                  "cwd": "${workspaceFolder}"
+              },
+              "group": "test",
+              "presentation": {
+                  "echo": true,
+                  "reveal": "always",
+                  "focus": false,
+                  "panel": "shared",
+                  "showReuseMessage": true,
+                  "clear": false
+              },
+              "problemMatcher": "$msCompile"
+          }
+      ]
 }

@@ -20,10 +20,10 @@ public sealed class ULongArrayConverter : JsonConverter
 
         try
         {
-            if (value is not null) 
+            if (value is not null)
                 return value.Select(ulong.Parse).ToArray();
         }
-        catch(Exception)
+        catch (Exception)
         {
         }
 

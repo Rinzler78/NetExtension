@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Rinzler78.NetExtension;
 

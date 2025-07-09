@@ -1,0 +1,162 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        dotnet-version: ['8.0.x']
+        configuration: [Debug, Release]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET ${{ matrix.dotnet-version }}
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Restore dependencies
+      run: dotnet restore src/Rinzler78.NetExtension.sln
+
+    - name: Build
+      run: dotnet build src/Rinzler78.NetExtension.sln --configuration ${{ matrix.configuration }} --no-restore
+
+    - name: Test
+      run: dotnet test src/Rinzler78.NetExtension.Tests/Rinzler78.NetExtension.Tests.csproj --configuration ${{ matrix.configuration }} --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger trx --results-directory coverage
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-${{ matrix.configuration }}
+        path: coverage/*.trx
+        retention-days: 30
+
+    - name: Generate coverage report
+      if: matrix.configuration == 'Release'
+      run: |
+        dotnet tool install -g dotnet-reportgenerator-globaltool
+        reportgenerator -reports:"coverage/**/coverage.cobertura.xml" -targetdir:"coverage-report" -reporttypes:"Html;Cobertura"
+
+    - name: Upload coverage report
+      if: matrix.configuration == 'Release'
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: coverage-report/
+        retention-days: 30
+
+    - name: Code quality check
+      if: matrix.configuration == 'Release'
+      run: |
+        dotnet tool install -g dotnet-format
+        dotnet format src/Rinzler78.NetExtension.sln --verify-no-changes --verbosity diagnostic
+
+    - name: Security scan
+      if: matrix.configuration == 'Release'
+      run: |
+        dotnet list src/Rinzler78.NetExtension.sln package --vulnerable --include-transitive
+
+    - name: Package validation
+      if: matrix.configuration == 'Release'
+      run: |
+        dotnet pack src/Rinzler78.NetExtension.Standard/Rinzler78.NetExtension.Standard.csproj --configuration Release --no-build --output ./artifacts
+        dotnet tool install -g dotnet-validate
+        dotnet validate package local ./artifacts/*.nupkg
+
+  compatibility-test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        dotnet-version: ['8.0.x']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET ${{ matrix.dotnet-version }}
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+
+    - name: Restore dependencies
+      run: dotnet restore src/Rinzler78.NetExtension.sln
+
+    - name: Build
+      run: dotnet build src/Rinzler78.NetExtension.sln --configuration Release --no-restore
+
+    - name: Test
+      run: dotnet test src/Rinzler78.NetExtension.Tests/Rinzler78.NetExtension.Tests.csproj --configuration Release --no-build --verbosity normal
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore src/Rinzler78.NetExtension.sln
+
+    - name: Format check
+      run: dotnet format src/Rinzler78.NetExtension.sln --verify-no-changes
+
+    - name: Analyzer check
+      run: dotnet build src/Rinzler78.NetExtension.sln --configuration Release --verbosity normal /p:TreatWarningsAsErrors=true
+
+  benchmark:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore src/Rinzler78.NetExtension.sln
+
+    - name: Build
+      run: dotnet build src/Rinzler78.NetExtension.sln --configuration Release --no-restore
+
+    - name: Run benchmarks
+      run: |
+        if [ -d "benchmarks" ]; then
+          dotnet run --project benchmarks --configuration Release -- --memory --job short
+        else
+          echo "No benchmarks project found, skipping..."
+        fi

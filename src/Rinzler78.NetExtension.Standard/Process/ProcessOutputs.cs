@@ -1,4 +1,4 @@
-﻿namespace Rinzler78.NetExtension.Process;
+namespace Rinzler78.NetExtension.Process;
 
 public sealed class ProcessOutputs
 {

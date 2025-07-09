@@ -218,7 +218,7 @@ public class ObservableRangeCollectionTests
 
         // Act
         var tasks = new List<Task>();
-        
+
         for (int i = 0; i < threadCount; i++)
         {
             var threadId = i;

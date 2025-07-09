@@ -1,7 +1,7 @@
 using System;
 using System.Numerics;
-using Xunit;
 using Rinzler78.NetExtension.Math;
+using Xunit;
 
 namespace Rinzler78.NetExtension.Tests.Math;
 

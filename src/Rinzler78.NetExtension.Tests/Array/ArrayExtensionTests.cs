@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
-using Xunit;
 using Rinzler78.NetExtension.Array;
+using Xunit;
 
 namespace Rinzler78.NetExtension.Tests.Array;
 
@@ -19,7 +19,7 @@ public class ArrayExtensionTests
         // Assert
         Assert.Equal(16, result.Length); // 2 ulongs * 8 bytes each
         Assert.NotNull(result);
-        
+
         // Verify that we can convert back (basic sanity check)
         Assert.True(result.Length % sizeof(ulong) == 0);
     }
@@ -36,7 +36,7 @@ public class ArrayExtensionTests
         // Assert
         Assert.Equal(12, result.Length); // 3 uints * 4 bytes each
         Assert.NotNull(result);
-        
+
         // Verify that we can convert back (basic sanity check)
         Assert.True(result.Length % sizeof(uint) == 0);
     }

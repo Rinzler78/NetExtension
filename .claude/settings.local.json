@@ -11,7 +11,16 @@
       "Bash(dotnet test:*)",
       "Bash(dotnet restore:*)",
       "Bash(ls:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(python3 -m pip install:*)",
+      "Bash(detect-secrets:*)",
+      "Bash(python3:*)",
+      "Bash(pre-commit install:*)",
+      "Bash(pre-commit run:*)",
+      "Bash(dotnet format:*)",
+      "Bash(sed:*)",
+      "Bash(chmod:*)",
+      "Bash(touch:*)"
     ],
     "deny": []
   }

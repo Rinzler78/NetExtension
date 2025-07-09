@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Xunit;
 using Rinzler78.NetExtension.Linq;
+using Xunit;
 
 namespace Rinzler78.NetExtension.Tests.Linq;
 

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Xunit;
 using Rinzler78.NetExtension.Objects;
+using Xunit;
 
 namespace Rinzler78.NetExtension.Tests.Objects;
 
@@ -234,10 +234,10 @@ public class ObjectExtensionTests
         // Act & Assert
         // Both null should be equal
         Assert.True(((TestSourceClass?)null) == ((TestSourceClass?)null));
-        
+
         // Null and non-null should not be equal
         Assert.False(obj3.IsEqualTo(null!, ""));
-        
+
         // Test with actual objects
         var obj4 = new TestSourceClass { Name = "Test" };
         var obj5 = new TestSourceClass { Name = "Test" };

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Microsoft.VisualBasic;
 using Rinzler78.NetExtension.Strings;

@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
 using System;
 using System.Globalization;
 using System.Numerics;
+using Newtonsoft.Json;
 
 namespace Rinzler78.NetExtension.Json.Converters;
 

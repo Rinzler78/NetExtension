@@ -1,41 +1,36 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            // Use IntelliSense to find out which attributes exist for C# debugging
-            // Use hover for the description of the existing attributes
-            // For further information visit https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md
-            "name": ".NET Core Launch (console)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/Rinzler78.NetExtension.Tests/bin/Debug/net8.0/Rinzler78.NetExtension.Tests.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/Rinzler78.NetExtension.Tests",
-            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
-            "console": "internalConsole",
-            "stopAtEntry": false
-        },
-        {
-            "name": ".NET Core Attach",
-            "type": "coreclr",
-            "request": "attach"
-        },
-        {
-            "name": "Debug Tests",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "dotnet",
-            "args": [
-                "test",
-                "${workspaceFolder}/src/Rinzler78.NetExtension.Tests/Rinzler78.NetExtension.Tests.csproj",
-                "--logger:console;verbosity=detailed"
-            ],
-            "cwd": "${workspaceFolder}",
-            "console": "integratedTerminal",
-            "stopAtEntry": false
-        }
-    ]
+      "version": "0.2.0",
+      "configurations": [
+          {
+              "name": ".NET Core Launch (console)",
+              "type": "coreclr",
+              "request": "launch",
+              "preLaunchTask": "build",
+              "program": "${workspaceFolder}/src/Rinzler78.NetExtension.Tests/bin/Debug/net8.0/Rinzler78.NetExtension.Tests.dll",
+              "args": [],
+              "cwd": "${workspaceFolder}/src/Rinzler78.NetExtension.Tests",
+              "console": "internalConsole",
+              "stopAtEntry": false
+          },
+          {
+              "name": ".NET Core Attach",
+              "type": "coreclr",
+              "request": "attach"
+          },
+          {
+              "name": "Debug Tests",
+              "type": "coreclr",
+              "request": "launch",
+              "preLaunchTask": "build",
+              "program": "dotnet",
+              "args": [
+                  "test",
+                  "${workspaceFolder}/src/Rinzler78.NetExtension.Tests/Rinzler78.NetExtension.Tests.csproj",
+                  "--logger:console;verbosity=detailed"
+              ],
+              "cwd": "${workspaceFolder}",
+              "console": "integratedTerminal",
+              "stopAtEntry": false
+          }
+      ]
 }

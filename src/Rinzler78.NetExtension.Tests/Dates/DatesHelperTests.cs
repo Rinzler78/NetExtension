@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Xunit;
 using Rinzler78.NetExtension.Dates;
+using Xunit;
 
 namespace Rinzler78.NetExtension.Tests.Dates;
 
@@ -97,19 +97,19 @@ public class DatesHelperTests
 
         // Assert
         Assert.Equal(4, result.Length);
-        
+
         // First slot: Jan 1 10:00 to Jan 2 10:00
         Assert.Equal(new DateTime(2023, 1, 1, 10, 0, 0), result[0].Start);
         Assert.Equal(new DateTime(2023, 1, 2, 10, 0, 0), result[0].End);
-        
+
         // Second slot: Jan 2 10:00:01 to Jan 3 10:00:01
         Assert.Equal(new DateTime(2023, 1, 2, 10, 0, 1), result[1].Start);
         Assert.Equal(new DateTime(2023, 1, 3, 10, 0, 1), result[1].End);
-        
+
         // Third slot: Jan 3 10:00:02 to Jan 4 10:00:02
         Assert.Equal(new DateTime(2023, 1, 3, 10, 0, 2), result[2].Start);
         Assert.Equal(new DateTime(2023, 1, 4, 10, 0, 2), result[2].End);
-        
+
         // Fourth slot: Jan 4 10:00:03 to Jan 4 15:30 (end date)
         Assert.Equal(new DateTime(2023, 1, 4, 10, 0, 3), result[3].Start);
         Assert.Equal(new DateTime(2023, 1, 4, 15, 30, 0), result[3].End);

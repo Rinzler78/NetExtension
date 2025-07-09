@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Xunit;
 using Rinzler78.NetExtension.Strings;
+using Xunit;
 
 namespace Rinzler78.NetExtension.Tests.Strings;
 

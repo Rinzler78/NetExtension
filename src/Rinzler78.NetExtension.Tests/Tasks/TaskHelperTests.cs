@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
 using Rinzler78.NetExtension.Tasks;
+using Xunit;
 
 namespace Rinzler78.NetExtension.Tests.Tasks;
 
@@ -85,7 +85,7 @@ public class TaskHelperTests
 
         // Act
         var result = task.IsRunning();
-        
+
         // Complete the task to clean up
         tcs.SetResult(true);
         await task;

@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json;
 
 namespace Rinzler78.NetExtension.Json.Converters;
 

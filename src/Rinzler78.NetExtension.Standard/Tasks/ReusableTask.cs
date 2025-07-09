@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,11 +21,11 @@ public sealed class ReusableTask
     {
         lock (_lock)
         {
-            if (!_invokeTask.IsCompleted) 
+            if (!_invokeTask.IsCompleted)
                 return _invokeTask;
-            
+
             _cancellationTokenSource = new CancellationTokenSource();
-            _invokeTask = Task.Run(() => 
+            _invokeTask = Task.Run(() =>
             {
                 if (!_cancellationTokenSource.Token.IsCancellationRequested)
                 {
@@ -43,7 +43,7 @@ public sealed class ReusableTask
         {
             if (_cancellationTokenSource.Token.IsCancellationRequested)
                 return;
-                
+
             Action();
         }
     }
