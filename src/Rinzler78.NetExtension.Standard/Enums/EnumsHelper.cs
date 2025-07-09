@@ -12,12 +12,20 @@ public static class EnumsHelper
         {
             var fromEnumString = obj.ToString();
             if (fromEnumString is not null)
-                return fromEnumString.Convert<ToEnumType>();
+            {
+                // Try to parse the string to the target enum type
+                if (Enum.TryParse<ToEnumType>(fromEnumString, true, out ToEnumType result) && Enum.IsDefined(typeof(ToEnumType), result))
+                    return result;
+            }
         }
         catch (Exception)
         {
         }
-
+        // Return first value of ToEnumType as default
+        var values = Enum.GetValues(typeof(ToEnumType));
+        var first = values.Length > 0 ? values.GetValue(0) : null;
+        if (first != null)
+            return (ToEnumType)first;
         return default;
     }
 
@@ -26,13 +34,17 @@ public static class EnumsHelper
     {
         try
         {
-            if (Enum.TryParse(str, out ToEnumType result))
+            if (Enum.TryParse(str, true, out ToEnumType result) && Enum.IsDefined(typeof(ToEnumType), result))
                 return result;
         }
         catch (Exception)
         {
         }
-
+        // Return first value of ToEnumType as default
+        var values = Enum.GetValues(typeof(ToEnumType));
+        var first = values.Length > 0 ? values.GetValue(0) : null;
+        if (first != null)
+            return (ToEnumType)first;
         return default;
     }
 

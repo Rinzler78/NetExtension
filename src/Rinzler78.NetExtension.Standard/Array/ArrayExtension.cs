@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.VisualBasic;
 using Rinzler78.NetExtension.Strings;
 
@@ -47,6 +48,9 @@ public static class ArrayExtension
 
     public static double[] SumArrays(params double[][] arrays)
     {
+        if (arrays == null || arrays.Length == 0)
+            return System.Array.Empty<double>();
+
         var count = arrays.Max(arg => arg.Length);
         var result = new double[count];
 
@@ -55,7 +59,10 @@ public static class ArrayExtension
             double sum = default;
 
             for (var y = 0; y < arrays.Length; ++y)
-                sum += arrays[y][i];
+            {
+                if (i < arrays[y].Length)
+                    sum += arrays[y][i];
+            }
 
             result[i] = sum;
         }

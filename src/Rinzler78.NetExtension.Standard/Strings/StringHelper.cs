@@ -40,6 +40,8 @@ public static class StringHelper
 
     public static bool IsValidEmail(this string str)
     {
+        if (str == null)
+            return false;
         var emailAddressAttribute = new EmailAddressAttribute();
         return emailAddressAttribute.IsValid(str);
     }
@@ -102,7 +104,11 @@ public static class StringHelper
 
     public static bool ContainsAny(this string str, string[] words)
     {
-        return words?.Any(arg => str.Contains(arg, StringComparison.Ordinal)) ?? true;
+        if (words == null)
+            return true;
+        if (words.Length == 0)
+            return true;
+        return words.Any(arg => str.Contains(arg, StringComparison.Ordinal));
     }
 
     public static string BeginByLowerCase(this string str)
@@ -122,11 +128,33 @@ public static class StringHelper
 
     public static string ToPascalCase(this string str)
     {
-        var sample = string.Join("", str.Select(c => char.IsLetterOrDigit(c) ? c.ToString().ToLower(CultureInfo.InvariantCulture) : "_").ToArray());
-
-        return string.Join("", sample
-            .Split(new[] { '_' }, StringSplitOptions.RemoveEmptyEntries)
-            .Select(s => $"{s.Substring(0, 1).ToUpper(CultureInfo.InvariantCulture)}{s.Substring(1)}"));
+        if (string.IsNullOrEmpty(str))
+            return str;
+        var sb = new StringBuilder();
+        bool newWord = true;
+        for (int i = 0; i < str.Length; i++)
+        {
+            char c = str[i];
+            if (!char.IsLetterOrDigit(c))
+            {
+                newWord = true;
+                continue;
+            }
+            if (newWord)
+            {
+                sb.Append(char.ToUpper(c, CultureInfo.InvariantCulture));
+                newWord = false;
+            }
+            else if (i > 0 && char.IsDigit(str[i - 1]) && char.IsLetter(c))
+            {
+                sb.Append(char.ToUpper(c, CultureInfo.InvariantCulture));
+            }
+            else
+            {
+                sb.Append(char.ToLower(c, CultureInfo.InvariantCulture));
+            }
+        }
+        return sb.ToString();
     }
 
     public static IEnumerable<string> MakeAllCombinations(this IEnumerable<string> allStrings)

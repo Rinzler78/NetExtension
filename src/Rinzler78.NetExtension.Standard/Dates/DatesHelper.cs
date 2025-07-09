@@ -10,22 +10,28 @@ public static class DatesHelper
     public static TimeSlot[] ToTimeSlots(DateTime startDate, DateTime endDate, uint daysSlotDuration = 0)
     {
         var list = new List<TimeSlot>();
-
         if (endDate > startDate)
         {
-            var start = startDate;
-            DateTime end;
-            do
+            if (daysSlotDuration == 0)
             {
-                end = start.AddDays(daysSlotDuration);
-                end = end > endDate ? endDate : end;
-
-                list.Add(new TimeSlot(start, end));
-
-                start = end.AddSeconds(1);
-            } while (end < endDate);
+                list.Add(new TimeSlot(startDate, endDate));
+            }
+            else
+            {
+                var start = startDate;
+                while (start < endDate)
+                {
+                    var end = start.AddDays(daysSlotDuration);
+                    if (end > endDate)
+                    {
+                        list.Add(new TimeSlot(start, endDate));
+                        break;
+                    }
+                    list.Add(new TimeSlot(start, end));
+                    start = end.AddSeconds(1);
+                }
+            }
         }
-
         return list.ToArray();
     }
 

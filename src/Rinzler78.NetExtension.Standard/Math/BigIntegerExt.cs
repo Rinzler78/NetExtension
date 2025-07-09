@@ -30,21 +30,18 @@ public static class BigIntegerExt
     {
         try
         {
-            return (double)bigInteger;
+            double val = (double)bigInteger;
+            if (double.IsInfinity(val))
+            {
+                return bigInteger < 0 ? double.MinValue : double.MaxValue;
+            }
+            return val;
         }
         catch (Exception)
         {
             // ignored
         }
-
-        double result;
-        if (bigInteger < 0)
-            result = double.MinValue;
-        else
-            result = double.MaxValue;
-
-        //Console.WriteLine($"BigInteger convert failed : From {bigInteger} to {result}");
-        return result;
+        return bigInteger < 0 ? double.MinValue : double.MaxValue;
     }
 
     public static decimal ToDecimal(this BigInteger bigInteger)

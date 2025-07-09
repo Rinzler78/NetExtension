@@ -84,6 +84,9 @@ public static class ObjectExtension
 
     public static ReturnType? GetPropertyValue<ReturnType>(this object src, string propName)
     {
-        return (ReturnType?)src.GetType().GetProperty(propName)?.GetValue(src, null);
+        var value = src.GetType().GetProperty(propName)?.GetValue(src, null);
+        if (value is ReturnType t)
+            return t;
+        return default;
     }
 }
