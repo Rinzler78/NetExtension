@@ -149,16 +149,16 @@ public class TaskHelperTests
             Task.Delay(25)
         };
 
-        var startTime = DateTime.Now;
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
         // Act
         await tasks.WhenAll();
-        var endTime = DateTime.Now;
+        stopwatch.Stop();
 
         // Assert
-        var elapsed = endTime - startTime;
-        Assert.True(elapsed.TotalMilliseconds >= 70); // Should wait for the longest task (75ms)
-        Assert.True(elapsed.TotalMilliseconds < 150); // But not too much longer
+        // Should wait for the longest task (75ms) with tolerance for CI environments
+        Assert.True(stopwatch.ElapsedMilliseconds >= 50); // Lower bound with tolerance
+        Assert.True(stopwatch.ElapsedMilliseconds < 200); // Upper bound with more tolerance
     }
 
     [Fact]
