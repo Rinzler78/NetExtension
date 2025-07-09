@@ -16,20 +16,42 @@ public static class JsonHelper
 
     public static object? DeSerializeObject(this string str) => JsonConvert.DeserializeObject(str);
 
-    public static ObjectType DeSerialize<ObjectType>(this string str)
-        => JsonConvert.DeserializeObject<ObjectType>(str) ?? throw new InvalidOperationException();
+    public static ObjectType? DeSerialize<ObjectType>(this string? str)
+    {
+        if (string.IsNullOrEmpty(str))
+            return default;
+        
+        return JsonConvert.DeserializeObject<ObjectType>(str);
+    }
 
-    public static ObjectType[] DeSerialize<ObjectType>(this string[] strs)
+    public static ObjectType?[] DeSerialize<ObjectType>(this string[] strs)
         => strs.Select(str => str.DeSerialize<ObjectType>()).ToArray();
 
-    public static ObjectType DeSerialize<ObjectType>(this string str, JsonSerializerSettings settings)
-        => JsonConvert.DeserializeObject<ObjectType>(str, settings) ?? throw new InvalidOperationException();
+    public static ObjectType? DeSerialize<ObjectType>(this string? str, JsonSerializerSettings settings)
+    {
+        if (string.IsNullOrEmpty(str))
+            return default;
+        
+        return JsonConvert.DeserializeObject<ObjectType>(str, settings);
+    }
 
-    public static ObjectType[] DeSerialize<ObjectType>(this string[] strs, JsonSerializerSettings settings)
+    public static ObjectType?[] DeSerialize<ObjectType>(this string[] strs, JsonSerializerSettings settings)
         => strs.Select(str => str.DeSerialize<ObjectType>(settings)).ToArray();
 
-    public static string SerializeObjectWithoutQuote(this object value)
+    public static string SerializeObjectWithoutQuote(this object? value)
     {
+        // Handle null values
+        if (value == null)
+        {
+            return "null";
+        }
+
+        // For simple string values, return without quotes
+        if (value is string stringValue)
+        {
+            return stringValue;
+        }
+
         var builder = new StringBuilder();
         var serializer = JsonSerializer.Create();
         var stringWriter = new StringWriter(builder);
@@ -56,31 +78,27 @@ public static class JsonHelper
         return null;
     }
 
-    public static ObjectType? DeSerializeObjectFromFile<ObjectType>(this string filePath)
+    public static ObjectType DeSerializeObjectFromFile<ObjectType>(this string filePath)
     {
-        if (File.Exists(filePath))
-        {
-            using (var reader = new StreamReader(filePath))
-            {
-                var json = reader.ReadToEnd();
-                return JsonConvert.DeserializeObject<ObjectType>(json);
-            }
-        }
+        if (!File.Exists(filePath))
+            throw new FileNotFoundException($"File not found: {filePath}");
 
-        return default;
+        using (var reader = new StreamReader(filePath))
+        {
+            var json = reader.ReadToEnd();
+            return JsonConvert.DeserializeObject<ObjectType>(json)!;
+        }
     }
 
-    public static ObjectType? DeSerializeObjectFromFile<ObjectType>(this string filePath, JsonSerializerSettings settings)
+    public static ObjectType DeSerializeObjectFromFile<ObjectType>(this string filePath, JsonSerializerSettings settings)
     {
-        if (File.Exists(filePath))
-        {
-            using (var reader = new StreamReader(filePath))
-            {
-                var json = reader.ReadToEnd();
-                return JsonConvert.DeserializeObject<ObjectType>(json, settings);
-            }
-        }
+        if (!File.Exists(filePath))
+            throw new FileNotFoundException($"File not found: {filePath}");
 
-        return default;
+        using (var reader = new StreamReader(filePath))
+        {
+            var json = reader.ReadToEnd();
+            return JsonConvert.DeserializeObject<ObjectType>(json, settings)!;
+        }
     }
 }

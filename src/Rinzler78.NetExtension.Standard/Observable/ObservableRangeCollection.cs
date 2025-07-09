@@ -8,6 +8,8 @@ namespace Rinzler78.NetExtension.Observable;
 
 public sealed class ObservableRangeCollection<T> : ObservableCollection<T>
 {
+    private readonly object _lock = new();
+
     public ObservableRangeCollection()
     {
     }
@@ -29,28 +31,31 @@ public sealed class ObservableRangeCollection<T> : ObservableCollection<T>
         if (collection is null)
             throw new ArgumentNullException(nameof(collection));
 
-        CheckReentrancy();
-
-        var startIndex = Count;
-
-        var itemsAdded = AddRangeCore(collection);
-
-        if (!itemsAdded)
-            return;
-
-        if (notificationMode == NotifyCollectionChangedAction.Reset)
+        lock (_lock)
         {
-            RaiseChangeNotificationEvents(NotifyCollectionChangedAction.Reset);
+            CheckReentrancy();
 
-            return;
+            var startIndex = Count;
+
+            var itemsAdded = AddRangeCore(collection);
+
+            if (!itemsAdded)
+                return;
+
+            if (notificationMode == NotifyCollectionChangedAction.Reset)
+            {
+                RaiseChangeNotificationEvents(NotifyCollectionChangedAction.Reset);
+
+                return;
+            }
+
+            var changedItems = collection is List<T> ? (List<T>)collection : new List<T>(collection);
+
+            RaiseChangeNotificationEvents(
+                NotifyCollectionChangedAction.Add,
+                changedItems,
+                startIndex);
         }
-
-        var changedItems = collection is List<T> ? (List<T>)collection : new List<T>(collection);
-
-        RaiseChangeNotificationEvents(
-            NotifyCollectionChangedAction.Add,
-            changedItems,
-            startIndex);
     }
 
     public void RemoveRange(IEnumerable<T> collection,
@@ -66,40 +71,43 @@ public sealed class ObservableRangeCollection<T> : ObservableCollection<T>
         if (collection is null)
             throw new ArgumentNullException(nameof(collection));
 
-        CheckReentrancy();
-
-        if (notificationMode == NotifyCollectionChangedAction.Reset)
+        lock (_lock)
         {
-            var raiseEvents = false;
-            foreach (var item in collection)
+            CheckReentrancy();
+
+            if (notificationMode == NotifyCollectionChangedAction.Reset)
             {
-                Items.Remove(item);
-                raiseEvents = true;
+                var raiseEvents = false;
+                foreach (var item in collection)
+                {
+                    Items.Remove(item);
+                    raiseEvents = true;
+                }
+
+                if (raiseEvents)
+                    RaiseChangeNotificationEvents(NotifyCollectionChangedAction.Reset);
+
+                return;
             }
 
-            if (raiseEvents)
-                RaiseChangeNotificationEvents(NotifyCollectionChangedAction.Reset);
-
-            return;
-        }
-
-        var changedItems = new List<T>(collection);
-        for (var i = 0; i < changedItems.Count; i++)
-        {
-            if (!Items.Remove(changedItems[i]))
+            var changedItems = new List<T>(collection);
+            for (var i = 0; i < changedItems.Count; i++)
             {
-                changedItems
-                    .RemoveAt(i); //Can't use a foreach because changedItems is intended to be (carefully) modified
-                i--;
+                if (!Items.Remove(changedItems[i]))
+                {
+                    changedItems
+                        .RemoveAt(i); //Can't use a foreach because changedItems is intended to be (carefully) modified
+                    i--;
+                }
             }
+
+            if (changedItems.Count == 0)
+                return;
+
+            RaiseChangeNotificationEvents(
+                NotifyCollectionChangedAction.Remove,
+                changedItems);
         }
-
-        if (changedItems.Count == 0)
-            return;
-
-        RaiseChangeNotificationEvents(
-            NotifyCollectionChangedAction.Remove,
-            changedItems);
     }
 
     public void Replace(T item)
@@ -112,20 +120,23 @@ public sealed class ObservableRangeCollection<T> : ObservableCollection<T>
         if (collection is null)
             throw new ArgumentNullException(nameof(collection));
 
-        CheckReentrancy();
+        lock (_lock)
+        {
+            CheckReentrancy();
 
-        var previouslyEmpty = Items.Count == 0;
+            var previouslyEmpty = Items.Count == 0;
 
-        Items.Clear();
+            Items.Clear();
 
-        AddRangeCore(collection);
+            AddRangeCore(collection);
 
-        var currentlyEmpty = Items.Count == 0;
+            var currentlyEmpty = Items.Count == 0;
 
-        if (previouslyEmpty && currentlyEmpty)
-            return;
+            if (previouslyEmpty && currentlyEmpty)
+                return;
 
-        RaiseChangeNotificationEvents(NotifyCollectionChangedAction.Reset);
+            RaiseChangeNotificationEvents(NotifyCollectionChangedAction.Reset);
+        }
     }
 
     private bool AddRangeCore(IEnumerable<T>? collection)
