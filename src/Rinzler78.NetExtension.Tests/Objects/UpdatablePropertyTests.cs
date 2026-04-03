@@ -63,6 +63,45 @@ public class UpdatablePropertyTests
     }
 
     [Fact]
+    public async Task Get_ConcurrentCalls_ShouldShareSingleInFlightFetch()
+    {
+        var calls = 0;
+        var gate = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var property = new UpdatableProperty<int>(async () =>
+        {
+            Interlocked.Increment(ref calls);
+            return await gate.Task;
+        });
+
+        var first = property.Get();
+        var second = property.Get();
+        gate.SetResult(42);
+        var results = await Task.WhenAll(first, second);
+
+        calls.Should().Be(1);
+        results.Should().AllSatisfy(result => result.Should().Be(42));
+    }
+
+    [Fact]
+    public async Task Get_WhenUpdateFails_ShouldRetryOnNextCall()
+    {
+        var calls = 0;
+        var property = new UpdatableProperty<int>(() =>
+        {
+            var attempt = Interlocked.Increment(ref calls);
+            return attempt == 1
+                ? Task.FromException<int>(new InvalidOperationException("boom"))
+                : Task.FromResult(42);
+        });
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => property.Get());
+        var value = await property.Get();
+
+        calls.Should().Be(2);
+        value.Should().Be(42);
+    }
+
+    [Fact]
     public async Task ExtensionMethods_ShouldGetAndUpdateAll()
     {
         var property1 = new UpdatableProperty<int>(() => Task.FromResult(1));
@@ -80,7 +119,6 @@ public class UpdatablePropertyTests
     public void Constructor_WithNullDelegate_ShouldThrow()
     {
         Action act = () => _ = new UpdatableProperty<int>(null!);
-
         act.Should().Throw<ArgumentNullException>();
     }
 }
