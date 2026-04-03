@@ -22,12 +22,10 @@ public class NetworkHelperIntegrationTests
         using var acceptLoopCts = new CancellationTokenSource();
         var acceptLoop = AcceptConnectionsUntilCancelledAsync(listener, acceptLoopCts.Token);
 
-        // Use retry for all open-port assertions to tolerate slow CI runners (200 ms TCP timeout).
         // Small warmup to allow the OS to finish binding the listening socket before probing it.
         await Task.Delay(50);
 
-        // Use retry for all open-port assertions to tolerate slow CI runners.
-        // Retrying avoids false negatives caused by transient OS scheduler delays without hiding real bugs.
+        // Retry all open-port assertions to tolerate transient scheduler delays on CI runners.
         IsPortOpenedWithRetry(IPAddress.Loopback, openPort).Should().BeTrue(
             "uint overload: the listener is running and should be reachable on loopback");
         IsPortOpenedWithRetryInt(IPAddress.Loopback, (int)openPort).Should().BeTrue(
@@ -45,7 +43,7 @@ public class NetworkHelperIntegrationTests
     /// <summary>
     /// Retries IsPortOpened up to <paramref name="maxAttempts"/> times with an
     /// increasing delay. This compensates for CI runners where loopback TCP
-    /// connections may take slightly longer than the library's 200 ms timeout.
+    /// connections may take slightly longer to settle than a single probe allows.
     /// </summary>
     private static bool IsPortOpenedWithRetry(IPAddress address, uint port, int maxAttempts = 5)
     {

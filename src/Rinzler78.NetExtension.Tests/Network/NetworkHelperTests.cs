@@ -64,18 +64,10 @@ public class NetworkHelperTests
     }
 
     [Fact]
-    [Trait("Category", "Integration")]
-    public void IsPortOpened_WithOpenAndClosedPorts_ShouldReflectSocketState()
-    {
-        // Moved to Integration/NetworkHelperIntegrationTests.cs — uses real TCP socket
-    }
-
-    [Fact]
     [Trait("Category", "Unit")]
     public void IsPortOpened_WithMaxPort_ShouldNotReturnFalseForInvalidReason()
     {
-        // Port 65535 must be accepted as valid (must not return false due to validation)
-        // Cannot open a real socket here, but we verify the call does not throw
+        // Port 65535 is valid. This unit test only verifies validation, not socket reachability.
         var act = () => IPAddress.Loopback.IsPortOpened(65535u);
         act.Should().NotThrow<ArgumentOutOfRangeException>("port 65535 is a valid TCP port");
     }

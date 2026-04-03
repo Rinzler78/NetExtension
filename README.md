@@ -3,9 +3,9 @@
 [![CI](https://github.com/Rinzler78/NetExtension/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Rinzler78/NetExtension/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/v/Rinzler78.NetExtension?logo=nuget&label=NuGet)](https://www.nuget.org/packages/Rinzler78.NetExtension)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
-[![.NET](https://img.shields.io/badge/.NET-8.0-blue?logo=dotnet&style=flat-square)](https://dotnet.microsoft.com/)
+[![.NET](https://img.shields.io/badge/.NET-10.0-blue?logo=dotnet&style=flat-square)](https://dotnet.microsoft.com/)
 
-A comprehensive collection of .NET 8 extensions and utilities: observable MVVM helpers (with source-generated properties), JSON utilities, SSRF-protected HTTP, network tools, string operations, async patterns, CSV, hash functions, and more.
+A comprehensive collection of .NET 10 extensions and utilities: observable MVVM helpers (with source-generated properties), JSON utilities, SSRF-protected HTTP, network tools, string operations, async patterns, CSV, hash functions, and more.
 
 ## 📦 Installation
 

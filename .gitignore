@@ -83,7 +83,6 @@ $RECYCLE.BIN/
 *.sln.docstates
 
 # User-specific files (MonoDevelop/Xamarin Studio)
-*.userprefs
 
 # Build results
 [Dd]ebug/
@@ -413,9 +412,6 @@ ASALocalRun/
 !.worktrees/.gitkeep
 
 # .NET build output directories
-[Oo]bj/
-[Bb]in/
-artifacts/
 .pi/
 
 # Internal / generated artifacts

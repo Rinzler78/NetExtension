@@ -25,7 +25,10 @@ public static class NetworkHelper
     /// Resolves a hostname to an IP address.
     /// </summary>
     /// <param name="host">The hostname to resolve.</param>
-    /// <returns>The resolved IP address, or null if resolution fails.</returns>
+    /// <returns>
+    /// The first resolved IP address, or <see langword="null"/> when <paramref name="host"/> is empty
+    /// or DNS resolution returns no addresses.
+    /// </returns>
     /// <exception cref="ArgumentNullException">Thrown when host is null.</exception>
     /// <exception cref="SocketException">Thrown when DNS resolution fails.</exception>
     public static IPAddress? Resolve(this string host)
@@ -49,24 +52,24 @@ public static class NetworkHelper
         return false;
     }
 
-    public static bool IsPortOpened(this IPAddress iPAddress, int portNumber)
+    public static bool IsPortOpened(this IPAddress ipAddress, int portNumber)
     {
         if (portNumber < 0)
             throw new ArgumentOutOfRangeException(nameof(portNumber), "Port number must be between 0 and 65535");
-        return iPAddress.IsPortOpened((uint)portNumber);
+        return ipAddress.IsPortOpened((uint)portNumber);
     }
 
     /// <summary>
     /// Checks if a specific port is open on the given IP address.
     /// </summary>
-    /// <param name="iPAddress">The IP address to check.</param>
+    /// <param name="ipAddress">The IP address to check.</param>
     /// <param name="portNumber">The port number to check.</param>
     /// <returns>True if the port is open, false otherwise.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when iPAddress is null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when ipAddress is null.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when portNumber is outside valid range.</exception>
-    public static bool IsPortOpened(this IPAddress iPAddress, uint portNumber)
+    public static bool IsPortOpened(this IPAddress ipAddress, uint portNumber)
     {
-        ArgumentNullException.ThrowIfNull(iPAddress);
+        ArgumentNullException.ThrowIfNull(ipAddress);
 
         if (portNumber > ushort.MaxValue)
             throw new ArgumentOutOfRangeException(nameof(portNumber), "Port number must be between 0 and 65535");
@@ -74,11 +77,11 @@ public static class NetworkHelper
         Socket? socket = null;
         try
         {
-            socket = new Socket(iPAddress.AddressFamily,
+            socket = new Socket(ipAddress.AddressFamily,
                         SocketType.Stream,
                         ProtocolType.Tcp);
 
-            IAsyncResult result = socket.BeginConnect(iPAddress, (int)portNumber, null, null);
+            IAsyncResult result = socket.BeginConnect(ipAddress, (int)portNumber, null, null);
             bool success = result.AsyncWaitHandle.WaitOne(PortCheckTimeoutMs, true);
 
             if (!success)
@@ -89,12 +92,10 @@ public static class NetworkHelper
         }
         catch (SocketException)
         {
-            // Connection failed - port is closed
             return false;
         }
         catch (ObjectDisposedException)
         {
-            // Socket was disposed
             return false;
         }
         finally

@@ -46,6 +46,23 @@ public class UpdatablePropertyTests
     }
 
     [Fact]
+    public async Task Get_AfterUpdate_ShouldReuseInitializedValueUntilForced()
+    {
+        var calls = 0;
+        var property = new UpdatableProperty<int>(() => Task.FromResult(Interlocked.Increment(ref calls)));
+
+        await property.Update();
+        var firstGet = await property.Get();
+        var secondGet = await property.Get();
+        var forcedGet = await property.Get(force: true);
+
+        calls.Should().Be(2);
+        firstGet.Should().Be(1);
+        secondGet.Should().Be(1);
+        forcedGet.Should().Be(2);
+    }
+
+    [Fact]
     public async Task ExtensionMethods_ShouldGetAndUpdateAll()
     {
         var property1 = new UpdatableProperty<int>(() => Task.FromResult(1));

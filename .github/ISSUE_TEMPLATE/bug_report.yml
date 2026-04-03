@@ -58,7 +58,7 @@ body:
     id: dotnet
     attributes:
       label: .NET Version
-      placeholder: "e.g. .NET 8.0.x"
+      placeholder: "e.g. .NET 10.0.x"
     validations:
       required: true
 

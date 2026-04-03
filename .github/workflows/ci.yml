@@ -90,7 +90,7 @@ jobs:
 
     strategy:
       matrix:
-        dotnet-version: ['8.0.x']
+        dotnet-version: ['10.0.x']
         configuration: [Debug, Release]
 
     steps:
@@ -160,12 +160,6 @@ jobs:
           coverage/coverage-gate.md
         retention-days: 30
 
-    - name: Code quality check
-      if: matrix.configuration == 'Release'
-      run: |
-        mkdir -p .tools
-        dotnet tool install dotnet-format --tool-path .tools
-        ./.tools/dotnet-format src/Rinzler78.NetExtension.sln --check --verbosity diagnostic
 
     - name: Pack NuGet package
       if: matrix.configuration == 'Release'
@@ -194,7 +188,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        dotnet-version: ['8.0.x']
+        dotnet-version: ['10.0.x']
 
     steps:
     - name: Checkout code

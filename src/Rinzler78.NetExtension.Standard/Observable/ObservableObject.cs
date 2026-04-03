@@ -1,10 +1,3 @@
-#if DEBUG
-//#define TRACE_PROPERTY_CHANGED
-//#define TRACE_PROPERTY_ATTACH_DETACH
-//#define TRACE_DISPOSE
-//#define TRACE_CTOR
-#endif
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -111,7 +104,6 @@ public abstract class ObservableObject : IObservableObject, IDisposable
 
             if (checkValidity.Invoke((target, source)))
             {
-                //if (EqualityComparer<T>.Default.Equals(target, source))
                 return false;
             }
 
@@ -179,11 +171,6 @@ public abstract class ObservableObject : IObservableObject, IDisposable
                 item.PropertyChanged -= OnDependenciesPropertyChanged;
         }
     }
-
-    //~ObservableObject()
-    //{
-    //    Dispose(false);
-    //}
 
     /// <summary>
     /// Attaches one or more observable objects as dependencies, causing this object to monitor their PropertyChanged events.

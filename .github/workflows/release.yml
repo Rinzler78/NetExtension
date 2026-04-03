@@ -25,7 +25,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: '10.0.x'
 
     - name: Extract version from tag
       id: extract_version
@@ -37,7 +37,6 @@ jobs:
     - name: Update project version
       run: |
         sed -i 's/<PackageVersion>.*<\/PackageVersion>/<PackageVersion>${{ steps.extract_version.outputs.VERSION }}<\/PackageVersion>/' src/Rinzler78.NetExtension.Standard/Rinzler78.NetExtension.Standard.csproj
-        sed -i 's/<Version>.*<\/Version>/<Version>${{ steps.extract_version.outputs.VERSION }}<\/Version>/' src/Rinzler78.NetExtension.Standard/Rinzler78.NetExtension.Standard.csproj
 
     - name: Restore dependencies
       run: dotnet restore src/Rinzler78.NetExtension.sln
@@ -97,7 +96,6 @@ jobs:
         prerelease: false
         files: |
           ./release-artifacts/*.nupkg
-          ./release-artifacts/*.snupkg
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Publish to NuGet (if configured)

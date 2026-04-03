@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <RootNamespace>Rinzler78.NetExtension</RootNamespace>
         <Nullable>enable</Nullable>
         <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
@@ -20,7 +20,9 @@
         <RepositoryType>git</RepositoryType>
         <PackageTags>extensions utilities dotnet csharp</PackageTags>
         <PackageReleaseNotes>See CHANGELOG.md for full history.</PackageReleaseNotes>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <EnablePackageValidation>true</EnablePackageValidation>
+        <SourceGeneratorOutputPath>$(MSBuildThisFileDirectory)..\Rinzler78.NetExtension.SourceGenerators\bin\$(Configuration)\netstandard2.0\Rinzler78.NetExtension.SourceGenerators.dll</SourceGeneratorOutputPath>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -35,9 +37,9 @@
 
 
     <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
         <PackageReference Include="CsvHelper" Version="33.1.0" />
-        <PackageReference Include="System.IO.Hashing" Version="9.0.7" />
+        <PackageReference Include="System.IO.Hashing" Version="10.0.5" />
 
         <PackageReference Include="bigrational" Version="1.0.0.7" />
     </ItemGroup>
@@ -48,5 +50,17 @@
       Include="..\Rinzler78.NetExtension.SourceGenerators\Rinzler78.NetExtension.SourceGenerators.csproj"
       OutputItemType="Analyzer"
       ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(SourceGeneratorOutputPath)"
+          Pack="true"
+          PackagePath="analyzers/dotnet/cs"
+          Visible="false"
+          Condition="Exists('$(SourceGeneratorOutputPath)')" />
+    <None Include="..\..\README.md"
+          Pack="true"
+          PackagePath="\"
+          Link="README.md" />
   </ItemGroup>
 </Project>

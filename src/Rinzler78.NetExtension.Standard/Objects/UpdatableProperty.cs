@@ -13,6 +13,7 @@ public abstract class UpdatableProperty : ObservableObject
     private object? _property;
 
     private Task _updateTask = Task.CompletedTask;
+    private bool _initialized;
 
     public object? Property
     {
@@ -28,8 +29,11 @@ public abstract class UpdatableProperty : ObservableObject
             {
                 _getTask = Task.Run(async () =>
                 {
-                    if (Property == default || force)
+                    if (!_initialized || force)
+                    {
                         await Update().ConfigureAwait(false);
+                        _initialized = true;
+                    }
 
                     return Property;
                 });
@@ -43,7 +47,15 @@ public abstract class UpdatableProperty : ObservableObject
     {
         lock (_locker)
         {
-            if (_updateTask.IsCompleted) _updateTask = InnerUpdate();
+            if (_updateTask.IsCompleted)
+            {
+                _updateTask = Task.Run(async () =>
+                {
+                    await InnerUpdate().ConfigureAwait(false);
+                    _initialized = true;
+                });
+            }
+
             return _updateTask;
         }
     }
