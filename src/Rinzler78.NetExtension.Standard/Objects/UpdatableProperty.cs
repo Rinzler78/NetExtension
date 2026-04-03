@@ -27,16 +27,7 @@ public abstract class UpdatableProperty : ObservableObject
         {
             if (_getTask.IsCompleted)
             {
-                _getTask = Task.Run(async () =>
-                {
-                    if (!_initialized || force)
-                    {
-                        await Update().ConfigureAwait(false);
-                        _initialized = true;
-                    }
-
-                    return Property;
-                });
+                _getTask = GetCore(force);
             }
 
             return _getTask;
@@ -49,15 +40,28 @@ public abstract class UpdatableProperty : ObservableObject
         {
             if (_updateTask.IsCompleted)
             {
-                _updateTask = Task.Run(async () =>
-                {
-                    await InnerUpdate().ConfigureAwait(false);
-                    _initialized = true;
-                });
+                _updateTask = UpdateCore();
             }
 
             return _updateTask;
         }
+    }
+
+    private async Task<object?> GetCore(bool force)
+    {
+        if (!_initialized || force)
+        {
+            await Update().ConfigureAwait(false);
+            _initialized = true;
+        }
+
+        return Property;
+    }
+
+    private async Task UpdateCore()
+    {
+        await InnerUpdate().ConfigureAwait(false);
+        _initialized = true;
     }
 
     protected abstract Task InnerUpdate();

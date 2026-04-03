@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
@@ -11,10 +14,10 @@ namespace Rinzler78.NetExtension.Strings;
 
 public static partial class StringHelper
 {
-    private static readonly HttpClient HttpClient = new()
-    {
-        Timeout = TimeSpan.FromSeconds(DefaultHttpTimeoutSeconds)
-    };
+    private static readonly object HostAddressResolverSync = new();
+    private static Func<string, IPAddress[]> _hostAddressResolver = Dns.GetHostAddresses;
+
+    private static readonly HttpClient HttpClient = CreateHttpClient();
 
     public static async Task<Stream> HttpGetStreamAsync(this string url, TimeSpan? timeout = null,
         CancellationToken cancellationToken = default)
@@ -25,10 +28,10 @@ public static partial class StringHelper
         {
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             cts.CancelAfter(timeout.Value);
-            return await HttpClient.GetStreamAsync(url, cts.Token).ConfigureAwait(false);
+            return await ExecuteHttpCall(() => HttpClient.GetStreamAsync(url, cts.Token)).ConfigureAwait(false);
         }
 
-        return await HttpClient.GetStreamAsync(url, cancellationToken).ConfigureAwait(false);
+        return await ExecuteHttpCall(() => HttpClient.GetStreamAsync(url, cancellationToken)).ConfigureAwait(false);
     }
 
     public static async Task<string> HttpGetStringAsync(this string url, TimeSpan? timeout = null,
@@ -40,10 +43,10 @@ public static partial class StringHelper
         {
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             cts.CancelAfter(timeout.Value);
-            return await HttpClient.GetStringAsync(url, cts.Token).ConfigureAwait(false);
+            return await ExecuteHttpCall(() => HttpClient.GetStringAsync(url, cts.Token)).ConfigureAwait(false);
         }
 
-        return await HttpClient.GetStringAsync(url, cancellationToken).ConfigureAwait(false);
+        return await ExecuteHttpCall(() => HttpClient.GetStringAsync(url, cancellationToken)).ConfigureAwait(false);
     }
 
     public static async Task<ReturnType> HttpGetAsync<ReturnType>(this string url,
@@ -88,23 +91,26 @@ public static partial class StringHelper
         {
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             cts.CancelAfter(timeout.Value);
-            httpResponse = await HttpClient.PostAsync(url, obj?.GetStringContent(), cts.Token)
+            httpResponse = await ExecuteHttpCall(() => HttpClient.PostAsync(url, obj?.GetStringContent(), cts.Token))
                 .ConfigureAwait(false);
         }
         else
         {
-            httpResponse = await HttpClient.PostAsync(url, obj?.GetStringContent(), cancellationToken)
+            httpResponse = await ExecuteHttpCall(() => HttpClient.PostAsync(url, obj?.GetStringContent(), cancellationToken))
                 .ConfigureAwait(false);
         }
 
-        var result = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+        using (httpResponse)
+        {
+            var result = await httpResponse.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
 
 #if SHOW_HTTP_TRACE
-        strb.AppendLine($"Answer ({url}) :");
-        strb.AppendLine(result);
-        Console.WriteLine(strb.ToString());
+            strb.AppendLine($"Answer ({url}) :");
+            strb.AppendLine(result);
+            Console.WriteLine(strb.ToString());
 #endif
-        return result;
+            return result;
+        }
     }
 
     public static async Task<ReturnType> HttpPost<RequestType, ImplementationType, ReturnType>(
@@ -141,49 +147,164 @@ public static partial class StringHelper
             throw new ArgumentException("Access to localhost is not allowed.", nameof(url));
         }
 
-        if (System.Net.IPAddress.TryParse(host, out var ipAddress))
+        if (IPAddress.TryParse(host, out var ipAddress))
         {
-            if (ipAddress.AddressFamily == AddressFamily.InterNetworkV6)
-            {
-                if (ipAddress.Equals(System.Net.IPAddress.IPv6Loopback) ||
-                    ipAddress.IsIPv6LinkLocal ||
-                    ipAddress.IsIPv6SiteLocal ||
-                    IsIPv6UniqueLocal(ipAddress))
-                    throw new ArgumentException("Access to private network ranges is not allowed.", nameof(url));
-            }
-            else
-            {
-                var bytes = ipAddress.GetAddressBytes();
-                if (bytes.Length == 4)
-                {
-                    if (bytes[0] == 0)
-                        throw new ArgumentException("Access to private network ranges is not allowed.", nameof(url));
-
-                    if (bytes[0] == ClassAPrivateFirstOctet)
-                        throw new ArgumentException("Access to private network ranges is not allowed.", nameof(url));
-
-                    if (bytes[0] == ClassBPrivateFirstOctet &&
-                        bytes[1] >= ClassBPrivateSecondOctetMin &&
-                        bytes[1] <= ClassBPrivateSecondOctetMax)
-                        throw new ArgumentException("Access to private network ranges is not allowed.", nameof(url));
-
-                    if (bytes[0] == ClassCPrivateFirstOctet &&
-                        bytes[1] == ClassCPrivateSecondOctet)
-                        throw new ArgumentException("Access to private network ranges is not allowed.", nameof(url));
-
-                    if (bytes[0] == 169 && bytes[1] == 254)
-                        throw new ArgumentException("Access to link-local addresses is not allowed.", nameof(url));
-
-                    if (bytes[0] == 100 && bytes[1] >= 64 && bytes[1] <= 127)
-                        throw new ArgumentException("Access to CGNAT address space is not allowed.", nameof(url));
-                }
-            }
+            ThrowIfBlockedAddress(ipAddress, nameof(url));
         }
+    }
+
+    internal static IDisposable OverrideHostAddressResolverForTesting(Func<string, IPAddress[]> resolver)
+    {
+        ArgumentNullException.ThrowIfNull(resolver);
+
+        lock (HostAddressResolverSync)
+        {
+            var previousResolver = _hostAddressResolver;
+            _hostAddressResolver = resolver;
+            return new HostAddressResolverOverride(previousResolver);
+        }
+    }
+
+    private static void ThrowIfBlockedAddress(IPAddress ipAddress, string paramName)
+    {
+        if (ipAddress.AddressFamily == AddressFamily.InterNetworkV6)
+        {
+            if (ipAddress.Equals(IPAddress.IPv6Loopback) ||
+                ipAddress.IsIPv6LinkLocal ||
+                ipAddress.IsIPv6SiteLocal ||
+                IsIPv6UniqueLocal(ipAddress))
+            {
+                throw new ArgumentException("Access to private network ranges is not allowed.", paramName);
+            }
+
+            return;
+        }
+
+        var bytes = ipAddress.GetAddressBytes();
+        if (bytes.Length != 4)
+            return;
+
+        if (bytes[0] == 0)
+            throw new ArgumentException("Access to private network ranges is not allowed.", paramName);
+
+        if (bytes[0] == 127)
+            throw new ArgumentException("Access to localhost is not allowed.", paramName);
+
+        if (bytes[0] == ClassAPrivateFirstOctet)
+            throw new ArgumentException("Access to private network ranges is not allowed.", paramName);
+
+        if (bytes[0] == ClassBPrivateFirstOctet &&
+            bytes[1] >= ClassBPrivateSecondOctetMin &&
+            bytes[1] <= ClassBPrivateSecondOctetMax)
+        {
+            throw new ArgumentException("Access to private network ranges is not allowed.", paramName);
+        }
+
+        if (bytes[0] == ClassCPrivateFirstOctet &&
+            bytes[1] == ClassCPrivateSecondOctet)
+        {
+            throw new ArgumentException("Access to private network ranges is not allowed.", paramName);
+        }
+
+        if (bytes[0] == 169 && bytes[1] == 254)
+            throw new ArgumentException("Access to link-local addresses is not allowed.", paramName);
+
+        if (bytes[0] == 100 && bytes[1] >= 64 && bytes[1] <= 127)
+            throw new ArgumentException("Access to CGNAT address space is not allowed.", paramName);
     }
 
     private static bool IsIPv6UniqueLocal(System.Net.IPAddress ipAddress)
     {
         var bytes = ipAddress.GetAddressBytes();
         return bytes.Length == 16 && (bytes[0] & 0xFE) == 0xFC;
+    }
+
+    private static HttpClient CreateHttpClient()
+    {
+        var handler = new SocketsHttpHandler
+        {
+            ConnectCallback = ConnectAsync
+        };
+
+        return new HttpClient(handler)
+        {
+            Timeout = TimeSpan.FromSeconds(DefaultHttpTimeoutSeconds)
+        };
+    }
+
+    private static async ValueTask<Stream> ConnectAsync(SocketsHttpConnectionContext context, CancellationToken cancellationToken)
+    {
+        var addresses = ResolveHostAddresses(context.DnsEndPoint.Host);
+        SocketException? lastSocketException = null;
+
+        foreach (var address in addresses)
+        {
+            ThrowIfBlockedAddress(address, nameof(context));
+
+            var socket = new Socket(address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+            try
+            {
+                await socket.ConnectAsync(new IPEndPoint(address, context.DnsEndPoint.Port), cancellationToken)
+                    .ConfigureAwait(false);
+                return new NetworkStream(socket, ownsSocket: true);
+            }
+            catch (SocketException ex)
+            {
+                lastSocketException = ex;
+                socket.Dispose();
+            }
+            catch
+            {
+                socket.Dispose();
+                throw;
+            }
+        }
+
+        throw lastSocketException ?? new SocketException((int)SocketError.HostNotFound);
+    }
+
+    private static async Task<T> ExecuteHttpCall<T>(Func<Task<T>> httpCall)
+    {
+        try
+        {
+            return await httpCall().ConfigureAwait(false);
+        }
+        catch (HttpRequestException ex) when (ex.InnerException is ArgumentException argumentException)
+        {
+            ExceptionDispatchInfo.Capture(argumentException).Throw();
+            throw;
+        }
+    }
+
+    private static IPAddress[] ResolveHostAddresses(string host)
+    {
+        Func<string, IPAddress[]> resolver;
+        lock (HostAddressResolverSync)
+            resolver = _hostAddressResolver;
+
+        return resolver(host);
+    }
+
+    private sealed class HostAddressResolverOverride : IDisposable
+    {
+        private readonly Func<string, IPAddress[]> _previousResolver;
+        private bool _disposed;
+
+        public HostAddressResolverOverride(Func<string, IPAddress[]> previousResolver)
+        {
+            _previousResolver = previousResolver;
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+                return;
+
+            lock (HostAddressResolverSync)
+                _hostAddressResolver = _previousResolver;
+
+            _disposed = true;
+        }
     }
 }
