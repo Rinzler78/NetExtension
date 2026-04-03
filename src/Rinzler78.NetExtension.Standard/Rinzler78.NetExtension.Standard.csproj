@@ -9,11 +9,12 @@
         <PackageVersion>0.2.0</PackageVersion>
         <Title>Rinzler78 .NET Extensions</Title>
         <Description>A comprehensive collection of .NET extensions and utilities</Description>
-        <Authors>bleclereperso</Authors>
+        <Authors>Rinzler78</Authors>
         <Company>Rinzler78</Company>
         <Product>NetExtension</Product>
-        <Copyright>Copyright © 2025</Copyright>
+        <Copyright>Copyright © 2024–2026 Rinzler78</Copyright>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/Rinzler78/NetExtension</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Rinzler78/NetExtension</RepositoryUrl>
         <RepositoryType>git</RepositoryType>

@@ -25,6 +25,6 @@ public static class ProcessHelper
         return new ProcessOutputs(stdOut, stdErr);
     }
 
-    public static ProcessPriorityClass CurrrentProcessPriorityClass()
+    public static ProcessPriorityClass CurrentProcessPriorityClass()
         => System.Diagnostics.Process.GetCurrentProcess().PriorityClass;
 }

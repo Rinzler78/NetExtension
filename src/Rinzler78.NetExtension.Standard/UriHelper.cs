@@ -4,7 +4,7 @@ namespace Rinzler78.NetExtension;
 
 public static class UriHelper
 {
-    public static string ToFullEnpoint(this Uri uri)
+    public static string ToFullEndpoint(this Uri uri)
     {
         var fullEndpoint = $"{uri.Scheme}://{uri.Host}:{uri.Port}{uri.AbsolutePath}";
 

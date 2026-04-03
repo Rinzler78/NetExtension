@@ -42,7 +42,7 @@ privately to minimise risk before a fix is available.
 This library provides utility extensions for .NET applications. Areas of particular
 security relevance include:
 
-- **HTTP utilities** (`StringHelper.HttpGetAsync`, `HttpPostString`) — SSRF protection
+- **HTTP utilities** (`StringHelper.HttpGetAsync<T>`, `HttpGetStringAsync`, `HttpPostString`) — SSRF protection
   via `ValidateUrl` blocks private ranges, loopback, and link-local addresses.
 - **File path utilities** (`JsonHelper.DeserializeObjectFromFile`) — path traversal
   protection via allowlist of safe file extensions.

@@ -29,7 +29,7 @@ The quality workflow emits:
 - `coverage-summary.json` and `coverage-summary.md` for the current file-level baseline
 - `coverage-gate.json` and `coverage-gate.md` for gate status and failures
 
-The checked-in baseline lives in `docs/testing-quality/coverage-baseline.json` and `docs/testing-quality/coverage-baseline.md`.
+The checked-in baseline lives in `docs/testing-quality/coverage-baseline.json`.
 
 ## Current policy
 

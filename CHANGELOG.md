@@ -22,8 +22,6 @@ Versioning follows [SemVer](https://semver.org/) — `0.MINOR.PATCH` until 1.0.
 - **`.github/ISSUE_TEMPLATE/`** — structured YAML templates for bug reports and feature requests.
 - **`ObservableObject`** — `AttachDependenciesCore` / `DetachDependenciesCore` helpers
   eliminate the AB/BA deadlock risk from the previous double-lock pattern.
-- **`scripts/local/setup.sh`** — one-shot developer environment initialisation
-  (submodules, pre-commit hooks, NuGet restore).
 - **`ensure_hooks()`** in `scripts/lib/common.sh` — auto-installs pre-commit hooks the
   first time any local script runs; worktree-aware and silent if pre-commit is absent.
 
@@ -107,7 +105,4 @@ Versioning follows [SemVer](https://semver.org/) — `0.MINOR.PATCH` until 1.0.
 ---
 
 [Unreleased]: https://github.com/Rinzler78/NetExtension/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/Rinzler78/NetExtension/compare/v0.1.2...v0.2.0
-[0.1.2]: https://github.com/Rinzler78/NetExtension/compare/v0.1.1...v0.1.2
-[0.1.1]: https://github.com/Rinzler78/NetExtension/compare/v0.1.0...v0.1.1
-[0.1.0]: https://github.com/Rinzler78/NetExtension/releases/tag/v0.1.0
+[0.2.0]: https://github.com/Rinzler78/NetExtension/releases/tag/v0.2.0

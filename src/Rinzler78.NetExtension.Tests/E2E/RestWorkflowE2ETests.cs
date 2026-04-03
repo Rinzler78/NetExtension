@@ -22,7 +22,7 @@ public class RestWorkflowE2ETests
 
             var manifest = new EndpointManifest
             {
-                Endpoint = api.BaseUri.ToFullEnpoint(),
+                Endpoint = api.BaseUri.ToFullEndpoint(),
                 RequestUrl = api.BaseUri.AbsoluteUri.CreateUrlPath(new Dictionary<string, object?>
                 {
                     ["page"] = 3,

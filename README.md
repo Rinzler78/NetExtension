@@ -156,7 +156,7 @@ bool     open     = IPAddress.Loopback.IsPortOpened(8080u);
 bool     open2    = "192.168.1.1".IsPortOpened(80u);
 IPAddress? addr   = "api.example.com".Resolve();
 PingReply  reply  = "8.8.8.8".Ping();
-string     ep     = new Uri("https://api.example.com/v1/").ToFullEnpoint();
+string     ep     = new Uri("https://api.example.com/v1/").ToFullEndpoint();
 // → "https://api.example.com/v1"
 ```
 

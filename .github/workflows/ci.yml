@@ -105,11 +105,6 @@ jobs:
         dotnet-version: ${{ matrix.dotnet-version }}
 
 
-    - name: Validate code style and hooks
-      run: |
-        pip install pre-commit --quiet
-        pre-commit run --all-files
-
     - name: Cache NuGet packages
       uses: actions/cache@v4
       with:
@@ -120,6 +115,11 @@ jobs:
 
     - name: Restore dependencies
       run: dotnet restore src/Rinzler78.NetExtension.sln
+
+    - name: Validate code style and hooks
+      run: |
+        pip install pre-commit --quiet
+        pre-commit run --all-files
 
     - name: Build
       run: dotnet build src/Rinzler78.NetExtension.sln --configuration ${{ matrix.configuration }} --no-restore

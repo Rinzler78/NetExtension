@@ -172,7 +172,7 @@ By participating in this project, you agree to abide by our Code of Conduct:
 ./scripts/local/test.sh
 
 # Run specific test class
-dotnet test --filter "ClassName=StringHelperTests"
+dotnet test --filter "FullyQualifiedName~StringHelperTests"
 ```
 
 ## Pull Request Process
@@ -283,7 +283,7 @@ For feature requests, include:
 If you discover a security vulnerability, please:
 
 1. **Do NOT create a public issue**
-2. **Email the maintainers** at [security email if available]
+2. **Open a [GitHub Security Advisory](https://github.com/Rinzler78/NetExtension/security/advisories/new)** — this keeps the report confidential until a fix is released.
 3. **Include details** about the vulnerability
 4. **Wait for acknowledgment** before public disclosure
 

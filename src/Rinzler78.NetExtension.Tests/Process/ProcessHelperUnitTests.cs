@@ -21,15 +21,15 @@ public class ProcessHelperUnitTests
     }
 
     [Fact]
-    public void CurrrentProcessPriorityClass_ShouldReturnValidPriorityClass()
+    public void CurrentProcessPriorityClass_ShouldReturnValidPriorityClass()
     {
-        // NOTE: The method name "CurrrentProcessPriorityClass" contains a typo in the
+        // NOTE: The method name "CurrentProcessPriorityClass" contains a typo in the
         // production API (three r's in "Currrent").  This test intentionally tracks that
         // typo so that a future rename will cause a compile error here, alerting the
         // maintainer to update call sites simultaneously.
-        var priority = ProcessHelper.CurrrentProcessPriorityClass();
+        var priority = ProcessHelper.CurrentProcessPriorityClass();
 
         Enum.IsDefined(typeof(ProcessPriorityClass), priority).Should().BeTrue(
-            "CurrrentProcessPriorityClass() must return a member of the ProcessPriorityClass enum");
+            "CurrentProcessPriorityClass() must return a member of the ProcessPriorityClass enum");
     }
 }
