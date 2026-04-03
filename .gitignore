@@ -416,7 +416,7 @@ ASALocalRun/
 [Oo]bj/
 [Bb]in/
 artifacts/
-.pi/subagents/
+.pi/
 
 # Internal / generated artifacts
 code-review-report.md

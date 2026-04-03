@@ -20,6 +20,7 @@ dotnet add package Rinzler78.NetExtension
 ## 🚀 Quick Start
 
 ```csharp
+using Newtonsoft.Json;
 using Rinzler78.NetExtension.Json;
 using Rinzler78.NetExtension.Observable;
 using Rinzler78.NetExtension.Strings;
@@ -96,6 +97,8 @@ public partial class UserViewModel : ObservableObject
 Serialization helpers and custom converters for Newtonsoft.Json.
 
 ```csharp
+using Newtonsoft.Json;
+
 // Serialize / deserialize
 string  json = myObject.SerializeObject(Formatting.Indented);
 MyType  obj  = json.Deserialize<MyType>()!;

@@ -4,6 +4,7 @@ WORKDIR /workspace
 COPY src/Rinzler78.NetExtension.sln src/
 COPY src/Rinzler78.NetExtension.Standard/Rinzler78.NetExtension.Standard.csproj src/Rinzler78.NetExtension.Standard/
 COPY src/Rinzler78.NetExtension.Tests/Rinzler78.NetExtension.Tests.csproj src/Rinzler78.NetExtension.Tests/
+COPY src/Rinzler78.NetExtension.SourceGenerators/Rinzler78.NetExtension.SourceGenerators.csproj src/Rinzler78.NetExtension.SourceGenerators/
 
 RUN dotnet restore src/Rinzler78.NetExtension.sln
 

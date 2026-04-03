@@ -36,7 +36,7 @@ public static class ProcessHelper
     public static async Task<ProcessOutputs> WaitProcessOutputsAsync(this Process process)
 
     // Process priority utilities
-    public static ProcessPriorityClass CurrrentProcessPriorityClass()
+    public static ProcessPriorityClass CurrentProcessPriorityClass()
 }
 ```
 
@@ -86,7 +86,7 @@ Console.WriteLine($"Error: {outputs.StandardError}");
 ### Process Priority Management
 ```csharp
 // Get current process priority
-var currentPriority = ProcessHelper.CurrrentProcessPriorityClass();
+var currentPriority = ProcessHelper.CurrentProcessPriorityClass();
 Console.WriteLine($"Current process priority: {currentPriority}");
 
 // Set process priority
