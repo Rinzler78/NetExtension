@@ -1,0 +1,15 @@
+{
+  "baseline_regression_tolerance_percent": 0.0,
+  "default_minimum_percent": 90.0,
+  "exclusions": [
+    "Strings/StringHelper.Http.cs"
+  ],
+  "global_minimum_percent": 90.0,
+  "minimums": {
+    "CollectionHelper.cs": 90.0,
+    "ConsoleExt.cs": 90.0,
+    "Rest/BaseRestApi.cs": 90.0,
+    "Rest/BaseRestApiExt.cs": 90.0,
+    "UriHelper.cs": 90.0
+  }
+}

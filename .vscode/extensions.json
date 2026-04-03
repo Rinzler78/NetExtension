@@ -1,0 +1,12 @@
+{
+      "recommendations": [
+          "ms-dotnettools.csharp",
+          "ms-dotnettools.csdevkit",
+          "ms-dotnettools.vscode-dotnet-pack",
+          "formulahendry.dotnet-test-explorer",
+          "formulahendry.dotnet",
+          "tintoy.msbuild-project-tools",
+          "hbenl.vscode-test-explorer",
+          "ms-dotnettools.vscode-dotnet-runtime"
+      ]
+}

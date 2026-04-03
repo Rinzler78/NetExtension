@@ -1,0 +1,305 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
+
+permissions:
+  contents: read
+  pull-requests: read
+  actions: write
+
+# Prevent concurrent runs on same commit across different branches
+concurrency:
+  group: ci-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  # Check if this commit has already been tested successfully
+  check-commit-status:
+    runs-on: ubuntu-latest
+    outputs:
+      should-run: ${{ steps.final-check.outputs.should-run }}
+      commit-sha: ${{ github.sha }}
+      branch-priority: ${{ steps.check.outputs.branch-priority }}
+    steps:
+    - name: Check if commit was already tested
+      id: check
+      run: |
+        # Determine branch priority (master > develop)
+        if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+          echo "branch-priority=high" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+          echo "branch-priority=low" >> $GITHUB_OUTPUT
+        else
+          echo "branch-priority=medium" >> $GITHUB_OUTPUT
+        fi
+
+        # Always run for pull requests
+        if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          echo "should-run=true" >> $GITHUB_OUTPUT
+          echo "Pull request detected - running CI"
+        else
+          echo "should-run=check-cache" >> $GITHUB_OUTPUT
+          echo "Push event - will check cache"
+        fi
+
+        echo "Commit SHA: ${{ github.sha }}"
+        echo "Branch: ${{ github.ref }}"
+
+    - name: Check commit test cache
+      id: cache-check
+      uses: actions/cache@v4
+      with:
+        path: .ci-status
+        key: ci-success-${{ github.sha }}
+        lookup-only: true
+
+    - name: Determine if should run
+      id: final-check
+      run: |
+        SHOULD_RUN="true"
+
+        if [[ "${{ steps.cache-check.outputs.cache-hit }}" == "true" ]]; then
+          # Cache hit - check if we should still run based on branch priority
+          if [[ "${{ steps.check.outputs.branch-priority }}" == "high" ]]; then
+            SHOULD_RUN="true"
+            echo "Running on master branch despite cache hit"
+          else
+            SHOULD_RUN="false"
+            echo "Skipping - commit already tested successfully"
+          fi
+        else
+          SHOULD_RUN="true"
+          echo "Running - commit not yet tested"
+        fi
+
+        # Override if it's a pull request or from check step
+        if [[ "${{ steps.check.outputs.should-run }}" == "true" ]]; then
+          SHOULD_RUN="true"
+        fi
+
+        echo "should-run=$SHOULD_RUN" >> $GITHUB_OUTPUT
+        echo "Final decision: should-run=$SHOULD_RUN"
+  build-and-test:
+    runs-on: ubuntu-latest
+    needs: check-commit-status
+    if: needs.check-commit-status.outputs.should-run == 'true'
+
+    strategy:
+      matrix:
+        dotnet-version: ['8.0.x']
+        configuration: [Debug, Release]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET ${{ matrix.dotnet-version }}
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+
+
+    - name: Validate code style and hooks
+      run: |
+        pip install pre-commit --quiet
+        pre-commit run --all-files
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/packages.lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Restore dependencies
+      run: dotnet restore src/Rinzler78.NetExtension.sln
+
+    - name: Build
+      run: dotnet build src/Rinzler78.NetExtension.sln --configuration ${{ matrix.configuration }} --no-restore
+
+    - name: Test
+      if: matrix.configuration == 'Debug'
+      run: dotnet test src/Rinzler78.NetExtension.Tests/Rinzler78.NetExtension.Tests.csproj --configuration ${{ matrix.configuration }} --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger trx --results-directory coverage
+
+    - name: Quality validation
+      if: matrix.configuration == 'Release'
+      run: ./scripts/local/quality.sh --configuration Release --no-build --results coverage
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-${{ matrix.configuration }}
+        path: coverage/**/*.trx
+        retention-days: 30
+
+    - name: Generate coverage report
+      if: matrix.configuration == 'Release'
+      run: |
+        mkdir -p .tools
+        dotnet tool install dotnet-reportgenerator-globaltool --tool-path .tools
+        ./.tools/reportgenerator -reports:"coverage/**/coverage.cobertura.xml" -targetdir:"coverage-report" -reporttypes:"Html;Cobertura"
+
+    - name: Upload coverage report
+      if: matrix.configuration == 'Release'
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: |
+          coverage-report/
+          coverage/coverage-summary.json
+          coverage/coverage-summary.md
+          coverage/coverage-gate.json
+          coverage/coverage-gate.md
+        retention-days: 30
+
+    - name: Code quality check
+      if: matrix.configuration == 'Release'
+      run: |
+        mkdir -p .tools
+        dotnet tool install dotnet-format --tool-path .tools
+        ./.tools/dotnet-format src/Rinzler78.NetExtension.sln --check --verbosity diagnostic
+
+    - name: Pack NuGet package
+      if: matrix.configuration == 'Release'
+      run: dotnet pack src/Rinzler78.NetExtension.Standard/Rinzler78.NetExtension.Standard.csproj --configuration Release --no-build --output ./artifacts
+
+    - name: Upload NuGet package artifact
+      if: matrix.configuration == 'Release'
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-package
+        path: ./artifacts/*.nupkg
+        retention-days: 90
+
+    - name: Security scan
+      if: matrix.configuration == 'Release'
+      run: |
+        dotnet list src/Rinzler78.NetExtension.sln package --vulnerable --include-transitive
+
+
+
+  compatibility-test:
+    runs-on: ${{ matrix.os }}
+    needs: check-commit-status
+    if: needs.check-commit-status.outputs.should-run == 'true'
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        dotnet-version: ['8.0.x']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET ${{ matrix.dotnet-version }}
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+
+    - name: Restore dependencies
+      run: dotnet restore src/Rinzler78.NetExtension.sln
+
+    - name: Build
+      run: dotnet build src/Rinzler78.NetExtension.sln --configuration Release --no-restore
+
+    - name: Test
+      run: dotnet test src/Rinzler78.NetExtension.Tests/Rinzler78.NetExtension.Tests.csproj --configuration Release --no-build --verbosity normal
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: check-commit-status
+    if: needs.check-commit-status.outputs.should-run == 'true'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+
+    - name: Validate code style and hooks
+      run: |
+        pip install pre-commit --quiet
+        pre-commit run --all-files
+
+    - name: Restore dependencies
+      run: dotnet restore src/Rinzler78.NetExtension.sln
+
+    - name: Setup local tools
+      run: |
+        mkdir -p .tools
+        dotnet tool install dotnet-format --tool-path .tools
+
+    - name: Format check
+      run: |
+        ./.tools/dotnet-format src/Rinzler78.NetExtension.sln --check
+
+    - name: Analyzer check
+      run: dotnet build src/Rinzler78.NetExtension.sln --configuration Release --verbosity normal /p:TreatWarningsAsErrors=true
+
+  benchmark:
+    runs-on: ubuntu-latest
+    needs: check-commit-status
+    if: github.event_name == 'pull_request' && needs.check-commit-status.outputs.should-run == 'true'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore src/Rinzler78.NetExtension.sln
+
+    - name: Build
+      run: dotnet build src/Rinzler78.NetExtension.sln --configuration Release --no-restore
+
+    - name: Run benchmarks
+      run: |
+        if [ -d "benchmarks" ]; then
+          dotnet run --project benchmarks --configuration Release -- --memory --job short
+        else
+          echo "No benchmarks project found, skipping..."
+        fi
+
+  # Mark commit as successfully tested
+  mark-commit-success:
+    runs-on: ubuntu-latest
+    needs: [check-commit-status, build-and-test, compatibility-test, lint]
+    if: always() && (needs.build-and-test.result == 'success' || needs.build-and-test.result == 'skipped') && (needs.compatibility-test.result == 'success' || needs.compatibility-test.result == 'skipped') && (needs.lint.result == 'success' || needs.lint.result == 'skipped')
+
+    steps:
+    - name: Mark commit as tested
+      run: |
+        mkdir -p .ci-status
+        echo "Commit ${{ github.sha }} tested successfully on $(date)" > .ci-status/success.txt
+        echo "Branch: ${{ github.ref }}" >> .ci-status/success.txt
+        echo "Workflow: ${{ github.workflow }}" >> .ci-status/success.txt
+        echo "Run ID: ${{ github.run_id }}" >> .ci-status/success.txt
+
+    - name: Cache success status
+      uses: actions/cache@v4
+      with:
+        path: .ci-status
+        key: ci-success-${{ github.sha }}
+
+    - name: Summary
+      run: |
+        echo "✅ Commit ${{ github.sha }} marked as successfully tested"
+        echo "🚀 Future runs on this commit will be skipped on lower priority branches"
+        echo "ℹ️  To force re-run: Clear cache or push to master branch"
