@@ -10,7 +10,7 @@ Versioning follows [SemVer](https://semver.org/) — `0.MINOR.PATCH` until 1.0.
 
 ---
 
-## [0.2.0] — 2026-04-03
+## [0.1.0] — 2026-04-03
 
 ### Added
 - **`[ObservableProperty]` Roslyn source generator** — marks private backing fields in `partial`
@@ -62,7 +62,7 @@ Versioning follows [SemVer](https://semver.org/) — `0.MINOR.PATCH` until 1.0.
   `[AttributeUsage(AttributeTargets.Field)]` and optional explicit property name override.
 - **`ReusableTask`** — removed 25-line commented-out dead-code block.
 - **CI** — `pre-commit install` (no-op in CI) replaced by `pre-commit run --all-files`.
-- **PackageVersion** bumped to `0.2.0`.
+- **PackageVersion** set to `0.1.0` for the public release.
 
 ### Security
 - HTTP helpers now block IPv6 ULA, link-local, APIPA, `0.0.0.0`, and CGNAT ranges
@@ -71,38 +71,5 @@ Versioning follows [SemVer](https://semver.org/) — `0.MINOR.PATCH` until 1.0.
 
 ---
 
-## [0.1.2] — 2025-07-15
-
-### Changed
-- Smart commit-based CI execution to avoid redundant runs.
-- CI quality gates: enforce ≥ 90% coverage (`quality-gates.json`, `coverage-baseline.json`).
-- Refactored developer workflow scripts (`scripts/local/`, `scripts/docker/`).
-- Added explicit integration and e2e test suites; aligned Docker and local test suites.
-
-### Added
-- `docs/testing-quality/` — quality gate documentation and baselines.
-- Bash/Perl wrappers for coverage reporting, comment language checks, changelog extraction.
-- Docker support (`docker/netextension/Dockerfile`, `scripts/docker/`).
-
----
-
-## [0.1.1] — 2025-07-10
-
-### Changed
-- CI validation test reset (clean start).
-
----
-
-## [0.1.0] — 2024-02-01
-
-### Added
-- Initial release.
-- Core utility extensions: collections, JSON, strings, observables, process, REST,
-  tasks, dates, geo, math, enums, network, types, footprint.
-- xUnit test project with coverage via Coverlet.
-- GitHub Actions CI pipeline.
-
----
-
-[Unreleased]: https://github.com/Rinzler78/NetExtension/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/Rinzler78/NetExtension/releases/tag/v0.2.0
+[Unreleased]: https://github.com/Rinzler78/NetExtension/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/Rinzler78/NetExtension/releases/tag/v0.1.0
