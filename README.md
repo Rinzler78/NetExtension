@@ -14,7 +14,7 @@ dotnet add package Rinzler78.NetExtension
 ```
 
 ```xml
-<PackageReference Include="Rinzler78.NetExtension" Version="0.0.0.2" />
+<PackageReference Include="Rinzler78.NetExtension" Version="0.2.0" />
 ```
 
 ## 🚀 Quick Start
@@ -35,8 +35,8 @@ public partial class PersonViewModel : ObservableObject
 
 // ── JSON ──────────────────────────────────────────────────────────────────
 string json     = myObject.SerializeObject(Formatting.Indented);
-MyType restored = json.DeSerialize<MyType>()!;
-MyConfig cfg    = "/app/config.json".DeSerializeObjectFromFile<MyConfig>();
+MyType restored = json.Deserialize<MyType>()!;
+MyConfig cfg    = "/app/config.json".DeserializeObjectFromFile<MyConfig>();
 
 // ── String utilities ──────────────────────────────────────────────────────
 bool   ok      = "user@example.com".IsValidEmail();        // true
@@ -98,7 +98,7 @@ Serialization helpers and custom converters for Newtonsoft.Json.
 ```csharp
 // Serialize / deserialize
 string  json = myObject.SerializeObject(Formatting.Indented);
-MyType  obj  = json.DeSerialize<MyType>()!;
+MyType  obj  = json.Deserialize<MyType>()!;
 
 // Custom converters for numeric and date types
 var settings = new JsonSerializerSettings();
@@ -106,10 +106,10 @@ settings.Converters.Add(BigIntegerConverter.Singleton);
 settings.Converters.Add(DecimalConverter.Singleton);
 settings.Converters.Add(DateTimeOffsetConverter.Singleton);
 
-MyDto result = json.DeSerialize<MyDto>(settings)!;
+MyDto result = json.Deserialize<MyDto>(settings)!;
 
 // File-based JSON (path-validated against traversal attacks)
-MyConfig cfg = "/app/config.json".DeSerializeObjectFromFile<MyConfig>();
+MyConfig cfg = "/app/config.json".DeserializeObjectFromFile<MyConfig>();
 ```
 
 ### 🔤 Strings & HTTP
@@ -135,6 +135,9 @@ string   result = await "https://api.example.com/items".HttpPostString(newItem);
 ```csharp
 // WhenAll as fluent extension
 await urls.Select(url => FetchAsync(url)).ToList().WhenAll();
+
+// WhenAll<T> — collect typed results
+string[] responses = await urls.Select(url => url.HttpGetStringAsync()).WhenAll();
 
 // Null-safe helpers
 bool running   = myTask.IsRunning();
