@@ -52,3 +52,11 @@ The `Ping` instance SHALL be disposed after use.
 #### Scenario: Successful ping
 - **WHEN** called with a reachable hostname
 - **THEN** a `PingReply` with status `Success` is returned
+
+### Requirement: IsPortOpened Returns False When Host Resolves to No Address
+`IsPortOpened(string, uint)` SHALL return `false` when `Resolve()` returns `null`
+(DNS resolves the hostname but returns an empty address list).
+
+#### Scenario: Unresolvable host returns false
+- **WHEN** `IsPortOpened` is called with a hostname whose DNS resolution returns null
+- **THEN** `false` is returned without throwing

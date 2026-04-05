@@ -56,3 +56,26 @@ Only the following extensions are permitted: `.json .xml .csv .txt .yaml .yml .t
 #### Scenario: Deserialize to implementation
 - **WHEN** valid JSON is deserialized as `TInterface`
 - **THEN** a `TImplementation` instance is returned
+
+### Requirement: Numeric Converters Reject Invalid Input
+`BigIntegerConverter`, `BigRationalConverter`, `DecimalConverter`, `LongConverter`,
+and `ULongConverter` SHALL throw `JsonSerializationException` when `ReadJson`
+encounters a string that cannot be parsed into the target numeric type.
+`LongConverter` and `ULongConverter` SHALL also throw on overflow (values outside
+the representable range of `long`/`ulong`).
+
+#### Scenario: Invalid string throws JsonSerializationException
+- **WHEN** a JSON value of `"abc"` is deserialized via any numeric converter
+- **THEN** `JsonSerializationException` is thrown
+
+#### Scenario: Overflow throws for long and ulong converters
+- **WHEN** a JSON value exceeding `long.MaxValue` is deserialized via `LongConverter`
+- **THEN** `JsonSerializationException` is thrown
+
+### Requirement: Numeric Converters CanConvert Returns False for Non-Matching Types
+All numeric `JsonConverter` implementations SHALL return `false` from `CanConvert`
+when called with a type that is neither the target type nor its nullable variant.
+
+#### Scenario: CanConvert returns false for string type
+- **WHEN** `CanConvert(typeof(string))` is called on any numeric converter
+- **THEN** `false` is returned

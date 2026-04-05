@@ -58,3 +58,11 @@ notification SHALL be raised.
 #### Scenario: Both empty — no event
 - **WHEN** `ReplaceRange` is called on an empty collection with an empty collection
 - **THEN** no `CollectionChanged` event is raised
+
+### Requirement: AddRange Reset Mode With Empty Collection Raises No Event
+When `AddRange` is called with `NotifyCollectionChangedAction.Reset` and an empty
+collection, no `CollectionChanged` event SHALL be raised.
+
+#### Scenario: Empty collection in Reset mode produces no notification
+- **WHEN** `AddRange` is called with an empty enumerable and `Reset` mode
+- **THEN** no `CollectionChanged` event is raised and the collection remains empty
