@@ -10,6 +10,54 @@ Versioning follows [SemVer](https://semver.org/) — `0.MINOR.PATCH` until 1.0.
 
 ---
 
+## [0.2.0] — 2026-04-05
+
+### Added
+- **`ReusableTask` implements `IDisposable`** — disposes the internal `CancellationTokenSource`
+  on `Dispose()`; each `Invoke()` cycle now rotates and disposes the old CTS to prevent resource
+  leaks. `Invoke()`, `InvokeSync()`, and `Cancel()` throw `ObjectDisposedException` after disposal.
+  (**BREAKING** — pre-1.0)
+- **`ProcessHelper.WaitProcessOutputsAsync`** — reads stdout and stderr concurrently via
+  `Task.WhenAll` before `WaitForExitAsync`, eliminating the OS pipe deadlock on large output.
+- **`UpdatableProperty` uses `SemaphoreSlim(1,1)`** — replaces `object _locker` to allow
+  `await` inside the critical section; `_initialized` is now read and written atomically,
+  preventing concurrent first-access from triggering multiple `InnerUpdate` calls.
+- **`ArrayExtension` uses safe `Buffer.BlockCopy`** — replaced `unsafe` byte-copy blocks,
+  enabling removal of `AllowUnsafeBlocks` from the project.
+- **Quality gate enforcement in CI** — new step in `build-and-test` (Release) parses Cobertura
+  XML and fails if `line-rate < 0.90` or `branch-rate < 0.80` per `quality-gates.json`.
+- **Test category traits** — `[Trait("Category", "Security")]` added to all Security test
+  classes; CI test step now filters `Category!=E2E` to skip network-dependent tests.
+
+### Fixed
+- **`ProcessHelper.WaitProcessOutputs` (sync)** — susceptible to OS pipe buffer deadlock when
+  the process produced large output on both streams simultaneously. Now delegates to
+  `WaitProcessOutputsAsync`. Marked `[Obsolete]`.
+- **`ReusableTask.Cancel()` return value** — previously always returned `true`; now returns
+  `false` when no task has been started or when already cancelled. (**BREAKING** — pre-1.0)
+- **`UpdatableProperty._initialized` race** — was read outside the lock, allowing concurrent
+  first-access to call `InnerUpdate` multiple times. Fixed with `SemaphoreSlim`.
+- **`ObservableRangeCollection.AddRange` double-enumeration** — the `Add` path now snapshots
+  the source into a `List<T>` before calling `AddRangeCore`, preventing silent data loss with
+  forward-only `IEnumerable<T>` sources (LINQ queries, `yield return`).
+- **`NetworkHelper.IsPortOpened`** — replaced deprecated APM `BeginConnect`/`EndConnect` with
+  `ConnectAsync` + `CancellationTokenSource.CancelAfter(1000ms)`. Return type changed from
+  `bool` to `Task<bool>` across all overloads. (**BREAKING** — pre-1.0)
+
+### Changed
+- **`AllowUnsafeBlocks` removed** — removed from both Debug and Release PropertyGroup.
+- **`PackagePath` fixed** — replaced backslash `PackagePath` with empty string for cross-platform NuGet packing.
+- **CI .NET version unified** — `lint` and `benchmark` jobs updated from `8.0.x` to `10.0.x`.
+- **Pre-commit `dotnet-tools-setup`** — replaced reinstall with `dotnet tool restore`; removed `always_run: true`.
+- **`release.yml` sed** — uses `|` delimiter and GNU-compatible `sed -i` with comment.
+
+### Removed
+- **`TestResults/` untracked** — `**/TestResults/` added to `.gitignore`; previously committed
+  `.trx` and `coverage.cobertura.xml` files removed from version control.
+
+---
+
+
 ## [0.1.0] — 2026-04-03
 
 ### Added

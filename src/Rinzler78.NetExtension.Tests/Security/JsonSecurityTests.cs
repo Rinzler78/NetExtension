@@ -10,7 +10,7 @@ namespace Rinzler78.NetExtension.Tests.Security;
 /// Security validation tests for JSON operations.
 /// Tests for potential vulnerabilities in JSON deserialization.
 /// </summary>
-[Trait("Category", "Unit")]
+[Trait("Category", "Security")]
 public class JsonSecurityTests
 {
     public class TestClass

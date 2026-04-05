@@ -45,23 +45,25 @@ public sealed class ObservableRangeCollection<T> : ObservableCollection<T>
 
             var startIndex = Count;
 
-            var itemsAdded = AddRangeCore(collection);
-
-            if (!itemsAdded)
-                return;
-
             if (notificationMode == NotifyCollectionChangedAction.Reset)
             {
-                RaiseChangeNotificationEvents(NotifyCollectionChangedAction.Reset);
+                var itemsAdded = AddRangeCore(collection);
+                if (!itemsAdded)
+                    return;
 
+                RaiseChangeNotificationEvents(NotifyCollectionChangedAction.Reset);
                 return;
             }
 
-            var changedItems = collection is List<T> ? (List<T>)collection : new List<T>(collection);
+            // Snapshot once to avoid double-enumeration on forward-only IEnumerable sources
+            var snapshot = collection is List<T> list ? list : new List<T>(collection);
+
+            if (!AddRangeCore(snapshot))
+                return;
 
             RaiseChangeNotificationEvents(
                 NotifyCollectionChangedAction.Add,
-                changedItems,
+                snapshot,
                 startIndex);
         }
     }

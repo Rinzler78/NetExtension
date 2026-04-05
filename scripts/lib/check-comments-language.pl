@@ -52,6 +52,13 @@ my %FRENCH_WORDS = map { $_ => 1 } qw(
     réglage réglages calibrage calibrages étalonnage étalonnages
 );
 
+# English/technical words that also exist in French — excluded from false-positive detection.
+my %COMMON_TECH_WORDS = map { $_ => 1 } qw(
+    action actions base bases cache caches instruction instructions
+    table tables service services interface interfaces module modules
+    client clients session sessions
+);
+
 sub print_help {
     print "Usage: check-comments-language.pl [files ...]\n";
 }
@@ -97,7 +104,7 @@ sub find_french_words {
     my %found;
     while ($text =~ /\b([[:word:]]+)\b/gu) {
         my $word = lc $1;
-        $found{$word} = 1 if $FRENCH_WORDS{$word};
+        $found{$word} = 1 if $FRENCH_WORDS{$word} && !$COMMON_TECH_WORDS{$word};
     }
 
     return sort keys %found;

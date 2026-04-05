@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using System.Net.Sockets;
 using Rinzler78.NetExtension.Network;
@@ -46,37 +47,52 @@ public class NetworkHelperTests
     }
 
     [Fact]
-    public void IsPortOpened_WithInvalidArguments_ShouldReturnFalseOrThrow()
+    public async Task IsPortOpened_WithInvalidArguments_ShouldReturnFalseOrThrow()
     {
-        "".IsPortOpened(1234).Should().BeFalse();
-        "localhost".IsPortOpened((uint)ushort.MaxValue + 1).Should().BeFalse();
+        (await "".IsPortOpened(1234)).Should().BeFalse();
+        (await "localhost".IsPortOpened((uint)ushort.MaxValue + 1)).Should().BeFalse();
 
-        Action act = () => IPAddress.Loopback.IsPortOpened((uint)ushort.MaxValue + 1);
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        Func<Task> act = () => IPAddress.Loopback.IsPortOpened((uint)ushort.MaxValue + 1);
+        await act.Should().ThrowAsync<ArgumentOutOfRangeException>();
     }
 
     [Fact]
-    public void IsPortOpened_WithNullIp_ShouldThrowArgumentNullException()
+    public async Task IsPortOpened_WithNullIp_ShouldThrowArgumentNullException()
     {
-        Action act = () => NetworkHelper.IsPortOpened((IPAddress)null!, 80u);
+        Func<Task> act = () => NetworkHelper.IsPortOpened((IPAddress)null!, 80u);
 
-        act.Should().Throw<ArgumentNullException>();
+        await act.Should().ThrowAsync<ArgumentNullException>();
     }
 
     [Fact]
     [Trait("Category", "Unit")]
-    public void IsPortOpened_WithMaxPort_ShouldNotReturnFalseForInvalidReason()
+    public async Task IsPortOpened_WithMaxPort_ShouldNotReturnFalseForInvalidReason()
     {
         // Port 65535 is valid. This unit test only verifies validation, not socket reachability.
-        var act = () => IPAddress.Loopback.IsPortOpened(65535u);
-        act.Should().NotThrow<ArgumentOutOfRangeException>("port 65535 is a valid TCP port");
+        Func<Task> act = async () => await IPAddress.Loopback.IsPortOpened(65535u);
+        await act.Should().NotThrowAsync();
     }
 
     [Fact]
     [Trait("Category", "Unit")]
     public void IsPortOpened_WithNegativePortNumber_ShouldThrowArgumentOutOfRangeException()
     {
-        var act = () => IPAddress.Loopback.IsPortOpened(-1);
+        // int overload throws synchronously before returning a Task
+        Action act = () => IPAddress.Loopback.IsPortOpened(-1);
         act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [Fact]
+    public async Task IsPortOpened_NonRoutableAddress_ReturnsFalseWithinTimeout()
+    {
+        // 192.0.2.0/24 is TEST-NET-1 — non-routable, will always time out
+        var ip = IPAddress.Parse("192.0.2.1");
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+
+        var result = await ip.IsPortOpened(9999u);
+
+        sw.Stop();
+        result.Should().BeFalse();
+        sw.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(2));
     }
 }
