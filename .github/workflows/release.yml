@@ -36,7 +36,8 @@ jobs:
 
     - name: Update project version
       run: |
-        sed -i 's/<PackageVersion>.*<\/PackageVersion>/<PackageVersion>${{ steps.extract_version.outputs.VERSION }}<\/PackageVersion>/' src/Rinzler78.NetExtension.Standard/Rinzler78.NetExtension.Standard.csproj
+        # GNU sed (ubuntu-latest compatible) — use sed -i '' for macOS local runs
+        sed -i "s|<PackageVersion>.*</PackageVersion>|<PackageVersion>${{ steps.extract_version.outputs.VERSION }}</PackageVersion>|" src/Rinzler78.NetExtension.Standard/Rinzler78.NetExtension.Standard.csproj
 
     - name: Restore dependencies
       run: dotnet restore src/Rinzler78.NetExtension.sln

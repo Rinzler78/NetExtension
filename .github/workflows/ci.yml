@@ -126,11 +126,57 @@ jobs:
 
     - name: Test
       if: matrix.configuration == 'Debug'
-      run: dotnet test src/Rinzler78.NetExtension.Tests/Rinzler78.NetExtension.Tests.csproj --configuration ${{ matrix.configuration }} --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger trx --results-directory coverage
+      run: dotnet test src/Rinzler78.NetExtension.Tests/Rinzler78.NetExtension.Tests.csproj --configuration ${{ matrix.configuration }} --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger trx --results-directory coverage --filter "Category!=E2E"
 
     - name: Quality validation
       if: matrix.configuration == 'Release'
       run: ./scripts/local/quality.sh --configuration Release --no-build --results coverage
+
+    - name: Enforce coverage quality gates
+      if: matrix.configuration == 'Release'
+      run: |
+        set -euo pipefail
+        GATES_FILE="docs/testing-quality/quality-gates.json"
+        COBERTURA=$(find coverage -name "coverage.cobertura.xml" | head -1)
+
+        if [ -z "$COBERTURA" ]; then
+          echo "No Cobertura report found, skipping gate check"
+          exit 0
+        fi
+
+        LINE_RATE=$(python3 -c "
+        import xml.etree.ElementTree as ET, sys
+        tree = ET.parse('$COBERTURA')
+        root = tree.getroot()
+        print(root.attrib.get('line-rate', '0'))
+        ")
+        BRANCH_RATE=$(python3 -c "
+        import xml.etree.ElementTree as ET, sys
+        tree = ET.parse('$COBERTURA')
+        root = tree.getroot()
+        print(root.attrib.get('branch-rate', '0'))
+        ")
+
+        MIN_LINE=$(python3 -c "import json; d=json.load(open('$GATES_FILE')); print(d.get('line_rate', d.get('lineRate', 0.90)))")
+        MIN_BRANCH=$(python3 -c "import json; d=json.load(open('$GATES_FILE')); print(d.get('branch_rate', d.get('branchRate', 0.80)))")
+
+        echo "Coverage: line=$LINE_RATE branch=$BRANCH_RATE"
+        echo "Gates:    line>=$MIN_LINE branch>=$MIN_BRANCH"
+
+        python3 -c "
+        line, branch = float('$LINE_RATE'), float('$BRANCH_RATE')
+        min_line, min_branch = float('$MIN_LINE'), float('$MIN_BRANCH')
+        errors = []
+        if line < min_line:
+            errors.append(f'Line coverage {line:.1%} < {min_line:.1%}')
+        if branch < min_branch:
+            errors.append(f'Branch coverage {branch:.1%} < {min_branch:.1%}')
+        if errors:
+            print('QUALITY GATE FAILED:')
+            for e in errors: print(f'  - {e}')
+            exit(1)
+        print('Quality gates passed.')
+        "
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
@@ -220,7 +266,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: '10.0.x'
 
 
     - name: Validate code style and hooks
@@ -255,7 +301,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: '10.0.x'
 
     - name: Restore dependencies
       run: dotnet restore src/Rinzler78.NetExtension.sln

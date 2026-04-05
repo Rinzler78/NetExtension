@@ -388,4 +388,32 @@ public class ObservableRangeCollectionTests
         // Assert
         sender.Should().Be(collection);
     }
+
+    [Fact]
+    public void AddRange_WithForwardOnlyEnumerable_NotificationContainsAllItems()
+    {
+        // Arrange
+        var collection = new ObservableRangeCollection<int>();
+        List<int>? notifiedItems = null;
+        collection.CollectionChanged += (_, e) =>
+        {
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+                notifiedItems = e.NewItems?.Cast<int>().ToList();
+        };
+
+        // A forward-only LINQ enumerable (not a List)
+        IEnumerable<int> ForwardOnly()
+        {
+            yield return 1;
+            yield return 2;
+            yield return 3;
+        }
+
+        // Act
+        collection.AddRange(ForwardOnly());
+
+        // Assert
+        collection.Should().HaveCount(3);
+        notifiedItems.Should().NotBeNull().And.BeEquivalentTo(new[] { 1, 2, 3 });
+    }
 }

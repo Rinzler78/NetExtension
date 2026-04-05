@@ -13,7 +13,7 @@ namespace Rinzler78.NetExtension.Tests.Security;
 /// Security validation tests for file operations and path handling.
 /// Tests for potential vulnerabilities in file I/O operations.
 /// </summary>
-[Trait("Category", "Unit")]
+[Trait("Category", "Security")]
 public class FileSecurityTests : IDisposable
 {
     private readonly string _tempDirectory;

@@ -1,3 +1,5 @@
+using System.Linq;
+using System.Threading;
 using Rinzler78.NetExtension.Objects;
 
 namespace Rinzler78.NetExtension.Tests.Objects;
@@ -120,5 +122,27 @@ public class UpdatablePropertyTests
     {
         Action act = () => _ = new UpdatableProperty<int>(null!);
         act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public async Task Get_ConcurrentFirstAccess_InnerUpdateCalledExactlyOnce()
+    {
+        // Arrange
+        int callCount = 0;
+        var prop = new UpdatableProperty<int>(() =>
+        {
+            Interlocked.Increment(ref callCount);
+            return Task.FromResult(42);
+        });
+
+        // Act – 10 concurrent callers
+        var tasks = Enumerable.Range(0, 10)
+            .Select(_ => prop.Get())
+            .ToArray();
+        await Task.WhenAll(tasks);
+
+        // Assert
+        callCount.Should().Be(1);
+        prop.Property.Should().Be(42);
     }
 }

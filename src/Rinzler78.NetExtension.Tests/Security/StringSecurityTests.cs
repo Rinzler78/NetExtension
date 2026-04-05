@@ -22,7 +22,7 @@ namespace Rinzler78.NetExtension.Tests.Security;
 /// guard.  Those tests verify the SSRF-protection behaviour.
 /// </summary>
 [Collection("StringHelper.Http serial")]
-[Trait("Category", "Unit")]
+[Trait("Category", "Security")]
 public class StringSecurityTests
 {
     // =========================================================================
@@ -329,7 +329,7 @@ public class StringSecurityTests
     }
 
     [Fact]
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Security")]
     public async Task HttpGetStringAsync_IPv6Loopback_ThrowsArgumentException()
     {
         // IPv6 loopback [::1] is blocked by the SSRF guard (via LocalhostIpv6 string check
@@ -398,7 +398,7 @@ public class StringSecurityTests
     }
 
     [Theory]
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Security")]
     [InlineData("http://[fc00::1]/api")]         // IPv6 ULA
     [InlineData("http://[fd12:3456:789a::1]/")]  // IPv6 ULA (fd prefix)
     [InlineData("http://[fe80::1]/resource")]    // IPv6 link-local
