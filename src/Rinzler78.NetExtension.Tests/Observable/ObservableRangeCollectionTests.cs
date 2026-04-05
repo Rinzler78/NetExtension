@@ -416,4 +416,17 @@ public class ObservableRangeCollectionTests
         collection.Should().HaveCount(3);
         notifiedItems.Should().NotBeNull().And.BeEquivalentTo(new[] { 1, 2, 3 });
     }
+
+    [Fact]
+    public void AddRange_WithResetModeAndEmptyCollection_ShouldNotRaiseEvent()
+    {
+        var collection = new ObservableRangeCollection<int>();
+        var eventCount = 0;
+        collection.CollectionChanged += (_, _) => eventCount++;
+
+        collection.AddRange(System.Array.Empty<int>(), NotifyCollectionChangedAction.Reset);
+
+        collection.Should().BeEmpty();
+        eventCount.Should().Be(0);
+    }
 }

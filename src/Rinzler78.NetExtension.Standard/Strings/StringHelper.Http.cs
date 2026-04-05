@@ -125,6 +125,58 @@ public static partial class StringHelper
                    "Failed to deserialize response to the specified type.");
     }
 
+    // ── Test-only whitelist ───────────────────────────────────────────────────────────────────
+    // Allows integration tests to route requests to a local WireMock server while the SSRF
+    // guard remains active for all other callers.  Register via AllowLocalhostEndpointForTesting.
+
+    private static readonly HashSet<string> AllowedLocalhostEndpoints =
+        new(StringComparer.OrdinalIgnoreCase);
+
+    private static readonly object AllowedLocalhostSync = new();
+
+    /// <summary>
+    /// Adds <paramref name="host"/>:<paramref name="port"/> to the SSRF bypass whitelist so
+    /// that calls to that endpoint skip URL validation and connect directly via 127.0.0.1.
+    /// Returns a disposable that removes the entry when disposed.  Test use only.
+    /// </summary>
+    internal static IDisposable AllowLocalhostEndpointForTesting(string host, int port)
+    {
+        var key = MakeEndpointKey(host, port);
+        lock (AllowedLocalhostSync)
+            AllowedLocalhostEndpoints.Add(key);
+        return new LocalhostEndpointOverride(host, port);
+    }
+
+    private static string MakeEndpointKey(string host, int port) =>
+        $"{host.ToLowerInvariant()}:{port}";
+
+    private static bool IsAllowedLocalhostEndpoint(string host, int port)
+    {
+        lock (AllowedLocalhostSync)
+            return AllowedLocalhostEndpoints.Contains(MakeEndpointKey(host, port));
+    }
+
+    private sealed class LocalhostEndpointOverride : IDisposable
+    {
+        private readonly string _host;
+        private readonly int _port;
+        private bool _disposed;
+
+        public LocalhostEndpointOverride(string host, int port)
+        {
+            _host = host;
+            _port = port;
+        }
+
+        public void Dispose()
+        {
+            if (_disposed) return;
+            lock (AllowedLocalhostSync)
+                AllowedLocalhostEndpoints.Remove(MakeEndpointKey(_host, _port));
+            _disposed = true;
+        }
+    }
+
     private static void ValidateUrl(string url)
     {
         if (string.IsNullOrWhiteSpace(url))
@@ -140,6 +192,9 @@ public static partial class StringHelper
         }
 
         var host = uri.Host.ToLowerInvariant();
+        // Test whitelist: explicitly allowed localhost endpoints bypass all SSRF checks.
+        if (IsAllowedLocalhostEndpoint(host, uri.Port)) return;
+
         if (string.Equals(host, LocalhostName, StringComparison.Ordinal) ||
             string.Equals(host, LocalhostIpv4, StringComparison.Ordinal) ||
             string.Equals(host, LocalhostIpv6, StringComparison.Ordinal))
@@ -234,7 +289,27 @@ public static partial class StringHelper
 
     private static async ValueTask<Stream> ConnectAsync(SocketsHttpConnectionContext context, CancellationToken cancellationToken)
     {
-        var addresses = ResolveHostAddresses(context.DnsEndPoint.Host);
+        var dnsHost = context.DnsEndPoint.Host;
+        var dnsPort = context.DnsEndPoint.Port;
+
+        // Test whitelist: connect directly to loopback, bypassing SSRF DNS checks.
+        if (IsAllowedLocalhostEndpoint(dnsHost, dnsPort))
+        {
+            var loopbackSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            try
+            {
+                await loopbackSocket.ConnectAsync(new IPEndPoint(IPAddress.Loopback, dnsPort), cancellationToken)
+                    .ConfigureAwait(false);
+                return new NetworkStream(loopbackSocket, ownsSocket: true);
+            }
+            catch
+            {
+                loopbackSocket.Dispose();
+                throw;
+            }
+        }
+
+        var addresses = ResolveHostAddresses(dnsHost);
         SocketException? lastSocketException = null;
 
         foreach (var address in addresses)

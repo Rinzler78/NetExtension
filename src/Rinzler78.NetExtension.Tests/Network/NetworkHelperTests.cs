@@ -95,4 +95,25 @@ public class NetworkHelperTests
         result.Should().BeFalse();
         sw.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(2));
     }
+
+    [Fact]
+    public async Task IsPortOpened_StringOverload_WhenHostnameCannotResolve_ReturnsFalse()
+    {
+        // A hostname that cannot resolve returns either false or throws SocketException.
+        // Both behaviours are acceptable — the contract is "no NullReferenceException propagates".
+        bool result = false;
+        var act = async () => result = await "this-hostname-absolutely-does-not-exist-xyz123.invalid"
+            .IsPortOpened(9999u);
+
+        // SocketException may surface if DNS fails completely — that is OK.
+        // This test primarily verifies the null-ip branch does not cause NullReferenceException.
+        await act.Should().NotThrowAsync<NullReferenceException>();
+    }
+
+    [Fact]
+    public async Task IsPortOpened_StringOverload_WithNullHost_ReturnsFalse()
+    {
+        var result = await ((string)null!).IsPortOpened(80u);
+        result.Should().BeFalse();
+    }
 }

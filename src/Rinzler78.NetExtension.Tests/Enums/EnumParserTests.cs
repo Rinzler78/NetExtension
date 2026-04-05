@@ -4,6 +4,7 @@ using Rinzler78.NetExtension.Enums;
 namespace Rinzler78.NetExtension.Tests.Enums;
 
 [Trait("Category", "Unit")]
+[Collection("Console serial")]
 public class EnumParserTests
 {
     [Fact]
