@@ -48,6 +48,21 @@ public class ReusableTaskAdditionalTests
         task.Invoke(); // start async → sets _taskEverStarted = true
         task.Cancel().Should().BeTrue();
     }
+
+    [Fact]
+    public async Task Invoke_WhileRunning_ReturnsSameTaskInstance()
+    {
+        var tcs = new TaskCompletionSource();
+        using var reusable = new ReusableTask(() => tcs.Task.GetAwaiter().GetResult());
+
+        var t1 = reusable.Invoke();
+        var t2 = reusable.Invoke(); // called while t1 is still running
+
+        ReferenceEquals(t1, t2).Should().BeTrue();
+
+        tcs.SetResult(); // unblock
+        await t1;
+    }
 }
 
 [Trait("Category", "Unit")]
@@ -116,5 +131,17 @@ public class ReusableTaskDisposeTests
         }
         // If CTS was not disposed properly, finalizer would trigger eventually.
         // At minimum, verify it runs without error.
+    }
+
+    [Fact]
+    public void Dispose_CalledTwice_DoesNotThrow()
+    {
+        var task = new ReusableTask(() => { });
+        var act = () =>
+        {
+            task.Dispose();
+            task.Dispose();
+        };
+        act.Should().NotThrow();
     }
 }

@@ -10,6 +10,47 @@ Versioning follows [SemVer](https://semver.org/) — `0.MINOR.PATCH` until 1.0.
 
 ---
 
+## [0.3.0] — 2026-04-05
+
+### Added
+- **`WireMock.Net` test dependency** — embedded HTTP server enabling hermetic tests for
+  all HTTP methods without real network access. `WireMockServerFixture` + localhost
+  whitelist bypass added to `StringHelper.Http.cs`.
+- **`StringHelperHttpTests`** — 14 new unit tests covering `HttpGetStreamAsync`,
+  `HttpGetStringAsync`, `HttpGetAsync<T>`, `HttpPostString`, `HttpPost<TReq,TImpl,TReturn>`:
+  happy paths, SSRF blocking, timeout, cancellation, DNS rebinding, and null deserialization.
+- **`ObservableObject` coverage** — 6 new tests: `SetProperty` with `IObservableObject`
+  auto attach/detach, `propertyChanged` callback invocation, double-`Dispose` idempotence,
+  `Dispose(false)` finalizer path, base `OnDependenciesPropertyChanged`, and HashSet
+  duplicate-attach deduplication on large collections.
+- **`UpdatablePropertyExtensionTests`** — new test file covering `GetAll`/`UpdateAll`
+  with empty and non-empty arrays.
+- **JSON converter edge cases** — 12 new tests: `CanConvert(typeof(string))` returns
+  `false` for all 5 numeric converters; `ReadJson` with invalid string throws
+  `JsonSerializationException`; overflow throws for `LongConverter`/`ULongConverter`.
+- **`ObjectExtension` null-callback tests** — 2 tests covering the silent-swallow
+  behavior when `onCopyToFailedForProperty` is null.
+- **`NetworkHelper`/`ReusableTask` branch tests** — 4 tests: DNS null path, null host,
+  single-flight task identity, double-dispose idempotence.
+- **REST/Collection gap tests** — `AddRange(empty, Reset)` no-event, `BaseRestApi` leading
+  slash normalization, `BaseRestApiExt` bool-true/all-null/special-key scenarios.
+
+### Changed
+- **`ObjectExtension.CopyTo`** — removed redundant `if (targetPropertyInfo.CanWrite)` check
+  (dead code, already filtered by `.Where(x => x.CanWrite)`).
+- **`StringHelper.Http.cs`** — added `AllowLocalhostEndpointForTesting` internal API for
+  hermetic HTTP testing; `ValidateUrl` and `ConnectAsync` respect the whitelist.
+- **`EnumParserTests`** — added `[Collection("Console serial")]` to prevent parallelism
+  conflict with tests capturing `Console.Out`.
+- **CI quality gates** updated: line threshold `0.90` → `0.97`, branch `0.80` → `0.95`.
+
+### Coverage
+- Before: line 94.2%, branch 90.9%, 688 tests
+- After:  line **97.8%**, branch **95.1%**, **734 tests** (+46)
+
+---
+
+
 ## [0.2.0] — 2026-04-05
 
 ### Added

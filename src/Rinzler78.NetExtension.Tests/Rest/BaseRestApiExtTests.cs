@@ -117,4 +117,34 @@ public class BaseRestApiExtTests
 
         result.Should().Be("/items");
     }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Gap tests — bool, all-null full URL, special char key
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void CreateUrlPath_WithBoolTrueValue_SerializesAsTrue()
+    {
+        var result = "https://api.example.com/resource"
+            .CreateUrlPath(new Dictionary<string, object?> { ["active"] = (object)true });
+        result.Should().Contain("active=true");
+    }
+
+    [Fact]
+    public void CreateUrlPath_WithAllNullValues_ReturnsUnchangedUrl()
+    {
+        const string baseUrl = "https://api.example.com/resource";
+        var result = baseUrl.CreateUrlPath(
+            new Dictionary<string, object?> { ["a"] = null, ["b"] = null });
+        result.Should().Be(baseUrl);
+    }
+
+    [Fact]
+    public void CreateUrlPath_WithSpecialCharacterInKey_EncodesKey()
+    {
+        var result = "https://api.example.com/resource"
+            .CreateUrlPath(new Dictionary<string, object?> { ["my key"] = 1 });
+        // WebUtility.UrlEncode encodes space as '+'
+        result.Should().MatchRegex(@"my(\+|%20)key=1");
+    }
 }

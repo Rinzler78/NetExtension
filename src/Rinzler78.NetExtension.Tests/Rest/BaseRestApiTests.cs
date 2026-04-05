@@ -108,6 +108,16 @@ public class BaseRestApiTests
                 ItExpr.IsAny<CancellationToken>());
     }
 
+    [Fact]
+    public void Constructor_WithLeadingSlashInPath_ProducesSameUriAsWithoutSlash()
+    {
+        var baseUri = new Uri("https://api.example.com/");
+        var withSlash = new TestRestApi(baseUri, "/v1/resource");
+        var withoutSlash = new TestRestApi(baseUri, "v1/resource");
+
+        withSlash.BaseUri.Should().Be(withoutSlash.BaseUri);
+    }
+
     // ─────────────────────────────────────────────────────────────────
     // Test doubles
     // ─────────────────────────────────────────────────────────────────
