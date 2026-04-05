@@ -420,7 +420,6 @@ INSTALL_EXTENSIONS.md
 run_actions_locally.sh
 todo/
 coverage/
-openspec/
 .claude/
 
 # AI tooling — internal only
