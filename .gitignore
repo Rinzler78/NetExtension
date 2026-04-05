@@ -95,6 +95,7 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+**/TestResults/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -420,7 +421,6 @@ INSTALL_EXTENSIONS.md
 run_actions_locally.sh
 todo/
 coverage/
-openspec/
 .claude/
 
 # AI tooling — internal only

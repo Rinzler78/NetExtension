@@ -26,18 +26,18 @@ public class NetworkHelperIntegrationTests
         await Task.Delay(50);
 
         // Retry all open-port assertions to tolerate transient scheduler delays on CI runners.
-        IsPortOpenedWithRetry(IPAddress.Loopback, openPort).Should().BeTrue(
+        (await IsPortOpenedWithRetryAsync(IPAddress.Loopback, openPort)).Should().BeTrue(
             "uint overload: the listener is running and should be reachable on loopback");
-        IsPortOpenedWithRetryInt(IPAddress.Loopback, (int)openPort).Should().BeTrue(
+        (await IsPortOpenedWithRetryIntAsync(IPAddress.Loopback, (int)openPort)).Should().BeTrue(
             "int overload: the listener should still be reachable");
-        IsPortOpenedWithRetry("127.0.0.1", openPort).Should().BeTrue(
+        (await IsPortOpenedWithRetryAsync("127.0.0.1", openPort)).Should().BeTrue(
             "string overload: the listener should still be reachable");
 
         acceptLoopCts.Cancel();
         listener.Stop();
         await acceptLoop;
 
-        IPAddress.Loopback.IsPortOpened(openPort).Should().BeFalse();
+        (await IPAddress.Loopback.IsPortOpened(openPort)).Should().BeFalse();
     }
 
     /// <summary>
@@ -45,46 +45,46 @@ public class NetworkHelperIntegrationTests
     /// increasing delay. This compensates for CI runners where loopback TCP
     /// connections may take slightly longer to settle than a single probe allows.
     /// </summary>
-    private static bool IsPortOpenedWithRetry(IPAddress address, uint port, int maxAttempts = 5)
+    private static async Task<bool> IsPortOpenedWithRetryAsync(IPAddress address, uint port, int maxAttempts = 5)
     {
         for (var attempt = 0; attempt < maxAttempts; attempt++)
         {
-            if (address.IsPortOpened(port))
+            if (await address.IsPortOpened(port))
             {
                 return true;
             }
 
-            Thread.Sleep(100 * (attempt + 1));
+            await Task.Delay(100 * (attempt + 1));
         }
 
         return false;
     }
 
-    private static bool IsPortOpenedWithRetryInt(IPAddress address, int port, int maxAttempts = 5)
+    private static async Task<bool> IsPortOpenedWithRetryIntAsync(IPAddress address, int port, int maxAttempts = 5)
     {
         for (var attempt = 0; attempt < maxAttempts; attempt++)
         {
-            if (address.IsPortOpened(port))
+            if (await address.IsPortOpened(port))
             {
                 return true;
             }
 
-            Thread.Sleep(100 * (attempt + 1));
+            await Task.Delay(100 * (attempt + 1));
         }
 
         return false;
     }
 
-    private static bool IsPortOpenedWithRetry(string host, uint port, int maxAttempts = 5)
+    private static async Task<bool> IsPortOpenedWithRetryAsync(string host, uint port, int maxAttempts = 5)
     {
         for (var attempt = 0; attempt < maxAttempts; attempt++)
         {
-            if (host.IsPortOpened(port))
+            if (await host.IsPortOpened(port))
             {
                 return true;
             }
 
-            Thread.Sleep(100 * (attempt + 1));
+            await Task.Delay(100 * (attempt + 1));
         }
 
         return false;

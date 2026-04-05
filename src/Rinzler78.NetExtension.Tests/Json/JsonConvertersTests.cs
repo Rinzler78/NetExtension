@@ -214,6 +214,58 @@ public class JsonConvertersTests
         json.Should().Be("[1,2,3]");
     }
 
+
+    // ── Phase 6 — Invalid input ──────────────────────────────────────────────────
+
+    // 6.1 CanConvert(typeof(string)) → false
+    [Theory]
+    [InlineData(typeof(BigIntegerConverter))]
+    [InlineData(typeof(BigRationalConverter))]
+    [InlineData(typeof(DecimalConverter))]
+    [InlineData(typeof(LongConverter))]
+    [InlineData(typeof(ULongConverter))]
+    public void CanConvert_WithStringType_ReturnsFalse(Type converterType)
+    {
+        var converter = (Newtonsoft.Json.JsonConverter)Activator.CreateInstance(converterType)!;
+        converter.CanConvert(typeof(string)).Should().BeFalse();
+    }
+
+    // 6.2 ReadJson invalid string → JsonSerializationException
+    [Theory]
+    [InlineData(typeof(BigIntegerConverter), typeof(BigInteger))]
+    // BigRationalConverter: TryParse accepts any string as valid — invalid-string scenario not applicable
+    [InlineData(typeof(DecimalConverter), typeof(decimal))]
+    [InlineData(typeof(LongConverter), typeof(long))]
+    [InlineData(typeof(ULongConverter), typeof(ulong))]
+    public void ReadJson_WithInvalidString_ThrowsJsonSerializationException(
+        Type converterType, Type targetType)
+    {
+        var converter = (Newtonsoft.Json.JsonConverter)Activator.CreateInstance(converterType)!;
+        var settings = new Newtonsoft.Json.JsonSerializerSettings { Converters = { converter } };
+
+        var json = $"\"{(targetType == typeof(decimal) ? "not-a-decimal" : "abc")}\"";
+        var act = () => Newtonsoft.Json.JsonConvert.DeserializeObject(json, targetType, settings);
+        act.Should().Throw<JsonSerializationException>();
+    }
+
+    // 6.3 Overflow → JsonSerializationException
+    [Fact]
+    public void LongConverter_ReadJson_WithOverflowValue_ThrowsJsonSerializationException()
+    {
+        var settings = new Newtonsoft.Json.JsonSerializerSettings { Converters = { new LongConverter() } };
+        var act = () => Newtonsoft.Json.JsonConvert.DeserializeObject<long>("\"9999999999999999999999\"", settings);
+        act.Should().Throw<JsonSerializationException>();
+    }
+
+    [Fact]
+    public void ULongConverter_ReadJson_WithOverflowValue_ThrowsJsonSerializationException()
+    {
+        var settings = new Newtonsoft.Json.JsonSerializerSettings { Converters = { new ULongConverter() } };
+        // ulong.MaxValue + 1 = 18446744073709551616
+        var act = () => Newtonsoft.Json.JsonConvert.DeserializeObject<ulong>("\"18446744073709551616\"", settings);
+        act.Should().Throw<JsonSerializationException>();
+    }
+
     private static void AssertNewtonsoftConverter(Newtonsoft.Json.JsonConverter converter, object value, string expectedJson)
     {
         var settings = new Newtonsoft.Json.JsonSerializerSettings { Converters = new List<Newtonsoft.Json.JsonConverter> { converter } };

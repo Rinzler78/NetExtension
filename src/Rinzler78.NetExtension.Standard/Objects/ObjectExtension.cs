@@ -52,34 +52,30 @@ public static class ObjectExtension
             {
                 var targetPropertyInfo = targetProperties.First(x =>
                     string.Equals(x.Name, sourceProperty.Name, StringComparison.Ordinal));
-                //if (targetPropertyInfo.CanWrite && sourceProperty.PropertyType == targetPropertyInfo.PropertyType)
-                if (targetPropertyInfo.CanWrite)
+                try
                 {
-                    try
-                    {
-                        targetPropertyInfo.SetValue(target, sourceProperty.GetValue(source, null), null);
-                    }
-                    catch (ArgumentException)
-                    {
-                        // Property type mismatch or invalid value
-                        onCopyToFailedForProperty?.Invoke(
-                            new ValueTuple<PropertyInfo, object?>(sourceProperty, source),
-                            new ValueTuple<PropertyInfo, object?>(targetPropertyInfo, target));
-                    }
-                    catch (TargetException)
-                    {
-                        // Target object doesn't match the property's reflected type
-                        onCopyToFailedForProperty?.Invoke(
-                            new ValueTuple<PropertyInfo, object?>(sourceProperty, source),
-                            new ValueTuple<PropertyInfo, object?>(targetPropertyInfo, target));
-                    }
-                    catch (TargetInvocationException)
-                    {
-                        // Property setter threw an exception
-                        onCopyToFailedForProperty?.Invoke(
-                            new ValueTuple<PropertyInfo, object?>(sourceProperty, source),
-                            new ValueTuple<PropertyInfo, object?>(targetPropertyInfo, target));
-                    }
+                    targetPropertyInfo.SetValue(target, sourceProperty.GetValue(source, null), null);
+                }
+                catch (ArgumentException)
+                {
+                    // Property type mismatch or invalid value
+                    onCopyToFailedForProperty?.Invoke(
+                        new ValueTuple<PropertyInfo, object?>(sourceProperty, source),
+                        new ValueTuple<PropertyInfo, object?>(targetPropertyInfo, target));
+                }
+                catch (TargetException)
+                {
+                    // Target object doesn't match the property's reflected type
+                    onCopyToFailedForProperty?.Invoke(
+                        new ValueTuple<PropertyInfo, object?>(sourceProperty, source),
+                        new ValueTuple<PropertyInfo, object?>(targetPropertyInfo, target));
+                }
+                catch (TargetInvocationException)
+                {
+                    // Property setter threw an exception
+                    onCopyToFailedForProperty?.Invoke(
+                        new ValueTuple<PropertyInfo, object?>(sourceProperty, source),
+                        new ValueTuple<PropertyInfo, object?>(targetPropertyInfo, target));
                 }
             }
         }

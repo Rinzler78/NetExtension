@@ -224,6 +224,24 @@ public class ObservableObjectDependencyPerformanceTests
         Assert.Contains(existingDep, testObj.Dependencies);
     }
 
+    // ── Gap 5: AttachDependencies large collection + duplicate (HashSet path) ──
+    [Fact]
+    public void AttachDependencies_WithDuplicates_LargeCollection_ShouldNotAddDuplicate()
+    {
+        // Arrange – 11 items forces the HashSet path (Dependencies.Count >= 10 after first attach)
+        var testObj = new TestObservableObjectWithDependencies();
+        var deps = Enumerable.Range(0, 11)
+            .Select(_ => (IObservableObject)new TestObservableObjectWithDependencies())
+            .ToArray();
+
+        // Act – first attach fills Dependencies to 11, triggering HashSet branch on next attach
+        testObj.AttachDependenciesPublic(deps);           // 11 deps added
+        testObj.AttachDependenciesPublic(deps[0]);         // duplicate → must be ignored via HashSet
+
+        // Assert
+        testObj.Dependencies.Should().HaveCount(11);
+    }
+
     /// <summary>
     /// Test class that exposes protected AttachDependencies and DetachDependencies methods for testing.
     /// </summary>

@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -20,7 +21,8 @@ namespace Rinzler78.NetExtension.Tests.Security;
 /// <see cref="StringHelper.HttpGetStringAsync"/> which call the private ValidateUrl()
 /// guard.  Those tests verify the SSRF-protection behaviour.
 /// </summary>
-[Trait("Category", "Unit")]
+[Collection("StringHelper.Http serial")]
+[Trait("Category", "Security")]
 public class StringSecurityTests
 {
     // =========================================================================
@@ -327,7 +329,7 @@ public class StringSecurityTests
     }
 
     [Fact]
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Security")]
     public async Task HttpGetStringAsync_IPv6Loopback_ThrowsArgumentException()
     {
         // IPv6 loopback [::1] is blocked by the SSRF guard (via LocalhostIpv6 string check
@@ -396,7 +398,7 @@ public class StringSecurityTests
     }
 
     [Theory]
-    [Trait("Category", "Unit")]
+    [Trait("Category", "Security")]
     [InlineData("http://[fc00::1]/api")]         // IPv6 ULA
     [InlineData("http://[fd12:3456:789a::1]/")]  // IPv6 ULA (fd prefix)
     [InlineData("http://[fe80::1]/resource")]    // IPv6 link-local
@@ -408,5 +410,18 @@ public class StringSecurityTests
     {
         var act = () => url.HttpGetStringAsync();
         await act.Should().ThrowAsync<ArgumentException>();
+    }
+
+    [Fact]
+    public async Task HttpGetStringAsync_HostnameResolvingToPublicIp_DoesNotFailValidation()
+    {
+        // example.com resolves to a public IP — validation should pass (connection may fail but not for SSRF reasons)
+        using var _ = StringHelper.OverrideHostAddressResolverForTesting(
+            _ => new[] { IPAddress.Parse("93.184.216.34") }); // example.com IP
+
+        var act = () => "http://example.com".HttpGetStringAsync(timeout: TimeSpan.FromMilliseconds(100));
+        // Should throw timeout/network error, NOT ArgumentException
+        await act.Should().ThrowAsync<Exception>()
+            .Where(e => e.GetType() != typeof(ArgumentException) && !(e is ArgumentException));
     }
 }

@@ -74,4 +74,26 @@ public class ObjectExtensionAdditionalTests
     {
         public string Age { get; set; } = string.Empty;
     }
+
+    [Fact]
+    public void CopyTo_TypeMismatch_WithNoCallback_DoesNotThrow()
+    {
+        // ArgumentException branch — no callback provided
+        var source = new MismatchSource { Age = 42 };
+        var target = new MismatchTarget();
+
+        var act = () => source.CopyTo(target);
+        act.Should().NotThrow();
+    }
+
+    [Fact]
+    public void CopyTo_ThrowingSetter_WithNoCallback_DoesNotThrow()
+    {
+        // TargetInvocationException branch — no callback provided
+        var source = new ThrowingSource { Name = "x" };
+        var target = new ThrowingTarget();
+
+        var act = () => source.CopyTo(target);
+        act.Should().NotThrow();
+    }
 }

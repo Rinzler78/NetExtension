@@ -70,6 +70,91 @@ public class ObservableObjectAdvancedTests
         target.Dependencies.Should().BeEmpty();
     }
 
+    // ── Gap 1: SetProperty with IObservableObject property ─────────────────
+    [Fact]
+    public void SetProperty_WithIObservableObjectValue_AutoAttachesAndDetachesDependencies()
+    {
+        // Arrange
+        var harness = new ObservableObjectWithChildProp();
+        var depA = new TestDependency();
+        var depB = new TestDependency();
+
+        // Act – assign depA → auto-attached
+        harness.Child = depA;
+        harness.Dependencies.Should().ContainSingle().Which.Should().Be(depA);
+
+        // Act – replace with depB → depA detached, depB attached
+        harness.Child = depB;
+        harness.Dependencies.Should().ContainSingle().Which.Should().Be(depB);
+
+        // Act – set to null → depB detached, Dependencies empty
+        harness.Child = null;
+        harness.Dependencies.Should().BeEmpty();
+    }
+
+    // ── Gap 2: propertyChanged callback ────────────────────────────────────
+    [Fact]
+    public void SetProperty_WithPropertyChangedCallback_InvokesCallbackWithOldAndNewValues()
+    {
+        // Arrange
+        var harness = new TestObservableHarnessWithCallback();
+        (string? Old, string? New)? captured = null;
+
+        // Act
+        harness.SetName("hello", pair => captured = (pair.OldValue, pair.NewValue));
+
+        // Assert
+        captured.Should().NotBeNull();
+        captured!.Value.Old.Should().BeNull();
+        captured!.Value.New.Should().Be("hello");
+    }
+
+    // ── Gap 3: Dispose() × 2 idempotent ────────────────────────────────────
+    [Fact]
+    public void Dispose_CalledTwice_DoesNotThrow()
+    {
+        var harness = new TestObservableHarness();
+        var act = () =>
+        {
+            ((IDisposable)harness).Dispose();
+            ((IDisposable)harness).Dispose();
+        };
+        act.Should().NotThrow();
+    }
+
+    // ── Gap 4: OnDependenciesPropertyChanged base no-op ─────────────────────
+    [Fact]
+    public void OnDependenciesPropertyChanged_BaseImplementation_DoesNotThrow()
+    {
+        // TestObservableObjectNoOverride does NOT override OnDependenciesPropertyChanged
+        var noOverride = new TestObservableObjectNoOverride();
+        var dep = new TestObservableObjectNoOverride { Name = "dep" };
+        noOverride.AttachDependenciesPublic(dep);
+
+        // Trigger PropertyChanged on the dependency → base no-op must not throw
+        var act = () => { dep.Name = "changed"; };
+        act.Should().NotThrow();
+    }
+
+    // ── Gap 6: Dispose(bool disposing=false) ────────────────────────────────
+    [Fact]
+    public void Dispose_WithDisposingFalse_DoesNotClearPropertyChanged()
+    {
+        // Arrange – Dispose(false) must NOT null out PropertyChanged
+        var harness = new TestObservableHarnessWithExposedDispose();
+        bool eventRaised = false;
+        harness.PropertyChanged += (_, _) => eventRaised = true;
+
+        // Act – call protected Dispose(false)
+        harness.ExposeDispose(disposing: false);
+
+        // Assert – handler is still intact
+        harness.SetName("test");
+        eventRaised.Should().BeTrue();
+    }
+
+    // ── Existing helpers ───────────────────────────────────────────────────
+
     private sealed class TestObservableHarness : ObservableObject
     {
         private int _value;
@@ -104,5 +189,53 @@ public class ObservableObjectAdvancedTests
             get => _name;
             set => SetProperty(ref _name, value);
         }
+    }
+
+    // ── Helpers for new tests ──────────────────────────────────────────────
+
+    /// <summary>Exposes a child IObservableObject property to test auto attach/detach.</summary>
+    private sealed class ObservableObjectWithChildProp : ObservableObject
+    {
+        private IObservableObject? _child;
+
+        public IObservableObject? Child
+        {
+            get => _child;
+            set => SetProperty(ref _child, value);
+        }
+    }
+
+    /// <summary>Exposes SetProperty with the propertyChanged callback.</summary>
+    private sealed class TestObservableHarnessWithCallback : ObservableObject
+    {
+        private string? _name;
+
+        public bool SetName(string? value, Action<(string? OldValue, string? NewValue)> callback)
+            => SetProperty(ref _name, value, propertyChanged: callback);
+    }
+
+    /// <summary>Does NOT override OnDependenciesPropertyChanged – tests base no-op.</summary>
+    private sealed class TestObservableObjectNoOverride : ObservableObject
+    {
+        private string _name = string.Empty;
+
+        public string Name
+        {
+            get => _name;
+            set => SetProperty(ref _name, value);
+        }
+
+        public void AttachDependenciesPublic(params IObservableObject[] deps)
+            => AttachDependencies(deps);
+    }
+
+    /// <summary>Exposes protected Dispose(bool) for testing the disposing=false branch.</summary>
+    private sealed class TestObservableHarnessWithExposedDispose : ObservableObject
+    {
+        private string _name = string.Empty;
+
+        public string Name { get => _name; set => SetProperty(ref _name, value); }
+        public void SetName(string v) => Name = v;
+        public void ExposeDispose(bool disposing) => Dispose(disposing);
     }
 }

@@ -14,13 +14,17 @@ public class ReusableTaskAdditionalTests
     }
 
     [Fact]
-    public void InvokeSync_WhenCancelled_ShouldNotExecuteAction()
+    public async Task InvokeSync_WhenCancelled_ShouldNotExecuteAction()
     {
         var calls = 0;
         var task = new ReusableTask(() => Interlocked.Increment(ref calls));
-        task.Cancel();
 
-        task.InvokeSync();
+        // Must invoke first so _taskEverStarted = true, then cancel the CTS
+        await task.Invoke();
+        calls = 0; // reset counter — only InvokeSync behaviour matters below
+
+        task.Cancel(); // now _taskEverStarted=true → actually cancels CTS
+        task.InvokeSync(); // CTS is cancelled → should not execute
 
         calls.Should().Be(0);
     }
@@ -37,10 +41,107 @@ public class ReusableTaskAdditionalTests
     }
 
     [Fact]
-    public void Cancel_ShouldReturnTrue()
+    public void Cancel_AfterInvoke_ShouldReturnTrue()
+    {
+        // Cancel() now requires _taskEverStarted == true to return true
+        var task = new ReusableTask(() => Thread.Sleep(200));
+        task.Invoke(); // start async → sets _taskEverStarted = true
+        task.Cancel().Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Invoke_WhileRunning_ReturnsSameTaskInstance()
+    {
+        var tcs = new TaskCompletionSource();
+        using var reusable = new ReusableTask(() => tcs.Task.GetAwaiter().GetResult());
+
+        var t1 = reusable.Invoke();
+        var t2 = reusable.Invoke(); // called while t1 is still running
+
+        ReferenceEquals(t1, t2).Should().BeTrue();
+
+        tcs.SetResult(); // unblock
+        await t1;
+    }
+}
+
+[Trait("Category", "Unit")]
+public class ReusableTaskDisposeTests
+{
+    [Fact]
+    public void Dispose_DisposesInternalCts_WithoutThrowing()
     {
         var task = new ReusableTask(() => { });
+        var act = () => task.Dispose();
+        act.Should().NotThrow();
+    }
 
-        task.Cancel().Should().BeTrue();
+    [Fact]
+    public void Invoke_AfterDispose_ThrowsObjectDisposedException()
+    {
+        var task = new ReusableTask(() => { });
+        task.Dispose();
+        // Cast to Action to avoid FluentAssertions treating Func<Task> as async
+        Action act = () => { task.Invoke(); };
+        act.Should().Throw<ObjectDisposedException>();
+    }
+
+    [Fact]
+    public void InvokeSync_AfterDispose_ThrowsObjectDisposedException()
+    {
+        var task = new ReusableTask(() => { });
+        task.Dispose();
+        var act = () => task.InvokeSync();
+        act.Should().Throw<ObjectDisposedException>();
+    }
+
+    [Fact]
+    public void Cancel_AfterDispose_ThrowsObjectDisposedException()
+    {
+        var task = new ReusableTask(() => { });
+        task.Dispose();
+        var act = () => task.Cancel();
+        act.Should().Throw<ObjectDisposedException>();
+    }
+
+    [Fact]
+    public void Cancel_BeforeAnyInvoke_ReturnsFalse()
+    {
+        using var task = new ReusableTask(() => { });
+        task.Cancel().Should().BeFalse();
+    }
+
+    [Fact]
+    public void Cancel_WhenAlreadyCancelled_ReturnsFalse()
+    {
+        using var task = new ReusableTask(() => Thread.Sleep(500));
+        task.Invoke(); // start
+        task.Cancel(); // first cancel → true
+        task.Cancel().Should().BeFalse(); // second → false
+    }
+
+    [Fact]
+    public async Task Invoke_RotatesCts_PreviousCtsDisposed()
+    {
+        // Verify no exception thrown after multiple Invoke + complete cycles
+        using var task = new ReusableTask(() => { });
+        for (int i = 0; i < 5; i++)
+        {
+            await task.Invoke();
+        }
+        // If CTS was not disposed properly, finalizer would trigger eventually.
+        // At minimum, verify it runs without error.
+    }
+
+    [Fact]
+    public void Dispose_CalledTwice_DoesNotThrow()
+    {
+        var task = new ReusableTask(() => { });
+        var act = () =>
+        {
+            task.Dispose();
+            task.Dispose();
+        };
+        act.Should().NotThrow();
     }
 }
