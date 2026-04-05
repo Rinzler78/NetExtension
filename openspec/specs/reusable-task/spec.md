@@ -52,3 +52,18 @@ calling thread if cancellation has not been requested.
 #### Scenario: Execute synchronously
 - **WHEN** cancellation has not been requested
 - **THEN** the action is executed synchronously within the lock
+
+### Requirement: Single-Flight Returns Same Task
+When `Invoke()` is called while a previous task is still running,
+the exact same `Task` instance SHALL be returned.
+
+#### Scenario: Concurrent Invoke returns identical Task
+- **WHEN** `Invoke()` is called a second time before the first task completes
+- **THEN** the returned `Task` is reference-equal to the first one
+
+### Requirement: Dispose Idempotent
+Calling `Dispose()` multiple times SHALL be safe and SHALL NOT throw.
+
+#### Scenario: Double dispose does not throw
+- **WHEN** `Dispose()` is called twice
+- **THEN** no exception is thrown

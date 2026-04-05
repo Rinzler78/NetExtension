@@ -43,6 +43,16 @@ Primary users are .NET application developers who want to reduce boilerplate cod
 - Quality gates defined in `docs/testing-quality/quality-gates.json`
 - Global thresholds: line >= 90%, branch >= 80%
 
+### Test Infrastructure
+- Test HTTP server: `WireMock.Net` (embedded, no real network) for HTTP method unit tests
+- Test categories enforced via `[Trait("Category", "<type>")]`:
+  - Unit (default, no trait needed)
+  - Integration (real I/O, `[Trait("Category","Integration")]`)
+  - E2E (external network, `[Trait("Category","E2E")]`, filtered out in CI)
+  - Security (SSRF/injection tests, `[Trait("Category","Security")]`)
+- Coverage targets: line >= 97%, branch >= 95% (up from 94.2%/90.9%)
+- Coverage measured per capability class, enforced by CI quality gate
+
 ### Git Workflow
 - Git Flow: `master` (stable) / `develop` (integration) / `feature/<name>` branches
 - No direct push to `master` or `develop`
