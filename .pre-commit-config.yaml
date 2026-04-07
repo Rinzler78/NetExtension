@@ -1,0 +1,65 @@
+repos:
+  # Universal baseline hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+
+  # Secret scanning
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+        exclude: '\.secrets\.baseline$'
+
+  # C# formatting and linting
+  - repo: local
+    hooks:
+      - id: dotnet-tools-setup
+        name: Setup .NET local tools
+        entry: sh
+        language: system
+        args: [-c, 'dotnet tool restore --tool-manifest .tools/.config/dotnet-tools.json']
+        pass_filenames: false
+
+      - id: dotnet-format
+        name: dotnet format
+        entry: sh
+        language: system
+        args: [-c, './.tools/dotnet-format src/Rinzler78.NetExtension.sln --verbosity diagnostic']
+        files: \.cs$
+        pass_filenames: false
+
+      - id: check-comments-language
+        name: Check comments are in English
+        entry: ./scripts/check-comments-language.sh
+        language: system
+        files: \.cs$
+        pass_filenames: true
+
+      - id: dotnet-build
+        name: dotnet build
+        entry: dotnet build
+        language: system
+        files: \.cs$
+        args: [src/Rinzler78.NetExtension.sln, --configuration, Release, --verbosity, normal, '/p:TreatWarningsAsErrors=true']
+        pass_filenames: false
+
+      - id: dotnet-test
+        name: dotnet test
+        entry: dotnet test
+        language: system
+        files: \.cs$
+        args: [src/Rinzler78.NetExtension.Tests/Rinzler78.NetExtension.Tests.csproj, --configuration, Release, --no-build, --verbosity, minimal]
+        pass_filenames: false
+
+      - id: dotnet-security-scan
+        name: dotnet security scan
+        entry: dotnet list
+        language: system
+        files: \.cs$
+        args: [src/Rinzler78.NetExtension.sln, package, --vulnerable, --include-transitive]
+        pass_filenames: false

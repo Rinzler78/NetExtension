@@ -1,0 +1,303 @@
+{
+  "files": [
+    {
+      "covered_lines": 26,
+      "file": "Array/ArrayExtension.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 26
+    },
+    {
+      "covered_lines": 22,
+      "file": "CollectionHelper.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 22
+    },
+    {
+      "covered_lines": 4,
+      "file": "Command/CommandHelper.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 4
+    },
+    {
+      "covered_lines": 28,
+      "file": "ConsoleExt.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 28
+    },
+    {
+      "covered_lines": 21,
+      "file": "Csv/CsvExtension.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 21
+    },
+    {
+      "covered_lines": 18,
+      "file": "Dates/DatesHelper.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 18
+    },
+    {
+      "covered_lines": 8,
+      "file": "Dates/TimeSlot.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 8
+    },
+    {
+      "covered_lines": 29,
+      "file": "Enums/EnumParser.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 29
+    },
+    {
+      "covered_lines": 8,
+      "file": "Enums/EnumsHelper.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 8
+    },
+    {
+      "covered_lines": 10,
+      "file": "Enums/GlobalEnumParser.cs",
+      "line_rate_percent": 90.91,
+      "valid_lines": 11
+    },
+    {
+      "covered_lines": 5,
+      "file": "FootPrint/CRC32Helper.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 5
+    },
+    {
+      "covered_lines": 5,
+      "file": "FootPrint/CRC64Helper.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 5
+    },
+    {
+      "covered_lines": 6,
+      "file": "FootPrint/SHA512Helper.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 6
+    },
+    {
+      "covered_lines": 2,
+      "file": "Geo/DistanceHelper.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 2
+    },
+    {
+      "covered_lines": 11,
+      "file": "Json/Converters/BigIntegerConverter.cs",
+      "line_rate_percent": 91.67,
+      "valid_lines": 12
+    },
+    {
+      "covered_lines": 11,
+      "file": "Json/Converters/BigRationalConverter.cs",
+      "line_rate_percent": 91.67,
+      "valid_lines": 12
+    },
+    {
+      "covered_lines": 3,
+      "file": "Json/Converters/CollectionConverter.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 3
+    },
+    {
+      "covered_lines": 6,
+      "file": "Json/Converters/CollectionInterfaceConverterFactory.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 6
+    },
+    {
+      "covered_lines": 7,
+      "file": "Json/Converters/DateTimeOffsetConverter.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 7
+    },
+    {
+      "covered_lines": 11,
+      "file": "Json/Converters/DecimalConverter.cs",
+      "line_rate_percent": 91.67,
+      "valid_lines": 12
+    },
+    {
+      "covered_lines": 15,
+      "file": "Json/Converters/DoubleConverter.cs",
+      "line_rate_percent": 93.75,
+      "valid_lines": 16
+    },
+    {
+      "covered_lines": 2,
+      "file": "Json/Converters/InterfaceConverter.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 2
+    },
+    {
+      "covered_lines": 5,
+      "file": "Json/Converters/InterfaceConverterFactory.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 5
+    },
+    {
+      "covered_lines": 11,
+      "file": "Json/Converters/LongConverter.cs",
+      "line_rate_percent": 91.67,
+      "valid_lines": 12
+    },
+    {
+      "covered_lines": 18,
+      "file": "Json/Converters/ULongArrayConverter.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 18
+    },
+    {
+      "covered_lines": 11,
+      "file": "Json/Converters/ULongConverter.cs",
+      "line_rate_percent": 91.67,
+      "valid_lines": 12
+    },
+    {
+      "covered_lines": 72,
+      "file": "Json/JsonHelper.cs",
+      "line_rate_percent": 98.63,
+      "valid_lines": 73
+    },
+    {
+      "covered_lines": 6,
+      "file": "Linq/EnumerableExtension.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 6
+    },
+    {
+      "covered_lines": 16,
+      "file": "Math/BigIntegerExt.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 16
+    },
+    {
+      "covered_lines": 2,
+      "file": "Math/DecimalHelper.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 2
+    },
+    {
+      "covered_lines": 26,
+      "file": "Measure/PerformanceHelper.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 26
+    },
+    {
+      "covered_lines": 27,
+      "file": "Network/NetworkHelper.cs",
+      "line_rate_percent": 90.0,
+      "valid_lines": 30
+    },
+    {
+      "covered_lines": 54,
+      "file": "Objects/ObjectExtension.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 54
+    },
+    {
+      "covered_lines": 29,
+      "file": "Objects/UpdatableProperty.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 29
+    },
+    {
+      "covered_lines": 4,
+      "file": "Objects/UpdatablePropertyExtension.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 4
+    },
+    {
+      "covered_lines": 54,
+      "file": "Observable/ObservableObject.cs",
+      "line_rate_percent": 91.53,
+      "valid_lines": 59
+    },
+    {
+      "covered_lines": 82,
+      "file": "Observable/ObservableRangeCollection.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 82
+    },
+    {
+      "covered_lines": 10,
+      "file": "Process/ProcessHelper.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 10
+    },
+    {
+      "covered_lines": 7,
+      "file": "Process/ProcessOutputs.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 7
+    },
+    {
+      "covered_lines": 7,
+      "file": "Rest/BaseRestApi.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 7
+    },
+    {
+      "covered_lines": 5,
+      "file": "Rest/BaseRestApiExt.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 5
+    },
+    {
+      "covered_lines": 35,
+      "file": "Strings/StringHelper.Http.cs",
+      "line_rate_percent": 46.67,
+      "valid_lines": 75
+    },
+    {
+      "covered_lines": 140,
+      "file": "Strings/StringHelper.cs",
+      "line_rate_percent": 98.59,
+      "valid_lines": 142
+    },
+    {
+      "covered_lines": 29,
+      "file": "Tasks/ReusableTask.cs",
+      "line_rate_percent": 96.67,
+      "valid_lines": 30
+    },
+    {
+      "covered_lines": 3,
+      "file": "Tasks/TaskHelper.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 3
+    },
+    {
+      "covered_lines": 2,
+      "file": "Types/ActivatorHelper.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 2
+    },
+    {
+      "covered_lines": 1,
+      "file": "Types/ConvertHelper.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 1
+    },
+    {
+      "covered_lines": 23,
+      "file": "Types/TypeExtensions.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 23
+    },
+    {
+      "covered_lines": 2,
+      "file": "UriHelper.cs",
+      "line_rate_percent": 100.0,
+      "valid_lines": 2
+    }
+  ],
+  "global": {
+    "covered_lines": 939,
+    "line_rate_percent": 94.09,
+    "valid_lines": 998
+  }
+}

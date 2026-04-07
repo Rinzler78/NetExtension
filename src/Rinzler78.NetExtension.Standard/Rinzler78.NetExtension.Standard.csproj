@@ -1,0 +1,71 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <RootNamespace>Rinzler78.NetExtension</RootNamespace>
+        <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <IsPackable>true</IsPackable>
+        <PackageId>Rinzler78.NetExtension</PackageId>
+        <PackageVersion>1.0.0</PackageVersion>
+        <Title>Rinzler78 .NET Extensions</Title>
+        <Description>A comprehensive collection of .NET extensions and utilities</Description>
+        <Authors>Rinzler78</Authors>
+        <Company>Rinzler78</Company>
+        <Product>NetExtension</Product>
+        <Copyright>Copyright © 2024–2026 Rinzler78</Copyright>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/Rinzler78/NetExtension</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Rinzler78/NetExtension</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>extensions utilities dotnet csharp mvvm observable json csv hash network http ssrf-protection source-generator</PackageTags>
+        <PackageReleaseNotes>See CHANGELOG.md for full history.</PackageReleaseNotes>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);CS1591</NoWarn>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <EnablePackageValidation>true</EnablePackageValidation>
+        <SourceGeneratorOutputPath>$(MSBuildThisFileDirectory)..\Rinzler78.NetExtension.SourceGenerators\bin\$(Configuration)\netstandard2.0\Rinzler78.NetExtension.SourceGenerators.dll</SourceGeneratorOutputPath>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+        <PackageReference Include="CsvHelper" Version="33.1.0" />
+        <PackageReference Include="System.IO.Hashing" Version="10.0.5" />
+
+        <PackageReference Include="bigrational" Version="1.0.0.7" />
+    </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference
+      Include="..\Rinzler78.NetExtension.SourceGenerators\Rinzler78.NetExtension.SourceGenerators.csproj"
+      OutputItemType="Analyzer"
+      ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(SourceGeneratorOutputPath)"
+          Pack="true"
+          PackagePath="analyzers/dotnet/cs"
+          Visible="false"
+          Condition="Exists('$(SourceGeneratorOutputPath)')" />
+    <None Include="..\..\README.md"
+          Pack="true"
+          PackagePath=""
+          Link="README.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>Rinzler78.NetExtension.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+</Project>
