@@ -116,6 +116,77 @@ public class ConsoleExtTests
         }
     }
 
+    // ─────────────────────────────────────────────────────────────────
+    // ResetDefaultConsoleColor
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void ResetDefaultConsoleColor_ShouldRestoreStartupColors()
+    {
+        var originalForeground = System.Console.ForegroundColor;
+        var originalBackground = System.Console.BackgroundColor;
+
+        try
+        {
+            // Change colors
+            System.Console.ForegroundColor = ConsoleColor.Magenta;
+            System.Console.BackgroundColor = ConsoleColor.DarkCyan;
+
+            // Reset
+            ConsoleExt.ResetDefaultConsoleColor();
+
+            // Should be back to startup defaults
+            System.Console.ForegroundColor.Should().Be(ConsoleExt.DefaultForegroundColor);
+            System.Console.BackgroundColor.Should().Be(ConsoleExt.DefaultBackgroundColor);
+        }
+        finally
+        {
+            System.Console.ForegroundColor = originalForeground;
+            System.Console.BackgroundColor = originalBackground;
+        }
+    }
+
+    [Fact]
+    public void ConsoleWriteLine_WithNullForegroundAndValidBackground_ShouldUseDefaultForeground()
+    {
+        using var capture = new ConsoleCaptureTextWriter();
+        var originalOut = System.Console.Out;
+
+        try
+        {
+            System.Console.SetOut(capture);
+
+            "bg only".ConsoleWriteLine(ConsoleColor.DarkBlue, null);
+
+            capture.ToString().Should().Contain("bg only");
+        }
+        finally
+        {
+            System.Console.SetOut(originalOut);
+            ConsoleExt.ResetDefaultConsoleColor();
+        }
+    }
+
+    [Fact]
+    public void ConsoleWriteLine_WithNullBothColors_ShouldUseDefaults()
+    {
+        using var capture = new ConsoleCaptureTextWriter();
+        var originalOut = System.Console.Out;
+
+        try
+        {
+            System.Console.SetOut(capture);
+
+            "default colors".ConsoleWriteLine(null, null);
+
+            capture.ToString().Should().Contain("default colors");
+        }
+        finally
+        {
+            System.Console.SetOut(originalOut);
+        }
+    }
+
     private sealed class ConsoleCaptureTextWriter : StringWriter
     {
         public override Encoding Encoding => Encoding.UTF8;

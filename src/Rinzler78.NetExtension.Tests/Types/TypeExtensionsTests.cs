@@ -36,6 +36,31 @@ public class TypeExtensionsTests
         act.Should().Throw<ArgumentException>();
     }
 
+    // ─────────────────────────────────────────────────────────────────
+    // Nullable and complex types
+    // ─────────────────────────────────────────────────────────────────
+
+    [Theory]
+    [InlineData(typeof(int?), true)]
+    [InlineData(typeof(DateTime?), true)]
+    [InlineData(typeof(Guid?), true)]
+    [InlineData(typeof(decimal), true)]
+    [InlineData(typeof(TimeSpan), true)]
+    public void IsSimpleType_WithNullableAndAdditionalTypes_ShouldReturnTrue(Type type, bool expected)
+    {
+        type.IsSimpleType().Should().Be(expected);
+    }
+
+    [Theory]
+    [InlineData(typeof(List<int>))]
+    [InlineData(typeof(Dictionary<string, object>))]
+    [InlineData(typeof(TestMemberHost))]
+    [InlineData(typeof(object))]
+    public void IsSimpleType_WithComplexTypes_ShouldReturnFalse(Type type)
+    {
+        type.IsSimpleType().Should().BeFalse();
+    }
+
     private sealed class TestMemberHost
     {
         public int Counter = 1;

@@ -133,4 +133,91 @@ public class PerformanceHelperTests
 
         result.Should().Be(42);
     }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Additional edge cases
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void MeasureDuration_ActionWithNullCallback_ShouldNotThrow()
+    {
+        Action action = () => { };
+
+        var act = () => action.MeasureDuration((Action<TimeSpan>?)null!);
+
+        act.Should().NotThrow();
+    }
+
+    [Fact]
+    public void MeasureDuration_WithVeryFastAction_ShouldReturnNonNegativeDuration()
+    {
+        Action action = () => { /* no-op */ };
+
+        action.MeasureDuration(out var duration);
+
+        duration.Should().BeGreaterThanOrEqualTo(TimeSpan.Zero);
+    }
+
+    [Fact]
+    public void MeasureDuration_FuncWithInput_ShouldPassInputCorrectly()
+    {
+        Func<string, int> func = s => s.Length;
+
+        var result = func.MeasureDuration("hello", out var duration);
+
+        result.Should().Be(5);
+        duration.Should().BeGreaterThanOrEqualTo(TimeSpan.Zero);
+    }
+
+    [Fact]
+    public async Task MeasureDurationAsync_WithCallback_ShouldInvokeCallback()
+    {
+        TimeSpan capturedDuration = TimeSpan.Zero;
+        int capturedResult = 0;
+
+        var result = await ((Func<int>)(() => 99)).MeasureDurationAsync((d, r) =>
+        {
+            capturedDuration = d;
+            capturedResult = r;
+        });
+
+        result.Should().Be(99);
+        capturedResult.Should().Be(99);
+        capturedDuration.Should().BeGreaterThanOrEqualTo(TimeSpan.Zero);
+    }
+
+    [Fact]
+    public void MeasureDuration_FuncWithNullCallback_ShouldNotThrow()
+    {
+        Func<int> func = () => 42;
+
+        var result = func.MeasureDuration((Action<TimeSpan, int>?)null!);
+
+        result.Should().Be(42);
+    }
+
+    [Fact]
+    public async Task MeasureDurationAsync_FuncWithInputAndCallback_ShouldInvokeCallback()
+    {
+        TimeSpan capturedDuration = TimeSpan.Zero;
+        int capturedResult = 0;
+
+        var result = await ((Func<int, int>)(x => x * 3)).MeasureDurationAsync(7, (d, r) =>
+        {
+            capturedDuration = d;
+            capturedResult = r;
+        });
+
+        result.Should().Be(21);
+        capturedResult.Should().Be(21);
+        capturedDuration.Should().BeGreaterThanOrEqualTo(TimeSpan.Zero);
+    }
+
+    [Fact]
+    public async Task MeasureDurationAsync_FuncWithInputAndNullCallback_ShouldNotThrow()
+    {
+        var result = await ((Func<string, int>)(s => s.Length)).MeasureDurationAsync("test", null);
+
+        result.Should().Be(4);
+    }
 }

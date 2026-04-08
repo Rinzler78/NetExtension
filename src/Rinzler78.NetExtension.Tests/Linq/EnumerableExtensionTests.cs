@@ -171,4 +171,38 @@ public class EnumerableExtensionTests
         var expectedSum = 1000 * 1001 / 2; // Sum of 1 to 1000
         Assert.Equal(expectedSum, result);
     }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Additional edge cases
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void TryAggregate_WithNullFunc_ShouldReturnDefault()
+    {
+        var numbers = new[] { 1, 2, 3 };
+
+        var result = numbers.TryAggregate(null!);
+
+        Assert.Equal(0, result); // NullReferenceException is caught → default(int)
+    }
+
+    [Fact]
+    public void TryAggregate_WithBothNullSourceAndFunc_ShouldReturnDefault()
+    {
+        IEnumerable<int>? nullSource = null;
+
+        var result = nullSource!.TryAggregate(null!);
+
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void TryAggregate_WithProductFunction_ShouldReturnProduct()
+    {
+        var numbers = new[] { 2, 3, 4 };
+
+        var result = numbers.TryAggregate((a, b) => a * b);
+
+        Assert.Equal(24, result);
+    }
 }

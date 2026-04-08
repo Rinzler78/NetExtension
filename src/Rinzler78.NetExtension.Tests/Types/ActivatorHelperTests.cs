@@ -181,4 +181,35 @@ public class ActivatorHelperTests
         act.Should().Throw<MissingMethodException>(
             "no constructor on TypeWithRequiredArg accepts (bool, int)");
     }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Abstract type and interface guards
+    // ─────────────────────────────────────────────────────────────────
+
+    private abstract class AbstractType { }
+    private interface ITestInterface { }
+
+    [Fact]
+    public void CreateInstance_WithAbstractType_ShouldThrowMissingMethodException()
+    {
+        var act = () => typeof(AbstractType).CreateInstance();
+
+        act.Should().Throw<MissingMethodException>();
+    }
+
+    [Fact]
+    public void CreateInstance_WithInterface_ShouldThrowMissingMethodException()
+    {
+        var act = () => typeof(ITestInterface).CreateInstance();
+
+        act.Should().Throw<MissingMethodException>();
+    }
+
+    [Fact]
+    public void CreateInstance_Generic_ValueType_ShouldReturnDefault()
+    {
+        var result = typeof(int).CreateInstance<int>();
+
+        result.Should().Be(0);
+    }
 }
