@@ -37,6 +37,20 @@ public class JsonHelperTests
     }
 
     [Fact]
+    public void SerializeObject_WithFormattingOnly_ShouldApplyFormatting()
+    {
+        var obj = new { Name = "Test", Value = 42 };
+
+        var indented = obj.SerializeObject(Formatting.Indented);
+        var compact = obj.SerializeObject(Formatting.None);
+
+        indented.Should().Contain("\n", "Indented formatting adds newlines");
+        compact.Should().NotContain("\n", "None formatting produces single-line JSON");
+        indented.Should().Contain("Test");
+        compact.Should().Contain("Test");
+    }
+
+    [Fact]
     public void DeserializeObject_ShouldDeserializeDynamicObject()
     {
         var result = "{\"Name\":\"Test\"}".DeserializeObject();

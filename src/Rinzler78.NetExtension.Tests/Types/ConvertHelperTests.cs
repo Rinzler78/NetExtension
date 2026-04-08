@@ -62,4 +62,31 @@ public class ConvertHelperTests
         ex.Should().BeOfType<InvalidCastException>(
             "Convert.ChangeType throws InvalidCastException when converting null to a non-nullable value type");
     }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Additional type conversions
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void ConvertValue_GuidString_ShouldThrowInvalidCastException()
+    {
+        // Convert.ChangeType does not support Guid conversion from string.
+        var guid = Guid.NewGuid();
+
+        var ex = Record.Exception(() => guid.ToString().ConvertValue<Guid>());
+
+        ex.Should().BeOfType<InvalidCastException>();
+    }
+
+    [Fact]
+    public void ConvertValue_IntToLong_ShouldWiden()
+    {
+        42.ConvertValue<long>().Should().Be(42L);
+    }
+
+    [Fact]
+    public void ConvertValue_DoubleToDecimal_ShouldConvert()
+    {
+        3.14.ConvertValue<decimal>().Should().BeApproximately(3.14m, 0.0001m);
+    }
 }

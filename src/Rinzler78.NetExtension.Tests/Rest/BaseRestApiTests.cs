@@ -136,6 +136,161 @@ public class BaseRestApiTests
     }
 
     // ─────────────────────────────────────────────────────────────────
+    // Empty / whitespace path
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void Constructor_WithEmptyStringPath_ShouldAppendTrailingSlash()
+    {
+        // "" is not null, so the concat branch executes: base + "/" + ""
+        var api = new TestRestApi("https://api.example.com", "");
+
+        api.BaseUri.AbsoluteUri.Should().Be("https://api.example.com/");
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Slash pattern normalization
+    // ─────────────────────────────────────────────────────────────────
+
+    [Theory]
+    [InlineData("https://api.example.com", "///path", "https://api.example.com/path")]
+    [InlineData("https://api.example.com", "v1/customers/", "https://api.example.com/v1/customers/")]
+    [InlineData("https://api.example.com/", "///path", "https://api.example.com/path")]
+    [InlineData("https://api.example.com", "customers", "https://api.example.com/customers")]
+    public void Constructor_WithVariousSlashPatterns_ShouldNormalize(
+        string baseUri, string path, string expected)
+    {
+        var api = new TestRestApi(baseUri, path);
+
+        api.BaseUri.AbsoluteUri.Should().Be(expected);
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Port preservation
+    // ─────────────────────────────────────────────────────────────────
+
+    [Theory]
+    [InlineData("https://api.example.com:8443", "v1/data", "https://api.example.com:8443/v1/data")]
+    [InlineData("http://localhost:5000", "api/health", "http://localhost:5000/api/health")]
+    [InlineData("http://localhost:5000/", "api/health", "http://localhost:5000/api/health")]
+    public void Constructor_WithPortInBaseUri_ShouldPreservePort(
+        string baseUri, string path, string expected)
+    {
+        var api = new TestRestApi(baseUri, path);
+
+        api.BaseUri.AbsoluteUri.Should().Be(expected);
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Encoded / special characters in path
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void Constructor_WithPreEncodedPath_ShouldPreserveEncoding()
+    {
+        var api = new TestRestApi("https://api.example.com", "v1/my%20resource");
+
+        api.BaseUri.AbsoluteUri.Should().Contain("my%20resource");
+    }
+
+    [Fact]
+    public void Constructor_WithSpaceInPath_ShouldEncodeSpace()
+    {
+        var api = new TestRestApi("https://api.example.com", "v1/file name");
+
+        // Uri constructor percent-encodes spaces
+        api.BaseUri.AbsoluteUri.Should().Contain("file%20name");
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Deep chaining (6 levels)
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void Constructor_DeeplyChainedConstruction_ShouldPreserveAllSegments()
+    {
+        var root = new TestRestApi("https://api.example.com/", "cosmos");
+        var l1 = new TestRestApi(root.BaseUri, "bank");
+        var l2 = new TestRestApi(l1.BaseUri, "v1beta1");
+        var l3 = new TestRestApi(l2.BaseUri, "balances");
+        var l4 = new TestRestApi(l3.BaseUri, "address123");
+        var l5 = new TestRestApi(l4.BaseUri, "spendable");
+
+        l5.BaseUri.AbsoluteUri.Should().Be(
+            "https://api.example.com/cosmos/bank/v1beta1/balances/address123/spendable");
+    }
+
+    [Fact]
+    public void Constructor_ChainedWithTrailingSlashInBase_ShouldPreserveAllSegments()
+    {
+        var root = new TestRestApi("https://api.example.com/", "api");
+        var l1 = new TestRestApi(new Uri(root.BaseUri.AbsoluteUri + "/"), "v2");
+        var l2 = new TestRestApi(l1.BaseUri, "users");
+
+        l2.BaseUri.AbsoluteUri.Should().Be("https://api.example.com/api/v2/users");
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Constructor overload equivalence
+    // ─────────────────────────────────────────────────────────────────
+
+    [Theory]
+    [InlineData("https://api.example.com", "v1/customers")]
+    [InlineData("https://api.example.com/", "v1/customers")]
+    [InlineData("https://api.example.com:8443", "v1/data")]
+    public void Constructor_StringAndUriOverloads_ShouldProduceEquivalentUri(
+        string baseUri, string path)
+    {
+        var fromString = new TestRestApi(baseUri, path);
+        var fromUri = new TestRestApi(new Uri(baseUri), path);
+
+        fromString.BaseUri.AbsoluteUri.Should().Be(fromUri.BaseUri.AbsoluteUri);
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Invalid / malformed base URI
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void Constructor_WithRelativeBaseUriString_ShouldThrowUriFormatException()
+    {
+        Action act = () => new TestRestApi("not-a-uri", "v1");
+
+        act.Should().Throw<UriFormatException>();
+    }
+
+    [Fact]
+    public void Constructor_WithEmptyBaseUriString_ShouldThrowUriFormatException()
+    {
+        Action act = () => new TestRestApi("", "v1");
+
+        act.Should().Throw<UriFormatException>();
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Known limitations — query string / fragment in base URI
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void Constructor_WithQueryStringInBaseUri_ShouldAppendPathAfterQuery()
+    {
+        // Known limitation: path is appended via string concat after the query string.
+        var api = new TestRestApi("https://api.example.com/base?v=2", "v1/data");
+
+        // The resulting URI is technically malformed, but this documents current behavior.
+        api.BaseUri.AbsoluteUri.Should().Contain("v1/data");
+    }
+
+    [Fact]
+    public void Constructor_WithFragmentInBaseUri_ShouldAppendPathAfterFragment()
+    {
+        // Known limitation: fragments are included in AbsoluteUri, path appends after them.
+        var api = new TestRestApi("https://api.example.com/docs#section", "v1/data");
+
+        api.BaseUri.AbsoluteUri.Should().Contain("v1/data");
+    }
+
+    // ─────────────────────────────────────────────────────────────────
     // Test doubles
     // ─────────────────────────────────────────────────────────────────
 

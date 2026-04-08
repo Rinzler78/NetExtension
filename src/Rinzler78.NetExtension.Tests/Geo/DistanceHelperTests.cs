@@ -38,4 +38,57 @@ public class DistanceHelperTests
 
         result.Should().Be(2.5d);
     }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Boundary and negative values
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void FromMilesToKiloMeters_WithNegativeValue_ShouldReturnNegative()
+    {
+        var result = (-5L).FromMilesToKiloMeters();
+
+        result.Should().BeNegative();
+        result.Should().BeApproximately(-8.0467d, 0.001d);
+    }
+
+    [Fact]
+    public void FromMilesToKiloMeters_WithMaxLong_ShouldNotThrow()
+    {
+        var result = long.MaxValue.FromMilesToKiloMeters();
+
+        result.Should().BePositive();
+    }
+
+    [Fact]
+    public void FromMeterToKiloMeters_WithZero_ShouldReturnZero()
+    {
+        var result = 0L.FromMeterToKiloMeters();
+
+        result.Should().Be(0.0d);
+    }
+
+    [Fact]
+    public void FromMeterToKiloMeters_WithNegativeValue_ShouldReturnNegative()
+    {
+        var result = (-1500L).FromMeterToKiloMeters();
+
+        result.Should().Be(-1.5d);
+    }
+
+    [Fact]
+    public void FromMeterToKiloMeters_With1000_ShouldReturnExactlyOne()
+    {
+        var result = 1000L.FromMeterToKiloMeters();
+
+        result.Should().Be(1.0d);
+    }
+
+    [Fact]
+    public void FromMilesToKiloMeters_With100_ShouldBeAccurate()
+    {
+        var result = 100L.FromMilesToKiloMeters();
+
+        result.Should().BeApproximately(160.934d, 0.001d);
+    }
 }

@@ -147,4 +147,114 @@ public class BaseRestApiExtTests
         // WebUtility.UrlEncode encodes space as '+'
         result.Should().MatchRegex(@"my(\+|%20)key=1");
     }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Numeric / DateTime / Enum formatting
+    // ─────────────────────────────────────────────────────────────────
+
+    [Theory]
+    [InlineData(42, "42")]
+    [InlineData(3.14, "3.14")]
+    public void CreateUrlPath_NumericTypes_ShouldFormatWithInvariantCulture(
+        object value, string expectedFragment)
+    {
+        var result = "/resource".CreateUrlPath(
+            new Dictionary<string, object?> { ["n"] = value });
+
+        result.Should().Be($"/resource?n={expectedFragment}");
+    }
+
+    [Fact]
+    public void CreateUrlPath_DecimalValue_ShouldFormatWithInvariantCulture()
+    {
+        var result = "/resource".CreateUrlPath(
+            new Dictionary<string, object?> { ["price"] = 1234.56m });
+
+        result.Should().Be("/resource?price=1234.56");
+    }
+
+    [Fact]
+    public void CreateUrlPath_DateTimeValue_ShouldUseInvariantCultureFormat()
+    {
+        var dt = new DateTime(2026, 1, 15, 10, 30, 0, DateTimeKind.Unspecified);
+        var result = "/resource".CreateUrlPath(
+            new Dictionary<string, object?> { ["date"] = dt });
+
+        // DateTime.ToString(null, InvariantCulture) → "01/15/2026 10:30:00", then URL-encoded
+        result.Should().Contain("date=");
+        result.Should().Contain("2026");
+    }
+
+    [Fact]
+    public void CreateUrlPath_WithEmptyStringValue_ShouldIncludeKeyWithEmptyValue()
+    {
+        var result = "/items".CreateUrlPath(
+            new Dictionary<string, object?> { ["filter"] = "" });
+
+        // Empty string is not null, so it passes the Where(a.Value is not null) filter.
+        result.Should().Be("/items?filter=");
+    }
+
+    [Fact]
+    public void CreateUrlPath_EnumValue_ShouldSerializeAsName()
+    {
+        var result = "/resource".CreateUrlPath(
+            new Dictionary<string, object?> { ["status"] = System.Net.HttpStatusCode.OK });
+
+        result.Should().Contain("status=OK");
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Known limitation — existing query string
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void CreateUrlPath_WithExistingQueryString_ShouldAppendWithQuestionMark()
+    {
+        // Known limitation: the implementation always appends "?" regardless of existing query.
+        var result = "https://api.example.com/v1?existing=true".CreateUrlPath(
+            new Dictionary<string, object?> { ["new"] = 1 });
+
+        // Documents the double "?" behavior:
+        result.Should().Contain("?existing=true?new=1");
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Parameter ordering and bool false
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void CreateUrlPath_ShouldPreserveParameterInsertionOrder()
+    {
+        var args = new Dictionary<string, object?>
+        {
+            ["z"] = 1,
+            ["a"] = 2,
+            ["m"] = 3
+        };
+
+        var result = "/resource".CreateUrlPath(args);
+
+        result.Should().Be("/resource?z=1&a=2&m=3");
+    }
+
+    [Fact]
+    public void CreateUrlPath_WithBoolFalseValue_SerializesAsFalse()
+    {
+        var result = "/resource".CreateUrlPath(
+            new Dictionary<string, object?> { ["active"] = (object)false });
+
+        result.Should().Contain("active=false");
+    }
+
+    [Fact]
+    public void CreateUrlPath_WithObjectToStringFallback_ShouldUseToString()
+    {
+        // An object that is not bool and not IFormattable falls through to ToString()
+        var result = "/resource".CreateUrlPath(
+            new Dictionary<string, object?> { ["id"] = new Uri("https://example.com") });
+
+        result.Should().Contain("id=");
+        result.Should().Contain("example.com");
+    }
 }

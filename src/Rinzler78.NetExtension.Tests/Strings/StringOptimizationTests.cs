@@ -105,4 +105,53 @@ public class StringOptimizationTests
         var result = email?.IsValidEmail() ?? false;
         result.Should().Be(expectedResult, $"Email '{email}' should be {(expectedResult ? "valid" : "invalid")}");
     }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Additional optimization edge cases
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void GetFileExtensionOptimized_WithHiddenFileAndExtension_ShouldReturnExtension()
+    {
+        // Hidden file WITH an extension (e.g., .gitignore.bak)
+        var result = "/tmp/.hidden.bak".GetFileExtensionOptimized();
+
+        result.Should().Be(".bak");
+    }
+
+    [Fact]
+    public void GetFileExtensionOptimized_WithDotAtEnd_ShouldReturnEmpty()
+    {
+        // Trailing dot — no characters after dot = no extension
+        var result = "file.".GetFileExtensionOptimized();
+
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void StartsWithAnyOptimized_WithEmptyPrefixArray_ShouldReturnFalse()
+    {
+        var result = "https://example.com".StartsWithAnyOptimized(System.Array.Empty<string>());
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public void TrimOptimized_WithNoMatchingChars_ShouldReturnSameInstance()
+    {
+        var input = "hello";
+
+        var result = input.TrimOptimized('*', '#');
+
+        // No trimming needed — should return the exact same string instance
+        result.Should().BeSameAs(input);
+    }
+
+    [Fact]
+    public void TrimOptimized_WithOnlyWhitespace_ShouldReturnEmpty()
+    {
+        var result = "   \t\n\r   ".TrimOptimized();
+
+        result.Should().BeEmpty();
+    }
 }

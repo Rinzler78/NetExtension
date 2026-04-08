@@ -200,4 +200,47 @@ public class ArrayExtensionTests
         // Assert
         result.Should().BeEmpty();
     }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Additional edge cases
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void GetBytes_StringArray_WithUnicodeStrings_ShouldUseAsciiEncoding()
+    {
+        // string[].GetBytes() → string.Join → StringHelper.GetBytes() → Encoding.ASCII
+        // 'é' (U+00E9) is outside ASCII range → replaced by 0x3F ('?')
+        var result = new[] { "café" }.GetBytes();
+
+        result.Should().HaveCount(4, "ASCII treats each char as one byte");
+        result[3].Should().Be(0x3F, "'é' is replaced by '?' in ASCII");
+    }
+
+    [Fact]
+    public void SumArrays_WithNegativeValues_ShouldSumCorrectly()
+    {
+        var a = new double[] { -1.0, 2.0, -3.0 };
+        var b = new double[] { 1.0, -2.0, 3.0 };
+
+        var result = ArrayExtension.SumArrays(a, b);
+
+        result.Should().Equal(new double[] { 0.0, 0.0, 0.0 });
+    }
+
+    [Fact]
+    public void GetBytes_UlongArray_WithMaxValue_ShouldReturnCorrectBytes()
+    {
+        var result = new[] { ulong.MaxValue }.GetBytes();
+
+        result.Should().HaveCount(8);
+        result.Should().AllSatisfy(b => b.Should().Be(0xFF));
+    }
+
+    [Fact]
+    public void GetBytes_StringArray_WithMultipleEmptyStrings_ShouldReturnEmpty()
+    {
+        var result = new[] { "", "", "" }.GetBytes();
+
+        result.Should().BeEmpty();
+    }
 }

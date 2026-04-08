@@ -91,6 +91,41 @@ public class DecimalHelperTests
         // 2^10 = 1024 — must be exact in decimal
         DecimalHelper.Pow(2m, 10m).Should().Be(1024m);
     }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Additional Pow / Log edge cases
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void Pow_WithOneBase_AnyExponent_ShouldReturnOne()
+    {
+        // 1^x = 1 for any x
+        DecimalHelper.Pow(1m, 100m).Should().Be(1m);
+        DecimalHelper.Pow(1m, -50m).Should().Be(1m);
+        DecimalHelper.Pow(1m, 0.5m).Should().BeApproximately(1m, 0.0001m);
+    }
+
+    [Fact]
+    public void Pow_NegativeBase_EvenExponent_ShouldReturnPositive()
+    {
+        // (-2)^2 = 4
+        DecimalHelper.Pow(-2m, 2m).Should().Be(4m);
+    }
+
+    [Fact]
+    public void Pow_NegativeBase_OddExponent_ShouldReturnNegative()
+    {
+        // (-2)^3 = -8
+        DecimalHelper.Pow(-2m, 3m).Should().Be(-8m);
+    }
+
+    [Fact]
+    public void Log_OfLargeValue_ShouldReturnCorrectApproximation()
+    {
+        // log(1000000) ≈ 13.8155
+        var result = 1000000m.Log();
+        result.Should().BeApproximately(13.8155m, 0.001m);
+    }
 }
 
 public static class DecimalHelperAdditionalTests

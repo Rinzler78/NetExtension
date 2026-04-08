@@ -204,4 +204,160 @@ public class StringHelperHttpTests
             .HttpPost<object, ConcreteResult, IResult>(new { });
         await act.Should().ThrowAsync<InvalidOperationException>();
     }
+
+    // ─────────────────────────────────────────────────────────────────
+    // URL validation edge cases
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task HttpGetStringAsync_WithFtpScheme_ShouldThrowArgumentException()
+    {
+        var act = async () => await "ftp://files.example.com/data".HttpGetStringAsync();
+
+        await act.Should().ThrowAsync<ArgumentException>();
+    }
+
+    [Fact]
+    public async Task HttpGetStreamAsync_WithPrivateClassB_ShouldThrowArgumentException()
+    {
+        var act = async () => await "http://172.16.0.1/resource".HttpGetStreamAsync();
+
+        await act.Should().ThrowAsync<ArgumentException>();
+    }
+
+    [Fact]
+    public async Task HttpPostString_WithPrivateClassC_ShouldThrowArgumentException()
+    {
+        var act = async () => await "http://192.168.0.1/post".HttpPostString(new { });
+
+        await act.Should().ThrowAsync<ArgumentException>();
+    }
+
+    [Fact]
+    public async Task HttpGetStringAsync_WithLocalhostName_ShouldThrowArgumentException()
+    {
+        var act = async () => await "http://localhost/resource".HttpGetStringAsync();
+
+        await act.Should().ThrowAsync<ArgumentException>();
+    }
+
+    [Fact]
+    public async Task HttpGetStreamAsync_WithCustomTimeout_ShouldRespectTimeout()
+    {
+        _fixture.Server
+            .Given(Request.Create().WithPath("/timeout-test").UsingGet())
+            .RespondWith(Response.Create().WithStatusCode(200).WithBody("fast")
+                .WithDelay(TimeSpan.FromMilliseconds(50)));
+
+        var url = $"{_fixture.BaseUrl}/timeout-test";
+        // Large timeout — should succeed
+        await using var stream = await url.HttpGetStreamAsync(timeout: TimeSpan.FromSeconds(10));
+        stream.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task HttpGetAsync_WithPreCancelledToken_ShouldThrowOperationCanceledException()
+    {
+        _fixture.Server
+            .Given(Request.Create().WithPath("/cancel-dto").UsingGet())
+            .RespondWith(Response.Create().WithStatusCode(200).WithBody("{\"Name\":\"x\",\"Value\":1}")
+                .WithHeader("Content-Type", "application/json"));
+
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
+        var act = async () => await $"{_fixture.BaseUrl}/cancel-dto".HttpGetAsync<SampleDto>(
+            cancellationToken: cts.Token);
+        await act.Should().ThrowAsync<OperationCanceledException>();
+    }
+
+    // ── HttpGetAsync<Impl, Return> interface overload ────────────────
+
+    private interface ISampleResult { string Name { get; } }
+    private record SampleImplResult(string Name, int Value) : ISampleResult;
+
+    [Fact]
+    public async Task HttpGetAsync_InterfaceOverload_HappyPath_ReturnsTypedResult()
+    {
+        var json = JsonConvert.SerializeObject(new SampleImplResult("iface-test", 7));
+        _fixture.Server
+            .Given(Request.Create().WithPath("/iface-dto").UsingGet())
+            .RespondWith(Response.Create().WithStatusCode(200).WithBody(json)
+                .WithHeader("Content-Type", "application/json"));
+
+        var result = await $"{_fixture.BaseUrl}/iface-dto"
+            .HttpGetAsync<SampleImplResult, ISampleResult>();
+        result.Name.Should().Be("iface-test");
+    }
+
+    // ── HttpGetAsync with custom JsonSerializerSettings ──────────────
+
+    [Fact]
+    public async Task HttpGetAsync_WithCustomSettings_ShouldDeserializeCorrectly()
+    {
+        var json = JsonConvert.SerializeObject(new SampleDto("settings-test", 99));
+        _fixture.Server
+            .Given(Request.Create().WithPath("/settings-dto").UsingGet())
+            .RespondWith(Response.Create().WithStatusCode(200).WithBody(json)
+                .WithHeader("Content-Type", "application/json"));
+
+        var settings = new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Ignore };
+        var result = await $"{_fixture.BaseUrl}/settings-dto".HttpGetAsync<SampleDto>(settings: settings);
+        result.Name.Should().Be("settings-test");
+    }
+
+    // ── HttpPostString with timeout ──────────────────────────────────
+
+    [Fact]
+    public async Task HttpPostString_WithTimeout_ShouldRespectTimeout()
+    {
+        _fixture.Server
+            .Given(Request.Create().WithPath("/post-timeout").UsingPost())
+            .RespondWith(Response.Create().WithStatusCode(200).WithBody("fast post"));
+
+        var result = await $"{_fixture.BaseUrl}/post-timeout"
+            .HttpPostString(new { Data = "test" }, timeout: TimeSpan.FromSeconds(10));
+        result.Should().Be("fast post");
+    }
+
+    [Fact]
+    public async Task HttpPostString_WithTimeoutExpired_ShouldThrow()
+    {
+        _fixture.Server
+            .Given(Request.Create().WithPath("/post-slow").UsingPost())
+            .RespondWith(Response.Create().WithStatusCode(200).WithBody("late")
+                .WithDelay(TimeSpan.FromSeconds(2)));
+
+        var act = async () => await $"{_fixture.BaseUrl}/post-slow"
+            .HttpPostString(new { }, timeout: TimeSpan.FromMilliseconds(100));
+        await act.Should().ThrowAsync<Exception>()
+            .Where(e => e is OperationCanceledException || e is TaskCanceledException);
+    }
+
+    // ── SSRF: IPv4-mapped IPv6 ───────────────────────────────────────
+
+    [Fact]
+    public async Task HttpGetStringAsync_IPv4MappedIPv6PrivateAddress_ShouldThrow()
+    {
+        // ::ffff:192.168.1.1 — IPv4-mapped IPv6 pointing to a private range
+        var act = async () => await "http://[::ffff:192.168.1.1]/api".HttpGetStringAsync();
+        await act.Should().ThrowAsync<ArgumentException>();
+    }
+
+    // ── ValidateUrl: whitespace-only URL ─────────────────────────────
+
+    [Fact]
+    public async Task HttpGetStringAsync_WithWhitespaceOnlyUrl_ShouldThrowArgumentException()
+    {
+        var act = async () => await "   ".HttpGetStringAsync();
+        await act.Should().ThrowAsync<ArgumentException>();
+    }
+
+    // ── ValidateUrl: invalid URI format ──────────────────────────────
+
+    [Fact]
+    public async Task HttpGetStringAsync_WithMalformedUrl_ShouldThrowArgumentException()
+    {
+        var act = async () => await "not://valid url at all".HttpGetStringAsync();
+        await act.Should().ThrowAsync<ArgumentException>();
+    }
 }
