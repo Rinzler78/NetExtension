@@ -1,6 +1,6 @@
 using System;
-using System.Net;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Rinzler78.NetExtension.Strings;

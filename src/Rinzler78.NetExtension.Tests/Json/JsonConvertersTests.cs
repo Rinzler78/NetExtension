@@ -2,10 +2,10 @@ using System.Collections.ObjectModel;
 using System.Numerics;
 using System.Text;
 using System.Text.Json;
-using BigRat = System.Numerics.BigRational;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Rinzler78.NetExtension.Json.Converters;
+using BigRat = System.Numerics.BigRational;
 
 namespace Rinzler78.NetExtension.Tests.Json;
 

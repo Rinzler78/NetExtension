@@ -1,7 +1,7 @@
 using System;
 using System.Net;
-using WireMock.Server;
 using Rinzler78.NetExtension.Strings;
+using WireMock.Server;
 
 namespace Rinzler78.NetExtension.Tests.TestHelpers;
 

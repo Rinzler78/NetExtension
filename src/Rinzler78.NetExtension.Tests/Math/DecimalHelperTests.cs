@@ -1,7 +1,7 @@
 using FluentAssertions;
-using Rinzler78.NetExtension.Math;
-using Rinzler78.NetExtension.Json;
 using Newtonsoft.Json;
+using Rinzler78.NetExtension.Json;
+using Rinzler78.NetExtension.Math;
 
 namespace Rinzler78.NetExtension.Tests.Math;
 

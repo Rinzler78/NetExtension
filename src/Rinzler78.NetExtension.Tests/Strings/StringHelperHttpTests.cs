@@ -3,13 +3,13 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Newtonsoft.Json;
 using Rinzler78.NetExtension.Strings;
 using Rinzler78.NetExtension.Tests.TestHelpers;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using Xunit;
-using FluentAssertions;
 
 namespace Rinzler78.NetExtension.Tests.Strings;
 

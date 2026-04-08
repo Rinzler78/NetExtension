@@ -32,6 +32,6 @@ public abstract class BaseRestApi
         ArgumentNullException.ThrowIfNull(baseUri);
         BaseUri = path is null
             ? baseUri
-            : new Uri(baseUri, path.TrimStart('/'));
+            : new Uri(baseUri.AbsoluteUri.TrimEnd('/') + "/" + path.TrimStart('/'));
     }
 }

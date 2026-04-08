@@ -118,6 +118,23 @@ public class BaseRestApiTests
         withSlash.BaseUri.Should().Be(withoutSlash.BaseUri);
     }
 
+    [Fact]
+    public void Constructor_ChainedConstruction_ShouldPreserveAllSegments()
+    {
+        // Reproduces the REST API hierarchy: root → cosmos → bank → v1beta1 → balances
+        // Each level passes its BaseUri (no trailing slash) to the next level.
+        // Before the fix, new Uri(root, segment) without trailing slash replaced the last segment.
+        var root = new TestRestApi("https://api.example.com/", "cosmos");
+        var l1 = new TestRestApi(root.BaseUri, "bank");
+        var l2 = new TestRestApi(l1.BaseUri, "v1beta1");
+        var l3 = new TestRestApi(l2.BaseUri, "balances");
+
+        root.BaseUri.AbsoluteUri.Should().Be("https://api.example.com/cosmos");
+        l1.BaseUri.AbsoluteUri.Should().Be("https://api.example.com/cosmos/bank");
+        l2.BaseUri.AbsoluteUri.Should().Be("https://api.example.com/cosmos/bank/v1beta1");
+        l3.BaseUri.AbsoluteUri.Should().Be("https://api.example.com/cosmos/bank/v1beta1/balances");
+    }
+
     // ─────────────────────────────────────────────────────────────────
     // Test doubles
     // ─────────────────────────────────────────────────────────────────
