@@ -6,7 +6,7 @@
         <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
         <IsPackable>true</IsPackable>
         <PackageId>Rinzler78.NetExtension</PackageId>
-        <PackageVersion>1.0.0</PackageVersion>
+        <PackageVersion>1.0.1</PackageVersion>
         <Title>Rinzler78 .NET Extensions</Title>
         <Description>A comprehensive collection of .NET extensions and utilities</Description>
         <Authors>Rinzler78</Authors>

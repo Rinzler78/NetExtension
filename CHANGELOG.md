@@ -10,6 +10,21 @@ Versioning follows [SemVer](https://semver.org/).
 
 ---
 
+## [1.0.1] — 2026-04-08
+
+### Fixed
+- **REST URI construction**: `BaseRestApi` used `new Uri(base, segment)` which, per RFC 3986,
+  replaced the last path segment instead of appending when the base had no trailing slash.
+  Chained hierarchies (e.g. `cosmos/bank/v1beta1/balances`) now preserve all segments.
+
+### Added
+- **131 edge-case unit tests** across all 20+ library modules (878 total, up from 737).
+  Covers: null/empty inputs, boundary values, overflow, encoding, slash patterns,
+  SSRF IP ranges (IPv4-mapped IPv6, CGNAT, link-local), culture-dependent formatting,
+  known limitations, and error paths.
+
+---
+
 ## [1.0.0] — 2026-04-07
 
 Initial public release.
@@ -63,5 +78,6 @@ Initial public release.
 
 ---
 
-[Unreleased]: https://github.com/Rinzler78/NetExtension/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/Rinzler78/NetExtension/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/Rinzler78/NetExtension/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/Rinzler78/NetExtension/releases/tag/v1.0.0

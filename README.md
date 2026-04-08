@@ -14,7 +14,7 @@ dotnet add package Rinzler78.NetExtension
 ```
 
 ```xml
-<PackageReference Include="Rinzler78.NetExtension" Version="1.0.0" />
+<PackageReference Include="Rinzler78.NetExtension" Version="1.0.1" />
 ```
 
 ## 🚀 Quick Start
