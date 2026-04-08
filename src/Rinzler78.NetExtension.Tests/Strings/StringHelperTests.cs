@@ -120,6 +120,8 @@ public class StringHelperTests
     [InlineData("HELLO WORLD", "Hello world")]
     [InlineData("test STRING", "Test string")]
     [InlineData("MiXeD cAsE", "Mixed case")]
+    [InlineData("", "")]
+    [InlineData("A", "A")]
     public void ToStartByUpperCase_ShouldReturnCorrectFormat(string input, string expected)
     {
         // Act
@@ -386,6 +388,185 @@ public class StringHelperTests
         Assert.Same(input, result);
     }
 
-    // Note: HTTP methods are not tested here as they require external dependencies
-    // These would be better suited for integration tests or mocked tests
+    // ─────────────────────────────────────────────────────────────────
+    // Additional email edge cases
+    // ─────────────────────────────────────────────────────────────────
+
+    [Theory]
+    [InlineData("user+tag@example.com", true)]
+    [InlineData("user.name+tag@sub.domain.com", true)]
+    [InlineData("user@123.123.123.123", true)]
+    [InlineData("user@.domain.com", true)]  // EmailAddressAttribute accepts this
+    [InlineData("user..name@domain.com", true)]  // EmailAddressAttribute accepts this
+    [InlineData(" @domain.com", true)]  // EmailAddressAttribute accepts leading space
+    [InlineData("plaintext", false)]
+    [InlineData("a@b@c.com", false)]
+    public void IsValidEmail_WithEdgeCases_ShouldValidateCorrectly(string email, bool expected)
+    {
+        var result = email.IsValidEmail();
+
+        Assert.Equal(expected, result);
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Levenshtein / Similarity additional edge cases
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void ComputeLevenshteinDistance_WithNullSource_ShouldReturnTargetLength()
+    {
+        string? source = null;
+
+        var result = source!.ComputeLevenshteinDistance("abc");
+
+        Assert.Equal(3, result);
+    }
+
+    [Fact]
+    public void ComputeLevenshteinDistance_WithBothNull_ShouldReturnZero()
+    {
+        string? source = null;
+        string? target = null;
+
+        var result = source!.ComputeLevenshteinDistance(target!);
+
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void CalculateSimilarity_WithBothNull_ShouldReturnOne()
+    {
+        string? a = null;
+        string? b = null;
+
+        var result = a!.CalculateSimilarity(b!);
+
+        Assert.Equal(1.0, result);
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // ContainsAll / ContainsAny with null str (extension method edge case)
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void ContainsAll_WithNullString_ShouldThrowNullReferenceException()
+    {
+        string? str = null;
+
+        // Extension method called on null: str.Contains() throws NRE.
+        Action act = () => str!.ContainsAll(new[] { "word" });
+
+        act.Should().Throw<NullReferenceException>();
+    }
+
+    [Fact]
+    public void ContainsAny_WithNullString_ShouldThrowNullReferenceException()
+    {
+        string? str = null;
+
+        Action act = () => str!.ContainsAny(new[] { "word" });
+
+        act.Should().Throw<NullReferenceException>();
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // ToPascalCase additional edge cases
+    // ─────────────────────────────────────────────────────────────────
+
+    [Theory]
+    [InlineData(null, null)]
+    [InlineData("a", "A")]
+    [InlineData("123abc", "123Abc")]
+    [InlineData("with--dashes", "WithDashes")]
+    [InlineData("___leading", "Leading")]
+    public void ToPascalCase_WithMoreEdgeCases_ShouldConvertCorrectly(string? input, string? expected)
+    {
+        var result = input!.ToPascalCase();
+
+        Assert.Equal(expected, result);
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // MakeAllCombinations edge cases
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void MakeAllCombinations_WithSingleElement_ShouldReturnSelfCombination()
+    {
+        var result = new[] { "X" }.MakeAllCombinations().ToArray();
+
+        Assert.Single(result);
+        Assert.Equal("XX", result[0]);
+    }
+
+    [Fact]
+    public void MakeAllCombinations_WithEmptyCollection_ShouldReturnEmpty()
+    {
+        var result = System.Array.Empty<string>().MakeAllCombinations().ToArray();
+
+        Assert.Empty(result);
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // GetStringContent edge case
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task GetStringContent_WithSimpleString_ShouldSerializeToJson()
+    {
+        var content = "hello".GetStringContent();
+        var body = await content.ReadAsStringAsync();
+
+        body.Should().Be("\"hello\"");
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // GetBytes — Unicode → ASCII (non-ASCII → 0x3F)
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void GetBytes_WithUnicodeCharacters_ShouldReplaceWithQuestionMark()
+    {
+        var result = "café".GetBytes();
+
+        // 'é' (U+00E9) is outside ASCII range → replaced by 0x3F ('?')
+        result.Should().Contain(0x3F);
+        result.Length.Should().Be(4); // c, a, f, ?
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // BeginByLowerCase / BeginByUpperCase — null input
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void BeginByLowerCase_WithNull_ShouldReturnNull()
+    {
+        string? input = null;
+
+        var result = input!.BeginByLowerCase();
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void BeginByUpperCase_WithNull_ShouldReturnNull()
+    {
+        string? input = null;
+
+        var result = input!.BeginByUpperCase();
+
+        Assert.Null(result);
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // ToJsonFormattedString — invalid JSON
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void ToJsonFormattedString_WithInvalidJson_ShouldThrow()
+    {
+        Action act = () => "not json at all".ToJsonFormattedString();
+
+        act.Should().Throw<Newtonsoft.Json.JsonReaderException>();
+    }
 }

@@ -188,6 +188,67 @@ public class CsvExtensionTests
     }
 
     // ─────────────────────────────────────────────────────────────────
+    // Additional edge cases
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void LoadCsv_WithHeaderOnly_ShouldReturnEmptyCollection()
+    {
+        var filePath = MockHelpers.CreateTempFile("Name;Age\n");
+
+        try
+        {
+            var result = filePath.LoadCsv<CsvRow>(hasHeaderRecord: true)!.ToArray();
+
+            result.Should().BeEmpty();
+        }
+        finally
+        {
+            MockHelpers.CleanupTempFile(filePath);
+        }
+    }
+
+    [Fact]
+    public void LoadCsv_WithEmptyFile_ShouldReturnEmptyCollection()
+    {
+        var filePath = MockHelpers.CreateTempFile("");
+
+        try
+        {
+            var result = filePath.LoadCsv<CsvRow>(hasHeaderRecord: true);
+
+            // CsvHelper returns an empty collection for an empty file.
+            result.Should().NotBeNull();
+            result!.Should().BeEmpty();
+        }
+        finally
+        {
+            MockHelpers.CleanupTempFile(filePath);
+        }
+    }
+
+    [Fact]
+    public async Task LoadCsvAsync_WithValidFile_ShouldReturnSameAsSync()
+    {
+        // LoadCsvAsync uses default hasHeaderRecord=true and separator=';'.
+        var filePath = MockHelpers.CreateTempFile("Alice;30\n");
+
+        try
+        {
+            var syncResult = filePath.LoadCsv<CsvRow>()!.ToArray();
+            var asyncResult = (await filePath.LoadCsvAsync<CsvRow>())!.ToArray();
+
+            asyncResult.Should().HaveSameCount(syncResult);
+            asyncResult[0].Name.Should().Be(syncResult[0].Name);
+            asyncResult[0].Age.Should().Be(syncResult[0].Age);
+        }
+        finally
+        {
+            MockHelpers.CleanupTempFile(filePath);
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────
     // Supporting types
     // ─────────────────────────────────────────────────────────────────
 

@@ -81,6 +81,52 @@ public class EnumParserTests
         }
     }
 
+    // ─────────────────────────────────────────────────────────────────
+    // Additional edge cases
+    // ─────────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void Parse_WithEmptyString_ShouldReturnDefault()
+    {
+        var parser = new EnumParser<ParserEnum>();
+        parser.Parse("").Should().Be(default(ParserEnum));
+    }
+
+    [Fact]
+    public void Parse_WithWhitespaceString_ShouldReturnDefault()
+    {
+        var parser = new EnumParser<ParserEnum>();
+        parser.Parse("  ").Should().Be(default(ParserEnum));
+    }
+
+    [Fact]
+    public void Parse_CaseInsensitive_ShouldMatch()
+    {
+        var parser = new EnumParser<ParserEnum>();
+        parser.Parse("value_one").Should().Be(ParserEnum.Value_One);
+        parser.Parse("VALUE_ONE").Should().Be(ParserEnum.Value_One);
+        parser.Parse("valuetwo").Should().Be(ParserEnum.ValueTwo);
+    }
+
+    [Fact]
+    public void Parse_WithDottedAlias_ShouldMatch()
+    {
+        var parser = new EnumParser<ParserEnum>();
+        // "value.one" is the dotted alias of "Value_One" (underscore replaced by dot)
+        parser.Parse("value.one").Should().Be(ParserEnum.Value_One);
+    }
+
+    [Flags]
+    private enum FlagsEnum { None = 0, Read = 1, Write = 2, Execute = 4 }
+
+    [Fact]
+    public void Parse_WithFlagsEnum_ShouldParseIndividualValues()
+    {
+        var parser = new EnumParser<FlagsEnum>();
+        parser.Parse("Read").Should().Be(FlagsEnum.Read);
+        parser.Parse("4").Should().Be(FlagsEnum.Execute);
+    }
+
     private enum ParserEnum { Value_One = 1, ValueTwo = 2 }
     private enum LongBackedParserEnum : long { VeryLarge = 2147483648L }
     private enum SignedParserEnum : int { NegativeOne = -1, Zero = 0 }
